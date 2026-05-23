@@ -105,6 +105,13 @@ export const DEFINED_ROUTES = {
 
     ['mitre-techniques']: {},
 
+    tracks: {
+        create: {},
+        EXCL_VAR_trackId: {
+            edit: {},
+        },
+    },
+
     ['sandbox-image']: {},
 
     ['sandbox-definition']: {

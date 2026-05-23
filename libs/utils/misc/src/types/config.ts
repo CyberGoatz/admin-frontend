@@ -75,6 +75,11 @@ export class PortalConfig extends Z.class({
             .nonempty('No user and group api path provided')
             .transform(removeTrailingSlash),
 
+        cybergoatz: z
+            .string({ required_error: 'CyberGoatz API path is required' })
+            .nonempty('No CyberGoatz api path provided')
+            .transform(removeTrailingSlash),
+
         sandbox: z
             .string({ required_error: 'Sandbox API path is required' })
             .nonempty('No sandbox api path provided')

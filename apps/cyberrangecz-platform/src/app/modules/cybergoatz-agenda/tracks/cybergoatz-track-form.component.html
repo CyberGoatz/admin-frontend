@@ -1,0 +1,249 @@
+<div class="track-form-page">
+    <mat-card appearance="outlined">
+        <mat-card-header>
+            <mat-card-title>
+                {{ title() }}
+            </mat-card-title>
+            <mat-card-subtitle>
+                Select runnable training instances. Total time is calculated
+                from the selected trainings.
+            </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            @if (isLoading()) {
+                <div class="loading">
+                    <mat-progress-spinner
+                        diameter="32"
+                        mode="indeterminate"
+                    />
+                    <span>Loading track details</span>
+                </div>
+            } @else {
+                @if (error()) {
+                    <div class="error-message">{{ error() }}</div>
+                }
+
+                <form
+                    [formGroup]="form"
+                    class="track-form"
+                    (ngSubmit)="save()"
+                >
+                    <div class="form-grid">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Title</mat-label>
+                            <input
+                                matInput
+                                formControlName="title"
+                            />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Slug</mat-label>
+                            <input
+                                matInput
+                                formControlName="slug"
+                            />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Display order</mat-label>
+                            <input
+                                matInput
+                                type="number"
+                                min="0"
+                                formControlName="displayOrder"
+                            />
+                        </mat-form-field>
+                    </div>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Description</mat-label>
+                        <textarea
+                            rows="4"
+                            matInput
+                            formControlName="description"
+                        ></textarea>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Banner image URL</mat-label>
+                        <input
+                            matInput
+                            formControlName="bannerImageUrl"
+                        />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Trainings</mat-label>
+                        <mat-select
+                            multiple
+                            formControlName="trainingInstanceIds"
+                            (selectionChange)="
+                                syncSelectedTrainingInstances($event.value)
+                            "
+                        >
+                            @for (
+                                instance of trainingInstances();
+                                track instance.id
+                            ) {
+                                <mat-option [value]="instance.id.toString()">
+                                    {{ instance.title }} ·
+                                    {{ instance.trainingDefinition.title }} ·
+                                    {{
+                                        formatDuration(
+                                            instance.trainingDefinition
+                                                .estimatedDuration || 0
+                                        )
+                                    }}
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+
+                    <div class="track-summary">
+                        <span>
+                            {{ selectedItems().length }} trainings selected
+                        </span>
+                        <span>
+                            Total time:
+                            {{ formatDuration(totalEstimatedDuration()) }}
+                        </span>
+                        <mat-checkbox formControlName="published">
+                            Published
+                        </mat-checkbox>
+                    </div>
+
+                    @if (selectedItems().length > 0) {
+                        <div class="selected-trainings">
+                            @for (
+                                item of selectedItems();
+                                track item.trainingInstanceId;
+                                let index = $index
+                            ) {
+                                @if (
+                                    findTrainingInstance(
+                                        item.trainingInstanceId
+                                    );
+                                    as instance
+                                ) {
+                                    <div class="selected-training">
+                                        <div class="selected-training-main">
+                                            <strong>
+                                                {{ instance.title }}
+                                            </strong>
+                                            <span>
+                                                {{
+                                                    instance.trainingDefinition
+                                                        .title
+                                                }}
+                                                ·
+                                                {{
+                                                    formatDuration(
+                                                        instance
+                                                            .trainingDefinition
+                                                            .estimatedDuration ||
+                                                            0
+                                                    )
+                                                }}
+                                            </span>
+                                        </div>
+                                        <mat-form-field
+                                            appearance="outline"
+                                            class="title-override"
+                                        >
+                                            <mat-label>
+                                                Title override
+                                            </mat-label>
+                                            <input
+                                                matInput
+                                                [value]="
+                                                    item.titleOverride || ''
+                                                "
+                                                (input)="
+                                                    updateTitleOverride(
+                                                        item.trainingInstanceId,
+                                                        $any($event.target)
+                                                            .value
+                                                    )
+                                                "
+                                            />
+                                        </mat-form-field>
+                                        <mat-checkbox
+                                            [checked]="item.published"
+                                            (change)="
+                                                updateItemPublished(
+                                                    item.trainingInstanceId,
+                                                    $event.checked
+                                                )
+                                            "
+                                        >
+                                            Published
+                                        </mat-checkbox>
+                                        <div class="order-actions">
+                                            <button
+                                                mat-icon-button
+                                                type="button"
+                                                [disabled]="index === 0"
+                                                aria-label="Move training up"
+                                                (click)="
+                                                    moveItem(
+                                                        item.trainingInstanceId,
+                                                        -1
+                                                    )
+                                                "
+                                            >
+                                                <mat-icon>
+                                                    arrow_upward
+                                                </mat-icon>
+                                            </button>
+                                            <button
+                                                mat-icon-button
+                                                type="button"
+                                                [disabled]="
+                                                    index ===
+                                                    selectedItems().length - 1
+                                                "
+                                                aria-label="Move training down"
+                                                (click)="
+                                                    moveItem(
+                                                        item.trainingInstanceId,
+                                                        1
+                                                    )
+                                                "
+                                            >
+                                                <mat-icon>
+                                                    arrow_downward
+                                                </mat-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+
+                    <mat-divider />
+
+                    <div class="form-actions">
+                        <button
+                            mat-button
+                            type="button"
+                            (click)="cancel()"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            mat-flat-button
+                            color="primary"
+                            type="submit"
+                            [disabled]="isSaving()"
+                        >
+                            {{ isSaving() ? 'Saving' : 'Save track' }}
+                        </button>
+                    </div>
+                </form>
+            }
+        </mat-card-content>
+    </mat-card>
+</div>

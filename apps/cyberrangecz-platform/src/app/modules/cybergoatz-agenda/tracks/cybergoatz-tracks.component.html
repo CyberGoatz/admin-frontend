@@ -1,0 +1,87 @@
+<div class="tracks-page">
+    <div class="section-header">
+        <h2>Tracks</h2>
+        <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            (click)="createTrack()"
+        >
+            Create track
+        </button>
+    </div>
+
+    @if (isLoading()) {
+        <div class="loading">
+            <mat-progress-spinner
+                diameter="32"
+                mode="indeterminate"
+            />
+            <span>Loading tracks</span>
+        </div>
+    } @else {
+        @if (error()) {
+            <div class="error-message">{{ error() }}</div>
+        }
+
+        @if (tracks().length === 0) {
+            <mat-card
+                appearance="outlined"
+                class="empty-card"
+            >
+                No CyberGoatz tracks have been created yet.
+            </mat-card>
+        } @else {
+            <div class="track-cards">
+                @for (track of tracks(); track track.id) {
+                    <mat-card
+                        appearance="outlined"
+                        class="track-card"
+                    >
+                        @if (track.bannerImageUrl) {
+                            <img
+                                [alt]="track.title + ' banner'"
+                                [src]="track.bannerImageUrl"
+                                class="track-banner"
+                            />
+                        }
+                        <mat-card-header>
+                            <mat-card-title>
+                                {{ track.title }}
+                            </mat-card-title>
+                            <mat-card-subtitle>
+                                {{ track.items.length }} trainings ·
+                                {{ track.published ? 'Published' : 'Draft' }}
+                            </mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <p>
+                                {{
+                                    track.description ||
+                                        'No description provided.'
+                                }}
+                            </p>
+                        </mat-card-content>
+                        <mat-card-actions align="end">
+                            <button
+                                mat-button
+                                type="button"
+                                (click)="editTrack(track)"
+                            >
+                                Edit
+                            </button>
+                            <button
+                                mat-button
+                                color="warn"
+                                type="button"
+                                (click)="deleteTrack(track)"
+                            >
+                                Delete
+                            </button>
+                        </mat-card-actions>
+                    </mat-card>
+                }
+            </div>
+        }
+    }
+</div>

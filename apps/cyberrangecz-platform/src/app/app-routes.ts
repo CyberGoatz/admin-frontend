@@ -12,9 +12,9 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'linear-definition',
         loadChildren: () =>
-            import(
-                './modules/training-agenda/training-definition-routing.module'
-            ).then((m) => m.TrainingDefinitionRoutingModule),
+            import('./modules/training-agenda/training-definition-routing.module').then(
+                (m) => m.TrainingDefinitionRoutingModule,
+            ),
         canActivate: [RoleGuards.trainingDesignerGuard],
         data: {
             breadcrumb: 'Linear Training Definitions',
@@ -25,9 +25,9 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'adaptive-definition',
         loadChildren: () =>
-            import(
-                './modules/training-agenda/adaptive-definition-routing.module'
-            ).then((m) => m.AdaptiveDefinitionRoutingModule),
+            import('./modules/training-agenda/adaptive-definition-routing.module').then(
+                (m) => m.AdaptiveDefinitionRoutingModule,
+            ),
         canActivate: [RoleGuards.adaptiveTrainingDesignerGuard],
         data: {
             breadcrumb: 'Adaptive Training Definitions',
@@ -38,9 +38,9 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'linear-instance',
         loadChildren: () =>
-            import(
-                './modules/training-agenda/training-instance-routing.module'
-            ).then((m) => m.TrainingInstanceRoutingModule),
+            import('./modules/training-agenda/training-instance-routing.module').then(
+                (m) => m.TrainingInstanceRoutingModule,
+            ),
         canActivate: [RoleGuards.trainingOrganizerGuard],
         data: {
             breadcrumb: 'Linear Training Instances',
@@ -51,9 +51,9 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'adaptive-instance',
         loadChildren: () =>
-            import(
-                './modules/training-agenda/adaptive-instance-routing.module'
-            ).then((m) => m.AdaptiveInstanceRoutingModule),
+            import('./modules/training-agenda/adaptive-instance-routing.module').then(
+                (m) => m.AdaptiveInstanceRoutingModule,
+            ),
         canActivate: [RoleGuards.adaptiveTrainingOrganizerGuard],
         data: {
             breadcrumb: 'Adaptive Training Instances',
@@ -64,9 +64,9 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'sandbox-definition',
         loadChildren: () =>
-            import(
-                './modules/sandbox-agenda/sandbox-definition-routing.module'
-            ).then((m) => m.SandboxDefinitionRoutingModule),
+            import('./modules/sandbox-agenda/sandbox-definition-routing.module').then(
+                (m) => m.SandboxDefinitionRoutingModule,
+            ),
         canActivate: [RoleGuards.sandboxDesignerGuard],
         data: {
             breadcrumb: 'Sandbox Definitions',
@@ -90,9 +90,9 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'sandbox-image',
         loadChildren: () =>
-            import(
-                './modules/sandbox-agenda/sandbox-images-routing.module'
-            ).then((m) => m.SandboxImagesRoutingModule),
+            import('./modules/sandbox-agenda/sandbox-images-routing.module').then(
+                (m) => m.SandboxImagesRoutingModule,
+            ),
         canActivate: [RoleGuards.sandboxOrganizerGuard],
         data: {
             breadcrumb: 'Images',
@@ -103,9 +103,9 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'run',
         loadChildren: () =>
-            import(
-                './modules/training-agenda/training-run-routing.module'
-            ).then((m) => m.TrainingRunRoutingModule),
+            import('./modules/training-agenda/training-run-routing.module').then(
+                (m) => m.TrainingRunRoutingModule,
+            ),
         canActivate: [RoleGuards.trainingTraineeGuard],
         data: {
             breadcrumb: 'Training Runs',
@@ -144,6 +144,19 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         },
     },
     {
+        path: 'tracks',
+        loadChildren: () =>
+            import('./modules/cybergoatz-agenda/tracks-routing.module').then(
+                (m) => m.CyberGoatzTracksRoutingModule,
+            ),
+        canActivate: [RoleGuards.trainingOrganizerGuard],
+        data: {
+            breadcrumb: 'CyberGoatz Tracks',
+            title: 'CyberGoatz Tracks',
+            preloadRoleCondition: 'trainingOrganizer',
+        },
+    },
+    {
         path: 'user',
         loadChildren: () =>
             import('./modules/user-and-group-agenda/user-routing.module').then(
@@ -172,9 +185,9 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'microservice',
         loadChildren: () =>
-            import(
-                './modules/user-and-group-agenda/microservice-routing.module'
-            ).then((m) => m.MicroserviceRoutingModule),
+            import('./modules/user-and-group-agenda/microservice-routing.module').then(
+                (m) => m.MicroserviceRoutingModule,
+            ),
         canActivate: [RoleGuards.uagAdminGuard],
         data: {
             breadcrumb: 'Microservice',
