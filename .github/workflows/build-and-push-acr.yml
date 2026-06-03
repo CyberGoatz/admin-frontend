@@ -1,0 +1,115 @@
+name: Build and push Docker image to ACR
+
+on:
+  push:
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  IMAGE_NAME: frontend-platform/frontend-platform
+
+jobs:
+  validate:
+    name: Validate Angular app
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npx nx run cyberrangecz-platform:lint
+
+      - name: Test
+        run: npx nx run cyberrangecz-platform:test -- --run --passWithNoTests
+
+      - name: Build
+        run: npx nx run cyberrangecz-platform:build:production
+
+  docker:
+    name: Build Docker image
+    runs-on: ubuntu-24.04
+    needs: validate
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: ${{ env.IMAGE_NAME }}:build-check
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  push:
+    name: Push Docker image
+    runs-on: ubuntu-24.04
+    needs:
+      - validate
+      - docker
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate registry configuration
+        run: |
+          test -n "${{ vars.ACR_LOGIN_SERVER }}" || (echo "Set ACR_LOGIN_SERVER as an organization or repository variable." && exit 1)
+          test -n "${{ secrets.ACR_USERNAME }}" || (echo "Set ACR_USERNAME as an organization or repository secret." && exit 1)
+          test -n "${{ secrets.ACR_PASSWORD }}" || (echo "Set ACR_PASSWORD as an organization or repository secret." && exit 1)
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Generate image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ vars.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=tag
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

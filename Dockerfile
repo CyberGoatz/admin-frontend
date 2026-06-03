@@ -6,7 +6,6 @@ RUN npm add --global nx
 COPY libs /build/libs
 COPY apps/cyberrangecz-platform /build/apps/cyberrangecz-platform
 COPY *.json /build/
-COPY .npmrc /build/
 
 RUN cd /build && \
     npm i && \
@@ -14,8 +13,7 @@ RUN cd /build && \
       nx run cyberrangecz-platform:build:production; \
     else \
       nx run cyberrangecz-platform:build:development; \
-    fi && \
-    rm -rf /build/.npmrc
+    fi
 
 FROM nginx:alpine
 COPY --from=builder /build/dist/apps/cyberrangecz-platform/browser /app

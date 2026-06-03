@@ -53,6 +53,12 @@ export class NavConfigFactory {
                         label: 'Run',
                         path: 'run' satisfies ValidPathPrefix,
                     },
+                    {
+                        label: 'Tracks',
+                        path: 'tracks' satisfies ValidPathPrefix,
+                        canActivate: () =>
+                            RoleResolver.isTrainingOrganizer(user.roles),
+                    },
                 ],
             },
             {
