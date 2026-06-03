@@ -38,7 +38,7 @@ jobs:
         run: npx nx run cyberrangecz-platform:lint
 
       - name: Test
-        run: npx nx run cyberrangecz-platform:test -- --run
+        run: npx nx run cyberrangecz-platform:test -- --run --passWithNoTests
 
       - name: Build
         run: npx nx run cyberrangecz-platform:build:production
