@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 env:
-  IMAGE_NAME: frontend-platform/frontend-platform
+  IMAGE_NAME: admin-frontend
 
 jobs:
   validate:
