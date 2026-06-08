@@ -13,7 +13,7 @@ export class TrainingInstanceMapper {
         result.id = dto.id;
         result.trainingDefinition = TrainingDefinitionMapper.fromDTO(dto.training_definition, false);
         result.startTime = new Date(dto.start_time);
-        result.endTime = new Date(dto.end_time);
+        result.endTime = dto.end_time ? new Date(dto.end_time) : undefined;
         result.title = dto.title;
         result.accessToken = dto.access_token;
         result.poolId = dto.pool_id;
@@ -33,7 +33,7 @@ export class TrainingInstanceMapper {
         const result = new TrainingInstanceCreateDTO();
         result.title = trainingInstance.title;
         result.start_time = trainingInstance.startTime.toISOString();
-        result.end_time = trainingInstance.endTime.toISOString();
+        result.end_time = trainingInstance.endTime?.toISOString();
         result.access_token = trainingInstance.accessToken;
         result.training_definition_id = trainingInstance.trainingDefinition.id;
         result.pool_id = trainingInstance.poolId;
@@ -49,7 +49,7 @@ export class TrainingInstanceMapper {
         result.id = trainingInstance.id;
         result.title = trainingInstance.title;
         result.start_time = trainingInstance.startTime.toISOString();
-        result.end_time = trainingInstance.endTime.toISOString();
+        result.end_time = trainingInstance.endTime?.toISOString();
         result.access_token = trainingInstance.accessToken;
         result.training_definition_id = trainingInstance.trainingDefinition.id;
         result.pool_id = trainingInstance.poolId;

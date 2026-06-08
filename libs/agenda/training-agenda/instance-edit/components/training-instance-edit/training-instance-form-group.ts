@@ -13,7 +13,6 @@ export class TrainingInstanceFormGroup {
             {
                 startTime: new UntypedFormControl(trainingInstance.startTime),
                 endTime: new UntypedFormControl(trainingInstance.endTime, [
-                    Validators.required,
                     this.dateValidator,
                 ]),
                 title: new UntypedFormControl(trainingInstance.title, [

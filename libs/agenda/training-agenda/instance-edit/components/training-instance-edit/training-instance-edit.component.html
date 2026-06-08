@@ -49,7 +49,7 @@
                     [owlDateTimeTrigger]="endTimePicker"
                     appearance="outline"
                     class="multi-line-hint"
-                    hintLabel="Trainees cannot access training runs after end time expires"
+                    hintLabel="Leave empty to allow trainees to access this training indefinitely"
                 >
                     <mat-label>End Time</mat-label>
                     <input
@@ -71,9 +71,6 @@
                     }
                     @if (endTime.hasError('dateInPast')) {
                         <mat-error>End time cannot be in the past</mat-error>
-                    }
-                    @if (endTime.hasError('required')) {
-                        <mat-error>This field is required</mat-error>
                     }
                 </mat-form-field>
 
@@ -258,4 +255,3 @@
         </div>
     </form>
 </div>
-
