@@ -8,7 +8,7 @@ export class TrainingInstance {
     poolId!: number;
     trainingDefinition!: TrainingDefinition;
     startTime!: Date;
-    endTime!: Date;
+    endTime?: Date;
     title!: string;
     accessToken!: string;
     lastEditBy!: string;
@@ -29,10 +29,14 @@ export class TrainingInstance {
     }
 
     /**
-     * True if passed time is greater than start time and smaller than end time of the training instance, false otherwise
+     * True if passed time is greater than start time and the training instance has not expired, false otherwise.
+     * Training instances without end time never expire.
      * @param timestamp time to be compared with start time and end time of training instance
      */
     isActive(timestamp: number): boolean {
-        return this.startTime.valueOf() < timestamp && this.endTime.valueOf() > timestamp;
+        return (
+            this.startTime.valueOf() < timestamp &&
+            (!this.endTime || this.endTime.valueOf() > timestamp)
+        );
     }
 }

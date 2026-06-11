@@ -17,7 +17,7 @@ export class TrainingRunMapper {
         result.trainingDefinitionId = dto.definition_id;
         result.trainingInstanceId = dto.instance_id;
         result.startTime = new Date(dto.start_time);
-        result.endTime = new Date(dto.end_time);
+        result.endTime = dto.end_time ? new Date(dto.end_time) : undefined;
         result.eventLogReference = dto.event_log_reference;
         result.sandboxInstanceId = dto.sandbox_instance_ref_id;
         result.sandboxInstanceAllocationId = dto.sandbox_instance_allocation_id;

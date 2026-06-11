@@ -14,7 +14,7 @@ export class TrainingRun {
     trainingDefinitionId!: number;
     player!: TrainingUser;
     startTime!: Date;
-    endTime!: Date;
+    endTime?: Date;
     currentLevel!: Level | number | Phase;
     eventLogReference!: string;
     state!: TrainingRunStateEnum;
