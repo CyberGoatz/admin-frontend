@@ -74,6 +74,35 @@
                         />
                     </mat-form-field>
 
+                    <mat-divider />
+
+                    <div class="form-grid">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Badge name</mat-label>
+                            <input
+                                matInput
+                                formControlName="badgeName"
+                            />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Badge image URL</mat-label>
+                            <input
+                                matInput
+                                formControlName="badgeImageUrl"
+                            />
+                        </mat-form-field>
+                    </div>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Badge description</mat-label>
+                        <textarea
+                            rows="2"
+                            matInput
+                            formControlName="badgeDescription"
+                        ></textarea>
+                    </mat-form-field>
+
                     <mat-form-field appearance="outline">
                         <mat-label>Trainings</mat-label>
                         <mat-select
