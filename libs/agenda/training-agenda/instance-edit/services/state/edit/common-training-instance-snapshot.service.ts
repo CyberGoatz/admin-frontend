@@ -37,6 +37,7 @@ export class CommonTrainingInstanceSnapshotService {
             ti = new TrainingInstance();
             ti.showStepperBar = true;
             ti.backwardMode = true;
+            ti.sandboxDurationMinutes = 60;
             this.instanceValidSubject$.next(false);
         }
         this.trainingInstanceSubject$.next(ti);

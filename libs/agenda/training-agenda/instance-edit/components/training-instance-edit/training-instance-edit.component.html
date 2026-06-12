@@ -135,6 +135,29 @@
                     }
                 </mat-form-field>
 
+                <mat-form-field
+                    appearance="outline"
+                    class="multi-line-hint"
+                    hintLabel="Maximum sandbox session time after a trainee starts the run"
+                >
+                    <mat-label>Sandbox Duration</mat-label>
+                    <input
+                        formControlName="sandboxDurationMinutes"
+                        matInput
+                        min="1"
+                        placeholder="Sandbox Duration"
+                        required
+                        type="number"
+                    />
+                    <span matSuffix>min</span>
+                    @if (sandboxDurationMinutes.hasError('required')) {
+                        <mat-error>This field is required</mat-error>
+                    }
+                    @if (sandboxDurationMinutes.hasError('min')) {
+                        <mat-error>Sandbox duration must be at least 1 minute</mat-error>
+                    }
+                </mat-form-field>
+
                 <!-- TRAINING DEFINITION field-->
                 <sentinel-resource-selector
                     #trainingDefinitionSelect

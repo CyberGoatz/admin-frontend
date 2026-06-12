@@ -14,6 +14,7 @@ export class TrainingInstance {
     lastEditBy!: string;
     localEnvironment!: boolean;
     sandboxDefinitionId!: number;
+    sandboxDurationMinutes = 60;
     backwardMode!: boolean;
     showStepperBar!: boolean;
 

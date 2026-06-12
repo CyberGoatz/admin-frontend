@@ -14,6 +14,7 @@ export interface TrainingInstanceDTO {
     last_edited_by?: string;
     local_environment?: boolean;
     sandbox_definition_id?: number;
+    sandbox_duration_minutes?: number;
     backward_mode?: boolean;
     show_stepper_bar?: boolean;
 }

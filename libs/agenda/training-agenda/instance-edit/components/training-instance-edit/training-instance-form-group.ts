@@ -37,6 +37,10 @@ export class TrainingInstanceFormGroup {
                 sandboxDefinitionId: new UntypedFormControl(
                     trainingInstance.sandboxDefinitionId
                 ),
+                sandboxDurationMinutes: new UntypedFormControl(
+                    trainingInstance.sandboxDurationMinutes ?? 60,
+                    [Validators.required, Validators.min(1)]
+                ),
             },
             {
                 validators: [this.dateSequenceValidator, this.sandboxValidator],
@@ -93,6 +97,8 @@ export class TrainingInstanceFormGroup {
         trainingInstance.sandboxDefinitionId = this.formGroup.get(
             'sandboxDefinitionId'
         ).value;
+        trainingInstance.sandboxDurationMinutes =
+            this.formGroup.get('sandboxDurationMinutes').value;
         trainingInstance.poolId = this.formGroup.get('poolId').value;
         trainingInstance.showStepperBar =
             this.formGroup.get('showStepperBar').value;

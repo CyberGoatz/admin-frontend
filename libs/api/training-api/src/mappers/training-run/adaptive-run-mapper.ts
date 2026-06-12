@@ -38,6 +38,8 @@ export class AdaptiveRunMapper {
                 return TrainingRunStateEnum.FINISHED;
             case TrainingRunDTO.StateEnum.ARCHIVED:
                 return TrainingRunStateEnum.ARCHIVED;
+            case TrainingRunDTO.StateEnum.EXPIRED:
+                return TrainingRunStateEnum.EXPIRED;
             default: {
                 console.error(`Unsupported training run state of value: ${state}`);
                 return undefined;

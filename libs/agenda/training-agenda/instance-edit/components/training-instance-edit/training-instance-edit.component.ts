@@ -152,6 +152,12 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
         );
     }
 
+    get sandboxDurationMinutes(): AbstractControl {
+        return this.trainingInstanceFormGroup.formGroup.get(
+            'sandboxDurationMinutes',
+        );
+    }
+
     get trainingDefinitions$(): Observable<TrainingDefinitionInfo[]> {
         return this.trainingDefinitionsSubject.pipe(
             combineLatestWith(this.trainingDefinitionSearchStringSubject),

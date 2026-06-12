@@ -17,10 +17,11 @@ export interface AccessedTrainingRunDTO {
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace AccessedTrainingRunDTO {
-    export type PossibleActionEnum = 'RESULTS';
+    export type PossibleActionEnum = 'RESULTS' | 'RESUME' | 'NONE' | 'SANDBOX_EXPIRED';
     export const PossibleActionEnum = {
         RESULTS: 'RESULTS' as PossibleActionEnum,
         RESUME: 'RESUME' as PossibleActionEnum,
         NONE: 'NONE' as PossibleActionEnum,
+        SANDBOX_EXPIRED: 'SANDBOX_EXPIRED' as PossibleActionEnum,
     };
 }
