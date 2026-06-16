@@ -20,6 +20,7 @@ export class TrainingInstanceMapper {
         result.lastEditBy = dto.last_edited_by;
         result.localEnvironment = dto.local_environment;
         result.sandboxDefinitionId = dto.sandbox_definition_id;
+        result.sandboxDurationMinutes = dto.sandbox_duration_minutes ?? 60;
         result.backwardMode = dto.backward_mode;
         result.showStepperBar = dto.show_stepper_bar;
         return result;
@@ -39,6 +40,7 @@ export class TrainingInstanceMapper {
         result.pool_id = trainingInstance.poolId;
         result.local_environment = trainingInstance.localEnvironment;
         result.sandbox_definition_id = trainingInstance.sandboxDefinitionId;
+        result.sandbox_duration_minutes = trainingInstance.sandboxDurationMinutes ?? 60;
         result.backward_mode = trainingInstance.backwardMode;
         result.show_stepper_bar = trainingInstance.showStepperBar;
         return result;
@@ -55,6 +57,7 @@ export class TrainingInstanceMapper {
         result.pool_id = trainingInstance.poolId;
         result.local_environment = trainingInstance.localEnvironment;
         result.sandbox_definition_id = trainingInstance.sandboxDefinitionId;
+        result.sandbox_duration_minutes = trainingInstance.sandboxDurationMinutes ?? 60;
         result.backward_mode = trainingInstance.backwardMode;
         result.show_stepper_bar = trainingInstance.showStepperBar;
         return result;

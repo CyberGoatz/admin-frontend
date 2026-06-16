@@ -24,10 +24,11 @@ export interface TrainingRunDTO {
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace TrainingRunDTO {
-    export type StateEnum = 'RUNNING' | 'FINISHED' | 'ARCHIVED';
+    export type StateEnum = 'RUNNING' | 'FINISHED' | 'ARCHIVED' | 'EXPIRED';
     export const StateEnum = {
         RUNNING: 'RUNNING' as StateEnum,
         FINISHED: 'FINISHED' as StateEnum,
         ARCHIVED: 'ARCHIVED' as StateEnum,
+        EXPIRED: 'EXPIRED' as StateEnum,
     };
 }

@@ -12,6 +12,9 @@ export interface CyberGoatzTrack {
     title: string;
     description: string | null;
     bannerImageUrl: string | null;
+    badgeName: string | null;
+    badgeDescription: string | null;
+    badgeImageUrl: string | null;
     displayOrder: number;
     published: boolean;
     createdAt: string;
@@ -24,6 +27,9 @@ export interface CyberGoatzTrackPayload {
     title: string;
     description?: string | null;
     bannerImageUrl?: string | null;
+    badgeName?: string | null;
+    badgeDescription?: string | null;
+    badgeImageUrl?: string | null;
     displayOrder?: number;
     published?: boolean;
 }

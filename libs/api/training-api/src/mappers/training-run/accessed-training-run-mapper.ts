@@ -42,6 +42,8 @@ export class AccessedTrainingRunMapper {
                 return TraineeAccessTrainingRunActionEnum.Resume;
             case PossibleActionEnum.NONE:
                 return TraineeAccessTrainingRunActionEnum.None;
+            case PossibleActionEnum.SANDBOX_EXPIRED:
+                return TraineeAccessTrainingRunActionEnum.SandboxExpired;
             default: {
                 console.error(`Unsupported possible action of training run:${action}`);
                 return undefined;
