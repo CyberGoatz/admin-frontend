@@ -103,32 +103,39 @@
                         ></textarea>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline">
-                        <mat-label>Trainings</mat-label>
-                        <mat-select
-                            multiple
-                            formControlName="trainingInstanceIds"
-                            (selectionChange)="
-                                syncSelectedTrainingInstances($event.value)
+                    <sentinel-resource-selector
+                        appearance="outline"
+                        label="Trainings"
+                        searchPlaceholder="Search Trainings"
+                        noResultsLabel="No Trainings found"
+                        [multiSelection]="true"
+                        [resources]="filteredTrainingInstances()"
+                        [selected]="selectedTrainingInstances()"
+                        (fetch)="onTrainingInstanceFilter($event)"
+                        (selectionChange)="
+                            syncSelectedTrainingInstancesFromResources($event)
+                        "
+                    >
+                        <ng-container
+                            [sentinelSelectorSelectedElement]="
+                                selectedTrainingInstanceElement
                             "
-                        >
-                            @for (
-                                instance of trainingInstances();
-                                track instance.id
-                            ) {
-                                <mat-option [value]="instance.id.toString()">
-                                    {{ instance.title }} ·
-                                    {{ instance.trainingDefinition.title }} ·
-                                    {{
-                                        formatDuration(
-                                            instance.trainingDefinition
-                                                .estimatedDuration || 0
-                                        )
-                                    }}
-                                </mat-option>
-                            }
-                        </mat-select>
-                    </mat-form-field>
+                        />
+                        <ng-container
+                            [sentinelSelectorElement]="trainingInstanceElement"
+                        />
+                    </sentinel-resource-selector>
+
+                    <ng-template
+                        #selectedTrainingInstanceElement
+                        let-selectedResource
+                    >
+                        {{ selectedResource.title }}
+                    </ng-template>
+
+                    <ng-template #trainingInstanceElement let-resource>
+                        {{ trainingInstanceToDisplayString(resource) }}
+                    </ng-template>
 
                     <div class="track-summary">
                         <span>

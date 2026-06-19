@@ -71,8 +71,22 @@ export class CyberGoatzTracksComponent {
         void this.router.navigate(['/tracks', 'create']);
     }
 
+    viewTrack(track: CyberGoatzTrack): void {
+        void this.router.navigate(['/tracks', track.id]);
+    }
+
     editTrack(track: CyberGoatzTrack): void {
         void this.router.navigate(['/tracks', track.id, 'edit']);
+    }
+
+    getDescriptionPreview(track: CyberGoatzTrack): string {
+        const description = track.description?.trim();
+        if (!description) {
+            return 'No description provided.';
+        }
+        return description.length > 30
+            ? `${description.slice(0, 30).trimEnd()}...`
+            : description;
     }
 
     deleteTrack(track: CyberGoatzTrack): void {

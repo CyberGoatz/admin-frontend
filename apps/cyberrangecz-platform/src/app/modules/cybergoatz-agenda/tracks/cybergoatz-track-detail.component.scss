@@ -1,0 +1,162 @@
+.track-detail-page {
+    display: grid;
+    gap: 1rem;
+}
+
+.section-header {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.section-header h2,
+.section-header p,
+.badge-content h3,
+.badge-content p,
+.description {
+    margin: 0;
+}
+
+.section-header p,
+.label,
+.training-main span {
+    color: var(--mat-sys-on-surface-variant);
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.track-banner-frame {
+    align-items: center;
+    background: var(--mat-sys-surface-container-low);
+    border: 1px solid var(--mat-sys-outline-variant);
+    display: flex;
+    height: 10rem;
+    justify-content: center;
+    max-width: 18rem;
+    overflow: hidden;
+    width: 100%;
+}
+
+.track-banner {
+    height: 100%;
+    object-fit: contain;
+    width: 100%;
+}
+
+.overview-card,
+.badge-card {
+    overflow: hidden;
+}
+
+.status-row {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.detail-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    margin-top: 1.25rem;
+}
+
+.detail-grid div,
+.training-main {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.label {
+    font-size: 0.875rem;
+}
+
+.badge-content {
+    align-items: center;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: auto minmax(0, 1fr);
+}
+
+.badge-image,
+.badge-placeholder {
+    height: 5rem;
+    width: 5rem;
+}
+
+.badge-image {
+    object-fit: contain;
+}
+
+.badge-placeholder {
+    align-items: center;
+    background: var(--mat-sys-surface-container-low);
+    border: 1px solid var(--mat-sys-outline-variant);
+    display: flex;
+    justify-content: center;
+}
+
+.training-list {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.training-item {
+    align-items: center;
+    border: 1px solid var(--mat-sys-outline-variant);
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    padding: 0.75rem;
+}
+
+.training-index {
+    align-items: center;
+    background: var(--mat-sys-surface-container-low);
+    display: flex;
+    font-weight: 600;
+    height: 2rem;
+    justify-content: center;
+    width: 2rem;
+}
+
+.empty-state {
+    color: var(--mat-sys-on-surface-variant);
+}
+
+.loading {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+}
+
+.error-message {
+    background: var(--mat-sys-error-container);
+    color: var(--mat-sys-on-error-container);
+    padding: 0.75rem 1rem;
+}
+
+@media (max-width: 700px) {
+    .section-header,
+    .header-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .training-item {
+        align-items: stretch;
+        grid-template-columns: 1fr;
+    }
+
+    .badge-content {
+        align-items: start;
+        grid-template-columns: 1fr;
+    }
+}

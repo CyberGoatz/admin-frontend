@@ -107,7 +107,7 @@ export const DEFINED_ROUTES = {
 
     tracks: {
         create: {},
-        EXCL_VAR_trackId: {
+        VAR_trackId: {
             edit: {},
         },
     },

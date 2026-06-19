@@ -13,6 +13,8 @@ export class RoleMapping extends Z.class({
     adaptiveTrainingDesigner: z.string().nonempty(),
     adaptiveTrainingOrganizer: z.string().nonempty(),
     trainingTrainee: z.string().nonempty(),
+    cyberGoatzAccess: z.string().nonempty(),
+    cyberGoatzWaitlisted: z.string().nonempty(),
     sandboxDesigner: z.string().nonempty(),
     sandboxOrganizer: z.string().nonempty(),
 }) {}
