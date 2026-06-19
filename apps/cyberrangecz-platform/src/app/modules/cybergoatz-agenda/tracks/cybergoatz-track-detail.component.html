@@ -1,0 +1,195 @@
+<div class="track-detail-page">
+    @if (isLoading()) {
+        <div class="loading">
+            <mat-progress-spinner
+                diameter="32"
+                mode="indeterminate"
+            />
+            <span>Loading track details</span>
+        </div>
+    } @else {
+        @if (error()) {
+            <div class="error-message">{{ error() }}</div>
+        }
+
+        @if (track(); as track) {
+            <div class="section-header">
+                <div>
+                    <h2>{{ track.title }}</h2>
+                    <p>{{ track.slug }}</p>
+                </div>
+                <div class="header-actions">
+                    <button
+                        mat-button
+                        type="button"
+                        (click)="backToTracks()"
+                    >
+                        Back
+                    </button>
+                    <button
+                        mat-flat-button
+                        color="primary"
+                        type="button"
+                        (click)="editTrack()"
+                    >
+                        Edit track
+                    </button>
+                </div>
+            </div>
+
+            @if (track.bannerImageUrl) {
+                <div class="track-banner-frame">
+                    <img
+                        class="track-banner"
+                        [alt]="track.title + ' banner'"
+                        [src]="track.bannerImageUrl"
+                    />
+                </div>
+            }
+
+            <mat-card
+                appearance="outlined"
+                class="overview-card"
+            >
+                <mat-card-content>
+                    <div class="status-row">
+                        <mat-chip-set>
+                            <mat-chip highlighted>
+                                {{ track.published ? 'Published' : 'Draft' }}
+                            </mat-chip>
+                        </mat-chip-set>
+                        <span>
+                            {{ sortedItems().length }} trainings
+                        </span>
+                        <span>
+                            {{ formatDuration(totalEstimatedDuration()) }}
+                        </span>
+                    </div>
+
+                    <p class="description">
+                        {{ track.description || 'No description provided.' }}
+                    </p>
+
+                    <div class="detail-grid">
+                        <div>
+                            <span class="label">Display order</span>
+                            <strong>{{ track.displayOrder }}</strong>
+                        </div>
+                        <div>
+                            <span class="label">Created</span>
+                            <strong>{{ formatDate(track.createdAt) }}</strong>
+                        </div>
+                        <div>
+                            <span class="label">Updated</span>
+                            <strong>{{ formatDate(track.updatedAt) }}</strong>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card
+                appearance="outlined"
+                class="badge-card"
+            >
+                <mat-card-header>
+                    <mat-card-title>Badge</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="badge-content">
+                        @if (track.badgeImageUrl) {
+                            <img
+                                class="badge-image"
+                                [alt]="getBadgeAltText(track)"
+                                [src]="track.badgeImageUrl"
+                            />
+                        } @else {
+                            <div class="badge-placeholder">
+                                <mat-icon>military_tech</mat-icon>
+                            </div>
+                        }
+                        <div>
+                            <h3>
+                                {{ track.badgeName || 'No badge name' }}
+                            </h3>
+                            <p>
+                                {{
+                                    track.badgeDescription ||
+                                        'No badge description provided.'
+                                }}
+                            </p>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title>Trainings</mat-card-title>
+                    <mat-card-subtitle>
+                        Track items in display order
+                    </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    @if (sortedItems().length === 0) {
+                        <div class="empty-state">
+                            This track does not contain any trainings.
+                        </div>
+                    } @else {
+                        <div class="training-list">
+                            @for (
+                                item of sortedItems();
+                                track item.id;
+                                let index = $index
+                            ) {
+                                <div class="training-item">
+                                    <div class="training-index">
+                                        {{ index + 1 }}
+                                    </div>
+                                    <div class="training-main">
+                                        <strong>{{ getItemTitle(item) }}</strong>
+                                        @if (
+                                            findTrainingInstance(
+                                                item.trainingInstanceId
+                                            );
+                                            as instance
+                                        ) {
+                                            <span>
+                                                {{
+                                                    instance.trainingDefinition
+                                                        .title
+                                                }}
+                                                ·
+                                                {{
+                                                    formatDuration(
+                                                        instance
+                                                            .trainingDefinition
+                                                            .estimatedDuration ||
+                                                            0
+                                                    )
+                                                }}
+                                            </span>
+                                        } @else {
+                                            <span>
+                                                Training instance id:
+                                                {{ item.trainingInstanceId }}
+                                            </span>
+                                        }
+                                    </div>
+                                    <mat-chip-set>
+                                        <mat-chip>
+                                            {{
+                                                item.published
+                                                    ? 'Published'
+                                                    : 'Draft'
+                                            }}
+                                        </mat-chip>
+                                    </mat-chip-set>
+                                </div>
+                            }
+                        </div>
+                    }
+                </mat-card-content>
+            </mat-card>
+        }
+    }
+</div>

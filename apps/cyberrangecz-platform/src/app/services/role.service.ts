@@ -21,6 +21,8 @@ export class RoleService {
         'adaptiveTrainingDesigner',
         'adaptiveTrainingOrganizer',
         'trainingTrainee',
+        'cyberGoatzAccess',
+        'cyberGoatzWaitlisted',
         'sandboxDesigner',
         'sandboxOrganizer',
     ] as const;

@@ -18,13 +18,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { createInfinitePaginationEvent } from '@crczp/api-common';
 import {
     LinearTrainingInstanceApi,
     TrainingInstanceSort,
 } from '@crczp/training-api';
 import { TrainingInstance } from '@crczp/training-model';
+import {
+    SentinelResourceSelectorComponent,
+    SentinelSelectorElementDirective,
+    SentinelSelectorSelectedElementDirective,
+} from '@sentinel/components/resource-selector';
 import { forkJoin, of, switchMap } from 'rxjs';
 import { CyberGoatzTrackApiService } from './cybergoatz-track-api.service';
 import {
@@ -57,12 +61,15 @@ interface EditableTrackItem {
         MatIconModule,
         MatInputModule,
         MatProgressSpinnerModule,
-        MatSelectModule,
+        SentinelResourceSelectorComponent,
+        SentinelSelectorElementDirective,
+        SentinelSelectorSelectedElementDirective,
     ],
 })
 export class CyberGoatzTrackFormComponent {
     readonly trainingInstances = signal<TrainingInstance[]>([]);
     readonly selectedItems = signal<EditableTrackItem[]>([]);
+    readonly trainingInstanceSearch = signal('');
     readonly isLoading = signal(true);
     readonly isSaving = signal(false);
     readonly error = signal<string | null>(null);
@@ -83,6 +90,25 @@ export class CyberGoatzTrackFormComponent {
 
     readonly title = computed(() =>
         this.trackId() ? 'Edit track' : 'Create track',
+    );
+
+    readonly filteredTrainingInstances = computed(() => {
+        const search = this.trainingInstanceSearch().trim().toLowerCase();
+        if (!search) {
+            return this.trainingInstances();
+        }
+
+        return this.trainingInstances().filter((instance) =>
+            this.trainingInstanceToDisplayString(instance)
+                .toLowerCase()
+                .includes(search),
+        );
+    });
+
+    readonly selectedTrainingInstances = computed(() =>
+        this.selectedItems()
+            .map((item) => this.findTrainingInstance(item.trainingInstanceId))
+            .filter((instance): instance is TrainingInstance => !!instance),
     );
 
     readonly totalEstimatedDuration = computed(() =>
@@ -133,6 +159,14 @@ export class CyberGoatzTrackFormComponent {
             });
     }
 
+    syncSelectedTrainingInstancesFromResources(
+        trainingInstances: TrainingInstance[],
+    ): void {
+        this.syncSelectedTrainingInstances(
+            trainingInstances.map((instance) => instance.id.toString()),
+        );
+    }
+
     syncSelectedTrainingInstances(trainingInstanceIds: string[]): void {
         const currentItems = new Map(
             this.selectedItems().map((item) => [item.trainingInstanceId, item]),
@@ -147,6 +181,11 @@ export class CyberGoatzTrackFormComponent {
                     },
             ),
         );
+        this.form.controls.trainingInstanceIds.setValue(trainingInstanceIds);
+    }
+
+    onTrainingInstanceFilter(search: string): void {
+        this.trainingInstanceSearch.set(search);
     }
 
     updateTitleOverride(trainingInstanceId: string, value: string): void {
@@ -231,6 +270,19 @@ export class CyberGoatzTrackFormComponent {
                 (instance) => String(instance.id) === trainingInstanceId,
             ) ?? null
         );
+    }
+
+    trainingInstanceToDisplayString(instance: TrainingInstance): string {
+        return [
+            instance.title,
+            instance.trainingDefinition?.title,
+            `Pool ${instance.poolId}`,
+            this.formatDuration(
+                instance.trainingDefinition?.estimatedDuration ?? 0,
+            ),
+        ]
+            .filter(Boolean)
+            .join(' · ');
     }
 
     formatDuration(minutes: number): string {

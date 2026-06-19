@@ -55,14 +55,16 @@
                             </mat-card-subtitle>
                         </mat-card-header>
                         <mat-card-content>
-                            <p>
-                                {{
-                                    track.description ||
-                                        'No description provided.'
-                                }}
-                            </p>
+                            <p>{{ getDescriptionPreview(track) }}</p>
                         </mat-card-content>
                         <mat-card-actions align="end">
+                            <button
+                                mat-button
+                                type="button"
+                                (click)="viewTrack(track)"
+                            >
+                                View
+                            </button>
                             <button
                                 mat-button
                                 type="button"
