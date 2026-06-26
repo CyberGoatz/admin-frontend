@@ -1,10 +1,10 @@
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import {
-    sentinelAuthGuard,
     sentinelAuthGuardWithLogin,
     sentinelNegativeAuthGuard,
 } from '@sentinel/auth';
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 import { ValidRouterConfig } from '@crczp/routing-commons';
 import { RoleGuards } from './utils/guards';
 
@@ -106,7 +106,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
             import('./modules/training-agenda/training-run-routing.module').then(
                 (m) => m.TrainingRunRoutingModule,
             ),
-        canActivate: [RoleGuards.trainingTraineeGuard],
+        canActivate: [RoleGuards.adminPlatformAccessGuard],
         data: {
             breadcrumb: 'Training Runs',
             title: 'Training Run Overview',
@@ -120,7 +120,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
             import('./modules/training-agenda/mitre-routing.module').then(
                 (m) => m.TrainingRunRoutingModule,
             ),
-        canActivate: [RoleGuards.trainingTraineeGuard],
+        canActivate: [RoleGuards.adminPlatformAccessGuard],
         data: {
             title: 'MITRE ATT&CK Techniques',
             breadcrumb: 'MITRE ATT&CK Techniques',
@@ -197,7 +197,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     },
     {
         path: 'notifications',
-        canActivate: [sentinelAuthGuard],
+        canActivate: [RoleGuards.adminPlatformAccessGuard],
         loadChildren: () =>
             import('./modules/notifications/notifications-routing.module').then(
                 (m) => m.NotificationsRoutingModule,
@@ -213,7 +213,7 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
             import('@crczp/components').then(
                 (m) => m.ConsoleFullscreenWrapperComponent,
             ),
-        canActivate: [sentinelAuthGuardWithLogin],
+        canActivate: [RoleGuards.adminPlatformAccessGuard],
     },
     {
         path: 'login',
@@ -223,6 +223,11 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'home',
         component: HomeComponent,
+        canActivate: [RoleGuards.adminPlatformAccessGuard],
+    },
+    {
+        path: 'access-denied',
+        component: AccessDeniedComponent,
         canActivate: [sentinelAuthGuardWithLogin],
     },
     {

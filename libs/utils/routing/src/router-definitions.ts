@@ -13,6 +13,7 @@ export const DEFINED_ROUTES = {
     login: {},
     logout: {},
     home: {},
+    ['access-denied']: {},
     notifications: {
         VAR_id: {},
     },

@@ -3,7 +3,6 @@ import { sentinelAuthGuardWithLogin } from '@sentinel/auth';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
 import { RoleKey, RoleService } from '../services/role.service';
-import { PortalDynamicEnvironment } from '../portal-dynamic-environment';
 import { from, Observable, of } from 'rxjs';
 import { ValidPath } from '@crczp/routing-commons';
 
@@ -95,30 +94,29 @@ function guardBuilderForRole(
 }
 
 /**
- * Creates a guard that redirects to the training run path if
- * a user is not an advanced user (has a stronger role than trainee).
+ * Creates a guard that rejects authenticated users without an admin-platform role.
  */
-const advancedUserGuard: CanActivateFn = (
+const adminPlatformAccessGuard: CanActivateFn = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
 ) => {
     const roleService = inject(RoleService);
-    const roleMapping = PortalDynamicEnvironment.getConfig().roleMapping;
 
-    return guardBuilder(() =>
-        roleService.hasAny$(
-            Object.values(roleMapping)
-                .map((role) => role as RoleKey)
-                .filter((role) => role !== roleMapping.trainingTrainee),
-        ),
+    return guardBuilder(
+        () => roleService.hasAny$(RoleService.ADMIN_PLATFORM_ROLES),
+        'access-denied',
     )(route, state);
 };
+
+const advancedUserGuard = adminPlatformAccessGuard;
+
 /**
  * Definitions of custom guards that are not based on roles.
  * These will be automatically added to the RoleGuards namespace
  */
 const customGuards = {
     advancedUserGuard: advancedUserGuard,
+    adminPlatformAccessGuard: adminPlatformAccessGuard,
 };
 
 type RoleGuardMap = {
@@ -127,7 +125,7 @@ type RoleGuardMap = {
 
 /**
  * Dynamically creates guards for each role defined in the
- * PortalDynamicEnvironment roleMapping.
+ * portal role mapping.
  *
  * The guards will be created in the RoleGuards namespace.
  */

@@ -26,6 +26,15 @@ export class RoleService {
         'sandboxDesigner',
         'sandboxOrganizer',
     ] as const;
+    public static readonly ADMIN_PLATFORM_ROLES: RoleKey[] = [
+        'uagAdmin',
+        'trainingDesigner',
+        'trainingOrganizer',
+        'adaptiveTrainingDesigner',
+        'adaptiveTrainingOrganizer',
+        'sandboxDesigner',
+        'sandboxOrganizer',
+    ] as const;
 
     /**
      * Dynamically created predicates for each role
