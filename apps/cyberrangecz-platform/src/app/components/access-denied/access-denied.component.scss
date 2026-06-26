@@ -1,0 +1,16 @@
+.access-denied-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 48px 24px;
+}
+
+.access-denied-card {
+    max-width: 520px;
+    width: 100%;
+}
+
+mat-card-title {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+}
