@@ -1,6 +1,6 @@
-# CyberRangeᶜᶻ Platform
+# CyberGoatz Admin
 
-Nx monorepo containing the CyberRangeCZ Platform frontend.
+Nx monorepo containing the CyberGoatz Admin frontend.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Nx monorepo containing the CyberRangeCZ Platform frontend.
 
 - To run the application, Node version >=20.19.0 is required.
 
-## Running the app locally against the CyberRangeᶜᶻ Platform backend
+## Running the app locally against the CyberGoatz Admin backend
 
 1. Configure and run the [Helm deployment](https://github.com/cyberrangecz/devops-helm). Make sure to use `development: true` for Keycloak configuration in `vagrant-values.yaml`. This will add `https://localhost:4200` to the OIDC redirect URIs.
     - in case, you need to override CORS, edit it in the [Helm deployment file](https://github.com/cyberrangecz/devops-helm/blob/master/helm/crczp-head/values.yaml) using corsWhitelist

@@ -1,4 +1,4 @@
-# CyberRangeᶜᶻ Platform Sandbox Agenda
+# CyberGoatz Admin Sandbox Agenda
 
 Sandbox Agenda is a library containing components and services to manage sandbox definitions, pools, and sandbox instances.
 It is developed as a frontend of [Sandbox service](https://github.com/cyberrangecz/backend-sandbox-service)

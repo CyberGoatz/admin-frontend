@@ -1,6 +1,6 @@
-# CyberRangeᶜᶻ Platform Theme
+# CyberGoatz Admin Theme
 
-This project unifies theme, styles, fonts, icons, and other assets for CyberRangeᶜᶻ Platform.
+This project unifies theme, styles, fonts, icons, and other assets for CyberGoatz Admin.
 
 ## Util styles cheatsheet
 
@@ -119,7 +119,7 @@ To use the assets in your app, include them in your build under desired output p
 
 Afterward assets can then be accessed like this:
 ```html
-<img src="/assets/logo/logo.svg" alt="CyberRangeᶜᶻ Platform logo">
+<img src="/assets/logo/logo.svg" alt="CyberGoatz Admin logo">
 ```
 
 ### Components

@@ -23,7 +23,7 @@ export class VMImagesService extends CrczpOffsetElementsPaginatedService<Virtual
     /**
      * Retrieves paginated available virtual machine images
      * @param pagination requested pagination
-     * @param onlyCrczpImages filters images belonging to CyberRangeᶜᶻ Platform
+     * @param onlyCrczpImages filters images belonging to CyberGoatz Admin
      * @param onlyGuiAccess filters images with GUI access
      * @param cached Performs the faster version of this endpoint but does not retrieve a fresh list of images
      * @param filter list of sentinel filters to filter results

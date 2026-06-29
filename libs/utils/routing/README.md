@@ -1,4 +1,4 @@
-# CyberRangeᶜᶻ Platform Utils Routing
+# CyberGoatz Admin Utils Routing
 
 This library is key for safely using routing within the platform as it provides type-safe methods for routing, ensuring that only valid routes are used and preventing runtime errors from invalid paths.
 
