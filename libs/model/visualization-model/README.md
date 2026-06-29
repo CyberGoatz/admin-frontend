@@ -1,3 +1,3 @@
-# CyberRangeᶜᶻ Platform Visualization Model
+# CyberGoatz Admin Visualization Model
 
 This library contains the API type definitions for visualization data.

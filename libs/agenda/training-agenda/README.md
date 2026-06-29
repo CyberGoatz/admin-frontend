@@ -1,4 +1,4 @@
-# CyberRangeᶜᶻ Platform Training Agenda
+# CyberGoatz Admin Training Agenda
 
 Training Agenda is a library containing components and services to design, organize and play training.
 It is developed as a frontend of [Training service](https://github.com/cyberrangecz/backend-training)

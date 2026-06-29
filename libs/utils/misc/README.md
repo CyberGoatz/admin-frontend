@@ -1,4 +1,4 @@
-# CyberRangeᶜᶻ Platform Utils Misc
+# CyberGoatz Admin Utils Misc
 
 This library contains miscellaneous utilities for the platform.
 

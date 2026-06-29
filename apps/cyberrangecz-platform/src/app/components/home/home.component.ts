@@ -177,7 +177,7 @@ export class HomeComponent implements OnInit {
                 'Microservices',
                 disabled,
                 'microservice',
-                'You can also manage the microservices that provide the CyberRangeᶜᶻ Platform’s functionality. Make sure you understand the implications before making any changes.',
+                'You can manage the microservices that provide CyberGoatz Admin functionality. Make sure you understand the implications before making any changes.',
                 'account_tree',
             ),
         ];

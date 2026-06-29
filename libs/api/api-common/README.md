@@ -1,4 +1,4 @@
-# # CyberRangeᶜᶻ Platform API Commons
+# # CyberGoatz Admin API Commons
 
 A shared Angular library centered around providing a powerful, minimally-configured mapper system for translating between API data types (DTOs) and frontend models. With simple configuration, it generates mapper functions that handle automatic case conversion (camelCase ↔ snake_case), custom property mappings, and type-safe transformations. Additionally, it includes utilities for HTTP services, pagination, validation, and file operations to support comprehensive API interactions.
 
