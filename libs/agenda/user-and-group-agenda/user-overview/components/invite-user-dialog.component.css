@@ -1,0 +1,29 @@
+.invite-user-form {
+    min-width: min(520px, 80vw);
+}
+
+mat-dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.name-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+@media (max-width: 640px) {
+    .invite-user-form {
+        min-width: 0;
+    }
+
+    .name-row {
+        grid-template-columns: 1fr;
+    }
+}
