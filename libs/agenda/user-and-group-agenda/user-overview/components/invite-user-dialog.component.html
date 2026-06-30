@@ -1,0 +1,68 @@
+<h2 mat-dialog-title>Invite User</h2>
+
+<form
+    class="invite-user-form"
+    [formGroup]="form"
+    (ngSubmit)="invite()"
+>
+    <mat-dialog-content>
+        <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input
+                matInput
+                type="email"
+                autocomplete="email"
+                formControlName="email"
+            />
+            @if (form.controls.email.hasError('email')) {
+                <mat-error>Enter a valid email address</mat-error>
+            }
+        </mat-form-field>
+
+        <div class="name-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Given name</mat-label>
+                <input
+                    matInput
+                    autocomplete="given-name"
+                    formControlName="givenName"
+                />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Family name</mat-label>
+                <input
+                    matInput
+                    autocomplete="family-name"
+                    formControlName="familyName"
+                />
+            </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Full name</mat-label>
+            <input
+                matInput
+                autocomplete="name"
+                formControlName="fullName"
+            />
+        </mat-form-field>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button
+            mat-button
+            type="button"
+            (click)="cancel()"
+        >
+            Cancel
+        </button>
+        <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+        >
+            Send invite
+        </button>
+    </mat-dialog-actions>
+</form>

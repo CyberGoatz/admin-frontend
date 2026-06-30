@@ -102,6 +102,13 @@ export class UserOverviewComponent implements OnInit {
                 defer(() => this.userService.getLocalOIDCUsers()),
             ),
             new SentinelControlItem(
+                'invite_user',
+                'Invite User',
+                'primary',
+                of(false),
+                defer(() => this.userService.inviteUser()),
+            ),
+            new SentinelControlItem(
                 'import_users',
                 'Import Users',
                 'primary',

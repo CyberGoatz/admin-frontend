@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -14,6 +15,10 @@ import { SelectablePaginatedService, UserFilter } from '@crczp/user-and-group-ag
 import { ErrorHandlerService, FileUploadProgressService, NotificationService, PortalConfig } from '@crczp/utils';
 import { FileUploadDialog, FileUploadDialogConfig } from '@crczp/components';
 import { OffsetPaginatedResource } from '@crczp/api-common';
+import {
+    InviteUserDialogComponent,
+    InviteUserDialogResult,
+} from '../components/invite-user-dialog.component';
 
 /**
  * Basic implementation of a layer between a component and an API service.
@@ -23,6 +28,8 @@ import { OffsetPaginatedResource } from '@crczp/api-common';
 @Injectable()
 export class UserOverviewService extends SelectablePaginatedService<User> {
     private api = inject(UserApi);
+    private http = inject(HttpClient);
+    private portalConfig = inject(PortalConfig);
     private dialog = inject(MatDialog);
     private notificationService = inject(NotificationService);
     private fileUploadProgressService = inject(FileUploadProgressService);
@@ -33,6 +40,44 @@ export class UserOverviewService extends SelectablePaginatedService<User> {
 
     constructor() {
         super(inject(PortalConfig).defaultPageSize);
+    }
+
+    inviteUser(): Observable<any> {
+        return this.dialog
+            .open<
+                InviteUserDialogComponent,
+                unknown,
+                InviteUserDialogResult
+            >(InviteUserDialogComponent)
+            .afterClosed()
+            .pipe(
+                take(1),
+                switchMap((invitee) => {
+                    if (!invitee) return EMPTY;
+                    return this.http
+                        .post(
+                            `${this.portalConfig.basePaths.cybergoatz}/admin/invitations`,
+                            invitee,
+                        )
+                        .pipe(
+                            tap(
+                                () =>
+                                    this.notificationService.emit(
+                                        'success',
+                                        'User invitation was sent',
+                                    ),
+                                (err) =>
+                                    this.errorHandler.emitAPIError(
+                                        err,
+                                        'Inviting user',
+                                    ),
+                            ),
+                            switchMap(() =>
+                                this.getAll(this.lastPagination, this.lastFilter),
+                            ),
+                        );
+                }),
+            );
     }
 
     /**
