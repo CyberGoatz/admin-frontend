@@ -115,12 +115,12 @@ export class AdaptiveInstanceTable extends SentinelTable<
     ): RowAction[] {
         return [
             new EditAction(
-                'Edit training instance',
+                'Edit mission instance',
                 of(false),
                 defer(() => service.edit(ti.id)),
             ),
             new DeleteAction(
-                'Delete training instance',
+                'Delete mission instance',
                 of(false),
                 defer(() => service.delete(ti)),
             ),
@@ -129,7 +129,7 @@ export class AdaptiveInstanceTable extends SentinelTable<
                 'Get Data',
                 'cloud_download',
                 'primary',
-                'Download ZIP file containing all training instance data',
+                'Download ZIP file containing all mission instance data',
                 of(false),
                 defer(() => service.download(ti.id)),
             ),
@@ -147,10 +147,10 @@ export class AdaptiveInstanceTable extends SentinelTable<
             ),
             new RowAction(
                 'training_runs',
-                'Training Runs',
+                'Mission Runs',
                 'run_circle',
                 'primary',
-                'Manage training runs',
+                'Manage mission runs',
                 of(false),
                 defer(() => service.runs(ti.id)),
             ),
@@ -168,7 +168,7 @@ export class AdaptiveInstanceTable extends SentinelTable<
                 'Show Progress',
                 'insights',
                 'primary',
-                'Show progress of training runs',
+                'Show progress of mission runs',
                 of(!ti.hasStarted()),
                 defer(() => service.progress(ti.id)),
             ),

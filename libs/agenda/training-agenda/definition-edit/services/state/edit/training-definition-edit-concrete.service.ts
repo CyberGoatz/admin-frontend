@@ -98,7 +98,7 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Editing training definition',
+                            'Editing mission definition',
                         ),
                 ),
             ),
@@ -112,14 +112,14 @@ export class TrainingDefinitionEditConcreteService extends TrainingDefinitionEdi
                     () => {
                         this.notificationService.emit(
                             'success',
-                            'Training was created',
+                            'Mission was created',
                         );
                         this.onSaved();
                     },
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Creating training definition',
+                            'Creating mission definition',
                         ),
                 ),
                 map((td) => td.id),

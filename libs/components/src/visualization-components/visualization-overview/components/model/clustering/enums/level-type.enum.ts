@@ -1,5 +1,5 @@
 export enum LevelTypeEnum {
-    TrainingLevel = 'Training level',
+    TrainingLevel = 'Mission level',
     InfoLevel = 'Info level',
     AssessmentLevel = ' Assessment level',
 }

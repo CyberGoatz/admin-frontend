@@ -10,12 +10,12 @@
 
 sentinel-root-agenda-container .container {
     font-weight: 700;
-    color: var(--neutral-80) !important;
+    color: var(--on-surface-variant) !important;
 }
 
 sentinel-root-agenda-container .mat-divider {
-    border-color: var(--neutral-70) !important;
-    border-top-width: 2px !important;
+    border-color: var(--outline-variant) !important;
+    border-top-width: 1px !important;
 }
 
 sentinel-root-agenda-container * {
@@ -25,4 +25,116 @@ sentinel-root-agenda-container * {
 .toolbar-username {
     font-size: 1.625rem;
     font-weight: 600;
+}
+
+.mat-toolbar {
+    --mat-toolbar-container-background-color: var(--surface-container-lowest);
+    --mat-toolbar-container-text-color: var(--on-surface);
+    --mat-icon-button-icon-color: var(--on-surface-variant);
+    border-bottom: 1px solid var(--outline-variant);
+    background: var(--surface-container-lowest) !important;
+    color: var(--on-surface) !important;
+}
+
+sentinel-toolbar .mat-toolbar,
+sentinel-toolbar .mat-toolbar.mat-primary {
+    --mat-toolbar-container-background-color: var(--surface-container-lowest);
+    --mat-toolbar-container-text-color: var(--on-surface);
+    --mat-icon-button-icon-color: var(--on-surface-variant);
+    background: var(--surface-container-lowest) !important;
+    color: var(--on-surface) !important;
+}
+
+sentinel-toolbar mat-toolbar-row.first {
+    border-bottom: 1px solid var(--outline-variant);
+    box-shadow: none !important;
+}
+
+sentinel-toolbar mat-toolbar-row.second {
+    border-bottom: 1px solid var(--outline-variant);
+    background: var(--surface-container-lowest) !important;
+    color: var(--on-surface) !important;
+}
+
+sentinel-breadcrumbs,
+sentinel-breadcrumbs * {
+    color: var(--on-surface) !important;
+}
+
+.nav-drawer.mat-drawer,
+.mat-drawer {
+    --mat-container-text-color: var(--on-surface);
+    --mat-icon-button-icon-color: var(--on-surface-variant);
+    --mat-button-text-label-text-color: var(--on-surface);
+    --mat-button-text-ripple-color: color-mix(in oklab, var(--primary) 18%, transparent);
+    border-right: 1px solid var(--outline-variant);
+    background: var(--surface-container-lowest) !important;
+    color: var(--on-surface) !important;
+}
+
+.nav-drawer a,
+.nav-drawer button,
+.mat-drawer a,
+.mat-drawer button,
+.mat-toolbar a,
+.mat-toolbar button,
+.mat-toolbar .username {
+    color: var(--on-surface) !important;
+}
+
+.nav-drawer .mat-mdc-button,
+.mat-drawer .mat-mdc-button {
+    --mat-text-button-label-text-color: var(--on-surface);
+    --mat-text-button-state-layer-color: transparent;
+    --mat-text-button-hover-state-layer-opacity: 0;
+    --mat-text-button-focus-state-layer-opacity: 0;
+    --mat-text-button-pressed-state-layer-opacity: 0;
+    border-left: 2px solid transparent;
+    border-radius: 0 !important;
+}
+
+.nav-drawer .mat-mdc-button:hover,
+.nav-drawer .mat-mdc-button:focus,
+.nav-drawer .mat-mdc-button:active,
+.nav-drawer .mat-mdc-button.cdk-focused,
+.nav-drawer .mat-mdc-button.cdk-program-focused,
+.nav-drawer .mat-mdc-button.cdk-keyboard-focused,
+.mat-drawer .mat-mdc-button:hover,
+.mat-drawer .mat-mdc-button:focus,
+.mat-drawer .mat-mdc-button:active,
+.mat-drawer .mat-mdc-button.cdk-focused,
+.mat-drawer .mat-mdc-button.cdk-program-focused,
+.mat-drawer .mat-mdc-button.cdk-keyboard-focused {
+    border-left-color: var(--primary);
+    background: color-mix(in oklab, var(--primary) 10%, var(--surface-container-lowest)) !important;
+    color: var(--on-surface) !important;
+}
+
+.nav-drawer .mat-mdc-button .mat-mdc-button-persistent-ripple::before,
+.nav-drawer .mat-mdc-button .mat-ripple-element,
+.mat-drawer .mat-mdc-button .mat-mdc-button-persistent-ripple::before,
+.mat-drawer .mat-mdc-button .mat-ripple-element {
+    background-color: transparent !important;
+    opacity: 0 !important;
+}
+
+.nav-drawer .mat-mdc-button:hover mat-icon,
+.nav-drawer .mat-mdc-button:focus mat-icon,
+.nav-drawer .mat-mdc-button:active mat-icon,
+.nav-drawer .mat-mdc-button.cdk-focused mat-icon,
+.mat-drawer .mat-mdc-button:hover mat-icon,
+.mat-drawer .mat-mdc-button:focus mat-icon,
+.mat-drawer .mat-mdc-button:active mat-icon,
+.mat-drawer .mat-mdc-button.cdk-focused mat-icon {
+    color: var(--primary) !important;
+}
+
+.nav-drawer mat-icon,
+.mat-drawer mat-icon,
+.mat-toolbar mat-icon {
+    color: var(--on-surface-variant) !important;
+}
+
+.sentinel-logo-wrapper {
+    filter: drop-shadow(0 10px 22px color-mix(in oklab, var(--primary) 10%, transparent));
 }

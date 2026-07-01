@@ -71,7 +71,7 @@ export class AccessedTrainingRunTable extends SentinelTable<
                 'Resume',
                 'open_in_new',
                 'primary',
-                'Resume training run',
+                'Resume mission run',
                 of(
                     trainingRun.action !==
                         TraineeAccessTrainingRunActionEnum.Resume,

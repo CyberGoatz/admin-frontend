@@ -13,7 +13,7 @@ function resolveInstance(
     type: TrainingTypeEnum,
 ) {
     return service.getInstance(route, type).pipe(
-        catchUndefinedOrNull('Training instance', () => {
+        catchUndefinedOrNull('Mission instance', () => {
             return service.navigateToInstanceOverview(type);
         }),
     );
@@ -27,8 +27,8 @@ function resolveInstanceTitle(
 ): Observable<string> | string {
     if (RoutingUtils.containsSubroute('create', state)) {
         return type === TrainingTypeEnum.LINEAR
-            ? 'Create Linear Training Instance'
-            : 'Create Adaptive Training Instance';
+            ? 'Create Linear Mission Instance'
+            : 'Create Adaptive Mission Instance';
     }
 
     function getTitleText(ti: TrainingInstance) {
@@ -48,7 +48,7 @@ function resolveInstanceTitle(
             return `Access Token of ${ti.title}`;
         }
         if (RoutingUtils.containsSubroute('runs', state)) {
-            return `Training Runs of ${ti.title}`;
+            return `Mission Runs of ${ti.title}`;
         }
         if (RoutingUtils.containsSubroute('cheating-detection', state)) {
             return `Cheating Detections of ${ti.title}`;

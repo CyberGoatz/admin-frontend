@@ -42,7 +42,7 @@ function resolveAccessedTrainingRunResults(
     return service
         .getRunResults(route, type)
         .pipe(
-            catchUndefinedOrNull('Training run', () =>
+            catchUndefinedOrNull('Mission run', () =>
                 service.navigateToRunOverview()
             )
         );

@@ -18,8 +18,47 @@
             }
         }
 
-        --primary: var(--primary-40);
-        --background: var(--neutral-98);
+        --primary: #b23a73;
+        --primary-container: #b23a73;
+        --primary-fixed: #9f2f61;
+        --primary-fixed-dim: #d84c8e;
+        --secondary: #8f4a2f;
+        --secondary-container: #8f4a2f;
+        --tertiary: #545f72;
+        --tertiary-container: #545f72;
+        --accent-gold: #a87920;
+        --accent-copper: #a65a3a;
+        --background: #f8f9fa;
+        --foreground: #191c1d;
+        --surface: #f8f9fa;
+        --surface-container-lowest: #ffffff;
+        --surface-container-low: #f3f4f5;
+        --surface-container: #edeeef;
+        --surface-container-high: #e7e8e9;
+        --surface-container-highest: #e1e3e4;
+        --surface-variant: #e1e3e4;
+        --outline: #7b7284;
+        --outline-variant: #d8d2df;
+        --on-surface: #191c1d;
+        --on-surface-variant: #5b5563;
+        --on-primary: #ffffff;
+        --on-primary-container: #ffffff;
+
+        // Existing admin styles use palette shade names directly as semantic surfaces.
+        --neutral-98: var(--background);
+        --neutral-100: var(--surface-container-lowest);
+        --neutral-95: var(--surface-container);
+        --neutral-90: var(--surface-container-high);
+        --neutral-80: var(--on-surface);
+        --neutral-70: var(--outline-variant);
+        --primary-98: #fff8fb;
+        --primary-95: #ffecf4;
+        --primary-90: #ffd8e8;
+        --primary-80: #ffb0d6;
+        --primary-50: #c94f87;
+        --primary-40: var(--primary-container);
+        --primary-25: #711a40;
+        --primary-10: #250715;
     }
 }
 

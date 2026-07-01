@@ -128,7 +128,7 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Fetching available training definitions',
+                            'Fetching available mission definitions',
                         ),
                 ),
             );
@@ -189,14 +189,14 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
                     () => {
                         this.notificationService.emit(
                             'success',
-                            'Training instance was created',
+                            'Mission instance was created',
                         );
                         this.onSaved();
                     },
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Creating training instance',
+                            'Creating mission instance',
                         ),
                 ),
             ),
@@ -245,14 +245,14 @@ export abstract class CommonTrainingInstanceEditService extends CommonTrainingIn
                         () => {
                             this.notificationService.emit(
                                 'success',
-                                'Training instance was successfully saved',
+                                'Mission instance was successfully saved',
                             );
                             this.onSaved();
                         },
                         (err) => {
                             this.errorHandler.emitAPIError(
                                 err,
-                                'Editing training instance',
+                                'Editing mission instance',
                             );
                         },
                     ),

@@ -84,7 +84,7 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
         return api.get(definitionId, withLevels).pipe(
             take(1),
             catchError((err) => {
-                this.emitApiError(err, 'Resolving training definition');
+                this.emitApiError(err, 'Resolving mission definition');
                 return of(null);
             }),
         );
@@ -108,7 +108,7 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
         return api.get(instanceId).pipe(
             take(1),
             catchError((err) => {
-                this.emitApiError(err, 'Resolving training instance');
+                this.emitApiError(err, 'Resolving mission instance');
                 return of(null);
             }),
         );
@@ -125,7 +125,7 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
         return api.resume(runId).pipe(
             take(1),
             catchError((err) => {
-                this.emitApiError(err, 'Accessing training run');
+                this.emitApiError(err, 'Accessing mission run');
                 return this.navigateToRunOverview();
             }),
         );
@@ -142,7 +142,7 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
         return api.access(runToken).pipe(
             take(1),
             catchError((err) => {
-                this.emitApiError(err, 'Accessing training run');
+                this.emitApiError(err, 'Accessing mission run');
                 return this.navigateToRunOverview();
             }),
         );
@@ -166,7 +166,7 @@ export class TrainingResolverHelperService extends CommonResolverHelperService {
         return api.get(runId).pipe(
             take(1),
             catchError((err) => {
-                this.emitApiError(err, 'Fetching training run results');
+                this.emitApiError(err, 'Fetching mission run results');
                 return of(null);
             }),
         );

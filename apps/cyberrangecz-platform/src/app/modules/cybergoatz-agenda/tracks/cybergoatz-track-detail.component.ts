@@ -126,7 +126,7 @@ export class CyberGoatzTrackDetailComponent {
 
     getItemTitle(item: CyberGoatzTrackItem): string {
         const instance = this.findTrainingInstance(item.trainingInstanceId);
-        return item.titleOverride || instance?.title || 'Training unavailable';
+        return item.titleOverride || instance?.title || 'Mission unavailable';
     }
 
     getBadgeAltText(track: CyberGoatzTrack): string {

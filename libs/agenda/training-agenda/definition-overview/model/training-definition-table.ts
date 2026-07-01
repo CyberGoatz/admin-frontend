@@ -88,12 +88,12 @@ export class TrainingDefinitionTable extends SentinelTable<
     ): RowAction[] {
         return [
             new EditAction(
-                'Edit training definition',
+                'Edit mission definition',
                 of(false),
                 defer(() => service.edit(td.id)),
             ),
             new DeleteAction(
-                'Delete training definition',
+                'Delete mission definition',
                 of(false),
                 defer(() => service.delete(td)),
             ),
@@ -102,12 +102,12 @@ export class TrainingDefinitionTable extends SentinelTable<
                 'Clone',
                 'file_copy',
                 'primary',
-                'Clone training definition',
+                'Clone mission definition',
                 of(false),
                 defer(() => service.clone(td)),
             ),
             new DownloadAction(
-                'Download training definition',
+                'Download mission definition',
                 of(false),
                 defer(() => service.download(td)),
             ),
@@ -116,7 +116,7 @@ export class TrainingDefinitionTable extends SentinelTable<
                 'Preview',
                 'remove_red_eye',
                 'primary',
-                'Preview training run',
+                'Preview mission run',
                 of(false),
                 defer(() => service.preview(td.id)),
             ),
@@ -135,7 +135,7 @@ export class TrainingDefinitionTable extends SentinelTable<
                         'Unrelease',
                         'lock_open',
                         'primary',
-                        'Unrelease training definition',
+                        'Unrelease mission definition',
                         of(false),
                         defer(() =>
                             service.changeState(
@@ -149,7 +149,7 @@ export class TrainingDefinitionTable extends SentinelTable<
                         'Archive',
                         'archive',
                         'warn',
-                        'Archive training definition',
+                        'Archive mission definition',
                         of(false),
                         defer(() =>
                             service.changeState(
@@ -166,7 +166,7 @@ export class TrainingDefinitionTable extends SentinelTable<
                         'Release',
                         'lock',
                         'primary',
-                        'Release training definition',
+                        'Release mission definition',
                         of(false),
                         defer(() =>
                             service.changeState(

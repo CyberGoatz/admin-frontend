@@ -1701,14 +1701,14 @@ export class BarchartComponent implements OnInit, OnChanges {
     ): string[] {
         if (showCorrectFlags) {
             return [
-                `Training ${trainingId}:`,
+                `Mission ${trainingId}:`,
                 numberOfFlags.numberOfCorrectFlags + ' participants',
                 'submitted',
                 'the correct answer',
             ];
         }
         return [
-            `Training ${trainingId}:`,
+            `Mission ${trainingId}:`,
             numberOfFlags.numberOfWrongFlags + ' wrong answers',
             'submitted by',
             numberOfFlags.submittedBy + ' participants',
@@ -1859,7 +1859,7 @@ export class BarchartComponent implements OnInit, OnChanges {
                 ),
                 '#000000',
                 [
-                    'Training ' + trainingIds[i],
+                    'Mission ' + trainingIds[i],
                     'correct answers',
                     'wrong answers',
                 ],

@@ -75,7 +75,7 @@ export class TrainingRunTable extends SentinelTable<
     ): RowAction[] {
         return [
             new DeleteAction(
-                'Delete training run with sandbox',
+                'Delete mission run with sandbox',
                 of(false),
                 defer(() => service.delete(element, instance.localEnvironment)),
             ),

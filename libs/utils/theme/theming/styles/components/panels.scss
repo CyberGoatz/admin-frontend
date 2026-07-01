@@ -1,7 +1,10 @@
 mat-expansion-panel.mat-expansion-panel {
     padding: 1rem 0;
     margin-bottom: 1.5rem;
-    border-radius: 24px;
+    border: 1px solid var(--outline-variant);
+    border-radius: 8px;
+    background-color: var(--surface-container-lowest);
+    color: var(--on-surface);
 }
 
 mat-panel-title.mat-expansion-panel-header-title {
@@ -34,7 +37,11 @@ div.mat-expansion-panel-body {
 }
 
 mat-card.mat-mdc-card {
-    background-color: var(--primary-98);
+    border: 1px solid var(--outline-variant);
+    border-radius: 8px;
+    background-color: var(--surface-container-lowest);
+    color: var(--on-surface);
+    box-shadow: 0 8px 24px rgba(26, 32, 44, 0.04);
 }
 
 // Remove padding from expansion panel content when the class is applied to the expansion panel

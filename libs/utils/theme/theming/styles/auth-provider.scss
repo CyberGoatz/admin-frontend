@@ -18,4 +18,21 @@ crczp-auth-provider-picker {
 
 .providers button {
     max-width: 500px;
+    background-color: var(--primary) !important;
+    color: var(--on-primary) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 10px 30px color-mix(in oklab, var(--primary) 10%, transparent) !important;
+    transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.providers button:hover {
+    background-color: color-mix(in oklab, var(--primary) 88%, #000000) !important;
+    color: var(--on-primary) !important;
+    box-shadow: 0 8px 18px color-mix(in oklab, var(--primary) 14%, transparent) !important;
+    transform: translateY(-1px);
+}
+
+.providers button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px color-mix(in oklab, var(--primary) 10%, transparent) !important;
 }

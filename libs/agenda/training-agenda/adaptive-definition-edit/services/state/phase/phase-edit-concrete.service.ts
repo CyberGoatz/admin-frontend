@@ -159,7 +159,7 @@ export class PhaseEditConcreteService extends PhaseEditService {
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Saving phases in adaptive training definition'
+                            'Saving phases in adaptive mission definition'
                         )
                 )
             );
@@ -293,7 +293,7 @@ export class PhaseEditConcreteService extends PhaseEditService {
                     ]);
                 },
                 (err) =>
-                    this.errorHandler.emitAPIError(err, 'Adding training phase')
+                    this.errorHandler.emitAPIError(err, 'Adding mission phase')
             )
         );
     }
@@ -379,7 +379,7 @@ export class PhaseEditConcreteService extends PhaseEditService {
             SentinelConfirmationDialogComponent,
             {
                 data: new SentinelConfirmationDialogConfig(
-                    'Move Training Phase',
+                    'Move Mission Phase',
                     `Do you want to move phase "${phase.title}"? This might affect data in subsequent decision matrices.`,
                     'Cancel',
                     'Move'

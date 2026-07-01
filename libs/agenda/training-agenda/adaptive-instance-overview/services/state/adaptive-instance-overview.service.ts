@@ -63,7 +63,7 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
                     this.hasErrorSubject$.next(true);
                     this.errorHandler.emitAPIError(
                         err,
-                        'Fetching training instances',
+                        'Fetching mission instances',
                     );
                 },
             ),
@@ -94,7 +94,7 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
                 error: (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Downloading training instance',
+                        'Downloading mission instance',
                     ),
             }),
         );
@@ -218,8 +218,8 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
             SentinelConfirmationDialogComponent,
             {
                 data: new SentinelConfirmationDialogConfig(
-                    'Delete Training Instance',
-                    `Do you want to delete training instance "${trainingInstance.title}"?`,
+                    'Delete Mission Instance',
+                    `Do you want to delete mission instance "${trainingInstance.title}"?`,
                     'Cancel',
                     'Delete',
                 ),
@@ -235,9 +235,9 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
             SentinelConfirmationDialogComponent,
             {
                 data: new SentinelConfirmationDialogConfig(
-                    'Force Delete Training Instance',
+                    'Force Delete Mission Instance',
                     `A pool is currently assigned to this instance.
-        Do you want to force delete training instance "${trainingInstance.title}" ?
+        Do you want to force delete mission instance "${trainingInstance.title}" ?
         This will unlock the pool and purge its command history.`,
                     'Cancel',
                     'Force delete',
@@ -257,7 +257,7 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
                 tap(() =>
                     this.notificationService.emit(
                         'success',
-                        'Training instance was successfully deleted',
+                        'Mission instance was successfully deleted',
                     ),
                 ),
                 catchError((err) => {
@@ -274,7 +274,7 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
                     }
                     return this.errorHandler.emitAPIError(
                         err,
-                        'Deleting training instance',
+                        'Deleting mission instance',
                     );
                 }),
                 switchMap(() =>
@@ -289,12 +289,12 @@ export class AdaptiveInstanceOverviewService extends CrczpOffsetElementsPaginate
                 () =>
                     this.notificationService.emit(
                         'success',
-                        'Training instance was successfully deleted',
+                        'Mission instance was successfully deleted',
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Force deleting training instance',
+                        'Force deleting mission instance',
                     ),
             ),
         );

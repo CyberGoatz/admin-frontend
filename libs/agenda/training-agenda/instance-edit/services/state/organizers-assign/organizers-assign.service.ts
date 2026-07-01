@@ -194,7 +194,7 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Assigning organizers to training instance',
+                            'Assigning organizers to mission instance',
                         ),
                 ),
                 switchMap(() =>
@@ -224,7 +224,7 @@ export class OrganizersAssignService extends SentinelUserAssignService {
                     (err) =>
                         this.errorHandler.emitAPIError(
                             err,
-                            'Deleting organizers from training instance',
+                            'Deleting organizers from mission instance',
                         ),
                 ),
                 switchMap(() =>

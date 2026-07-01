@@ -1,7 +1,7 @@
 <mat-expansion-panel [expanded]="true">
     <mat-expansion-panel-header>
         <mat-panel-title>
-            Adaptive Training Definition
+            Adaptive Mission Definition
         </mat-panel-title>
         <mat-panel-description>
             <span class="spacer"></span>
@@ -33,7 +33,7 @@
                 <h3>Phases</h3>
                 @if (phasesCount >= 0) {
                     <span class="phases-info"
-                    >Training definition contains {{ phasesCount }} phase(s)</span
+                    >Mission definition contains {{ phasesCount }} phase(s)</span
                     >
                 }
                 <mat-icon>games</mat-icon>
@@ -55,7 +55,7 @@
                     <h3>Single trainee performance simulation</h3>
                     @if (trainingPhasesCount >= 0) {
                         <span class="phases-info"
-                        >Training definition contains {{ trainingPhasesCount }} training phase(s)</span
+                        >Mission definition contains {{ trainingPhasesCount }} mission phase(s)</span
                         >
                     }
                     <mat-icon>timeline</mat-icon>
