@@ -1,9 +1,128 @@
 html {
     height: 100vh;
+    background: var(--background);
+    color-scheme: light;
 }
 
 body {
     margin: 0;
     min-height: 100vh;
-    font-family: 'Inter', sans-serif;
+    background:
+        radial-gradient(circle at 16% 0, color-mix(in oklab, var(--tertiary) 10%, transparent), transparent 28rem),
+        linear-gradient(180deg, var(--background) 0%, var(--surface-container-low) 100%);
+    color: var(--on-surface);
+    font-family: 'Sora', 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+a {
+    color: inherit;
+}
+
+:root {
+    --mat-button-text-container-shape: 4px;
+    --mat-button-outlined-container-shape: 4px;
+    --mat-button-filled-container-shape: 4px;
+    --mat-button-protected-container-shape: 4px;
+    --mat-button-tonal-container-shape: 4px;
+    --mat-icon-button-container-shape: 4px;
+    --mat-list-active-indicator-shape: 4px;
+    --mat-menu-container-shape: 4px;
+}
+
+.mat-drawer-content,
+.mat-sidenav-content,
+.mat-mdc-table,
+.mat-mdc-paginator,
+.mat-mdc-menu-panel,
+.mat-mdc-dialog-surface,
+.mat-mdc-select-panel,
+.mat-mdc-autocomplete-panel {
+    background: var(--surface-container-low) !important;
+    color: var(--on-surface) !important;
+}
+
+.mat-mdc-header-row,
+.mat-mdc-row,
+.mat-mdc-cell,
+.mat-mdc-header-cell,
+.mat-mdc-footer-cell {
+    border-color: var(--outline-variant) !important;
+    color: var(--on-surface) !important;
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-paginator,
+.mat-mdc-select-value,
+.mat-mdc-form-field-hint,
+.mat-mdc-form-field-error,
+.mat-mdc-card-subtitle {
+    color: var(--on-surface-variant) !important;
+}
+
+.mat-mdc-text-field-wrapper,
+.mat-mdc-form-field-focus-overlay {
+    background: var(--surface-container-lowest) !important;
+}
+
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-fab.mat-primary,
+.mat-mdc-mini-fab.mat-primary {
+    color: var(--on-primary) !important;
+    box-shadow: 0 10px 30px color-mix(in oklab, var(--primary) 10%, transparent) !important;
+}
+
+.mat-mdc-outlined-button,
+.mat-mdc-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button,
+.mat-mdc-icon-button,
+.mat-mdc-menu-item,
+.mat-mdc-list-item {
+    --mat-button-text-label-text-color: var(--on-surface);
+    --mat-outlined-button-outline-color: var(--outline-variant);
+    border-radius: 4px !important;
+}
+
+.mat-mdc-outlined-button:hover,
+.mat-mdc-button:hover,
+.mat-mdc-icon-button:hover,
+.mat-mdc-menu-item:hover,
+.mat-mdc-list-item:hover {
+    background: #e9ecef !important;
+    color: var(--primary) !important;
+}
+
+.mat-mdc-unelevated-button:hover,
+.mat-mdc-raised-button:hover {
+    background: #e9ecef !important;
+    color: var(--on-surface) !important;
+}
+
+.mat-mdc-raised-button.mat-primary:hover,
+.mat-mdc-unelevated-button.mat-primary:hover,
+.mat-mdc-fab.mat-primary:hover,
+.mat-mdc-mini-fab.mat-primary:hover {
+    background: color-mix(in oklab, var(--primary) 88%, #000000) !important;
+    color: var(--on-primary) !important;
+    box-shadow: 0 8px 18px rgba(26, 32, 44, 0.12) !important;
+}
+
+.mat-mdc-button-persistent-ripple,
+.mat-mdc-button-persistent-ripple::before,
+.mat-mdc-list-item .mdc-list-item__ripple,
+.mat-mdc-menu-item .mat-mdc-menu-ripple,
+.mat-ripple-element {
+    border-radius: 4px !important;
+}
+
+sentinel-sidebar-page-layout .content,
+sentinel-sidebar-page-layout .padded-content {
+    padding-top: 1rem !important;
+}
+
+sentinel-notification-card mat-card.notification-card:hover,
+sentinel-notification-overview mat-card.notification-card:hover,
+mat-card.notification-card.compact:hover {
+    background: var(--surface-container-low) !important;
 }

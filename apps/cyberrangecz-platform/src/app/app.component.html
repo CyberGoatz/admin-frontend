@@ -7,7 +7,7 @@
                       [notificationsRoute]="notificationRoute"
                       [user]="authService.activeUser$ | async"
                       [version]="version"
-                      logoSrc="./assets/logo/logo.svg">
+                      logoSrc="./assets/logo/logo-black.svg">
         <div role="toolbar">
             @if (authService.activeUser$ | async) {
                 <span class="username">{{ (authService.activeUser$ | async).nameWithAcademicTitles }}</span>
