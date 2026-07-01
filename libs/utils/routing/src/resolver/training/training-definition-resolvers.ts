@@ -20,7 +20,7 @@ function buildDefinitionResolver(
         return service
             .getDefinition(route, type, includeLevels)
             .pipe(
-                catchUndefinedOrNull('Training Definition', () =>
+                catchUndefinedOrNull('Mission Definition', () =>
                     service.navigateToDefinitionOverview(type),
                 ),
             );
@@ -37,8 +37,8 @@ function buildDefinitionTitleResolver(
     return (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
         if (RoutingUtils.containsSubroute('create', state)) {
             return type === TrainingTypeEnum.LINEAR
-                ? 'Create Linear Training Definition'
-                : 'Create Adaptive Training Definition';
+                ? 'Create Linear Mission Definition'
+                : 'Create Adaptive Mission Definition';
         }
 
         function getTitleText(ti: TrainingDefinition) {

@@ -5,8 +5,8 @@
                 {{ title() }}
             </mat-card-title>
             <mat-card-subtitle>
-                Select runnable training instances. Total time is calculated
-                from the selected trainings.
+                Select runnable mission instances. Total time is calculated
+                from the selected missions.
             </mat-card-subtitle>
         </mat-card-header>
 
@@ -105,9 +105,9 @@
 
                     <sentinel-resource-selector
                         appearance="outline"
-                        label="Trainings"
-                        searchPlaceholder="Search Trainings"
-                        noResultsLabel="No Trainings found"
+                        label="Missions"
+                        searchPlaceholder="Search Missions"
+                        noResultsLabel="No Missions found"
                         [multiSelection]="true"
                         [resources]="filteredTrainingInstances()"
                         [selected]="selectedTrainingInstances()"
@@ -139,7 +139,7 @@
 
                     <div class="track-summary">
                         <span>
-                            {{ selectedItems().length }} trainings selected
+                            {{ selectedItems().length }} missions selected
                         </span>
                         <span>
                             Total time:
@@ -221,7 +221,7 @@
                                                 mat-icon-button
                                                 type="button"
                                                 [disabled]="index === 0"
-                                                aria-label="Move training up"
+                                                aria-label="Move mission up"
                                                 (click)="
                                                     moveItem(
                                                         item.trainingInstanceId,
@@ -240,7 +240,7 @@
                                                     index ===
                                                     selectedItems().length - 1
                                                 "
-                                                aria-label="Move training down"
+                                                aria-label="Move mission down"
                                                 (click)="
                                                     moveItem(
                                                         item.trainingInstanceId,

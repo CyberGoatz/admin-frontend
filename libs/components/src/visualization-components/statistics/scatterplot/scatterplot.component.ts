@@ -685,7 +685,7 @@ export class ScatterplotComponent implements OnInit, OnChanges {
      * Each player is marked in three different ways:
      * * class 'legendGroup_' specifies the color group into which the player belongs
      * -> it is used in case a part of the legend is clicked (see 'handleLegendClick')
-     * * class 'trainingClass_' marks the training on which the player participated
+     * * class 'trainingClass_' marks the mission on which the player participated
      * -> it is used for interaction between the components
      * * ID '"player_" + index' enables to specify the individual users -> required e.g.
      * in case of interaction with bubblechart (info about the flags the player submitted)

@@ -24,7 +24,7 @@ export function canDeactivateTrainingDefinition(
         {
             data: new SentinelConfirmationDialogConfig(
                 'Unsaved Changes',
-                'There are unsaved changes in training definition, authors or levels. Do you really want to leave without saving?',
+                'There are unsaved changes in mission definition, authors or levels. Do you really want to leave without saving?',
                 'Cancel',
                 'Leave'
             ),

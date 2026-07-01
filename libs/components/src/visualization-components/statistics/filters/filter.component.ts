@@ -163,7 +163,7 @@ export class FilterComponent implements OnInit, OnChanges {
     private initCheckboxes(): void {
         this.trainingInstances.forEach((training) => {
             this.checkboxes.push({
-                training: 'Training ' + training.instanceId,
+                training: 'Mission ' + training.instanceId,
                 checked: training.instanceId === this.initialTrainingInstance,
                 disabled: false,
                 instanceId: training.instanceId,

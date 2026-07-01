@@ -25,7 +25,7 @@ export const canDeactivateTrainingInstance: CanDeactivateFn<
         {
             data: new SentinelConfirmationDialogConfig(
                 'Unsaved Changes',
-                'There are unsaved changes in training instance or organizers. Do you really want to leave?',
+                'There are unsaved changes in mission instance or organizers. Do you really want to leave?',
                 'Cancel',
                 'Leave'
             ),

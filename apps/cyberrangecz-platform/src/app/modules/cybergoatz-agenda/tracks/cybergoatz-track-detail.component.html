@@ -59,7 +59,7 @@
                             </mat-chip>
                         </mat-chip-set>
                         <span>
-                            {{ sortedItems().length }} trainings
+                            {{ sortedItems().length }} missions
                         </span>
                         <span>
                             {{ formatDuration(totalEstimatedDuration()) }}
@@ -124,7 +124,7 @@
 
             <mat-card appearance="outlined">
                 <mat-card-header>
-                    <mat-card-title>Trainings</mat-card-title>
+                    <mat-card-title>Missions</mat-card-title>
                     <mat-card-subtitle>
                         Track items in display order
                     </mat-card-subtitle>
@@ -132,7 +132,7 @@
                 <mat-card-content>
                     @if (sortedItems().length === 0) {
                         <div class="empty-state">
-                            This track does not contain any trainings.
+                            This track does not contain any missions.
                         </div>
                     } @else {
                         <div class="training-list">
@@ -170,7 +170,7 @@
                                             </span>
                                         } @else {
                                             <span>
-                                                Training instance id:
+                                                Mission instance id:
                                                 {{ item.trainingInstanceId }}
                                             </span>
                                         }

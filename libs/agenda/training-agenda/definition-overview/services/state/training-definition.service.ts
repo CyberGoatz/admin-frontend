@@ -158,7 +158,7 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
                 error: (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Downloading training definition',
+                        'Downloading mission definition',
                     ),
             }),
         );
@@ -189,7 +189,7 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
      */
     upload(): Observable<OffsetPaginatedResource<TrainingDefinition>> {
         const dialogRef = FileUploadDialog.open(this.dialog, {
-            title: 'Upload Training definition',
+            title: 'Upload Mission definition',
             mode: 'single',
         });
         return dialogRef.afterClosed().pipe(
@@ -201,7 +201,7 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
                 () => {
                     this.notificationService.emit(
                         'success',
-                        'Training definition was uploaded',
+                        'Mission definition was uploaded',
                     );
                     this.fileUploadProgressService.finish();
                     dialogRef.close();
@@ -210,7 +210,7 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
                     this.fileUploadProgressService.finish();
                     this.errorHandler.emitAPIError(
                         err,
-                        'Uploading training definition',
+                        'Uploading mission definition',
                     );
                     dialogRef.close();
                 },
@@ -240,7 +240,7 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
                     this.isLoadingSubject$.next(false);
                     this.errorHandler.emitAPIError(
                         err,
-                        'Fetching training definitions',
+                        'Fetching mission definitions',
                     );
                 },
             ),
@@ -254,8 +254,8 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
             SentinelConfirmationDialogComponent,
             {
                 data: new SentinelConfirmationDialogConfig(
-                    'Delete Training Definition',
-                    `Do you want to delete training definition "${trainingDefinition.title}"?`,
+                    'Delete Mission Definition',
+                    `Do you want to delete mission definition "${trainingDefinition.title}"?`,
                     'Cancel',
                     'Delete',
                 ),
@@ -272,12 +272,12 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
                 () =>
                     this.notificationService.emit(
                         'success',
-                        'Training definition was deleted',
+                        'Mission definition was deleted',
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Deleting training definition',
+                        'Deleting mission definition',
                     ),
             ),
             switchMap(() => this.getAll(this.lastPagination, this.lastFilters)),
@@ -308,12 +308,12 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
                 () =>
                     this.notificationService.emit(
                         'success',
-                        'Training definition was cloned',
+                        'Mission definition was cloned',
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Cloning training definition',
+                        'Cloning mission definition',
                     ),
             ),
             switchMap(() => this.getAll(this.lastPagination, this.lastFilters)),
@@ -328,8 +328,8 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
             SentinelConfirmationDialogComponent,
             {
                 data: new SentinelConfirmationDialogConfig(
-                    'Training Definition State Change',
-                    `Do you want to change state of training definition from "${trainingDefinition.state}" to "${newState}"?`,
+                    'Mission Definition State Change',
+                    `Do you want to change state of mission definition from "${trainingDefinition.state}" to "${newState}"?`,
                     'Cancel',
                     'Change',
                 ),
@@ -348,7 +348,7 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Changing training definition state',
+                        'Changing mission definition state',
                     ),
             ),
         );
@@ -372,7 +372,7 @@ export class TrainingDefinitionService extends CrczpOffsetElementsPaginatedServi
         }
         this.notificationService.emit(
             'success',
-            `Training definition state was changed to ${newState}`,
+            `Mission definition state was changed to ${newState}`,
         );
     }
 }

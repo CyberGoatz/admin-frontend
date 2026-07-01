@@ -1,7 +1,7 @@
 <div>
     <div class="button-container">
         <mat-form-field appearance="fill">
-            <mat-label>Choose Training Level</mat-label>
+            <mat-label>Choose Mission Level</mat-label>
             <mat-select (selectionChange)="onSelectionChange($event)">
                 @for (level of levels; track level) {
                     <mat-option [value]="level.id">

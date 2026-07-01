@@ -109,7 +109,7 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
             {
                 data: new SentinelConfirmationDialogConfig(
                     'Delete Sandbox Instance',
-                    `Do you want to delete sandbox instance and training run of player "${trainingRun?.player?.name}"?`,
+                    `Do you want to delete sandbox instance and mission run of player "${trainingRun?.player?.name}"?`,
                     'Cancel',
                     'Delete',
                 ),
@@ -151,12 +151,12 @@ export class AdaptiveRunConcreteService extends AdaptiveRunService {
                 () =>
                     this.notificationService.emit(
                         'success',
-                        'Deleting of training run started',
+                        'Deleting of mission run started',
                     ),
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Deleting training run',
+                        'Deleting mission run',
                     ),
             ),
         );

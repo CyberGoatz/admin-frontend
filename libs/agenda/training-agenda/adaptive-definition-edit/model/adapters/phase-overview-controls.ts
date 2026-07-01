@@ -43,7 +43,7 @@ export class PhaseOverviewControls {
         return [
             new SentinelControlMenuItem(
                 this.ADD_TRAINING_PHASE_ID,
-                'Training Phase',
+                'Mission Phase',
                 'primary',
                 of(false),
                 defer(() => service.add(AbstractPhaseTypeEnum.Training)),

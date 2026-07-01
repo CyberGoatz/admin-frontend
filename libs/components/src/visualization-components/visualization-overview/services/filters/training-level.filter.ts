@@ -11,7 +11,7 @@ const filterFunction = function(event: TimelineEvent) {
 
 export const trainingLevelFilter = {
     name: 'trainingLevelFilter',
-    labelName: 'Training level',
+    labelName: 'Mission level',
     checked: true,
     filterFunction: filterFunction
 };

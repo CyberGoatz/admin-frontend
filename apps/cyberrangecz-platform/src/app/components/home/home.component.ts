@@ -94,10 +94,10 @@ export class HomeComponent implements OnInit {
     private createParticipateButtons() {
         return [
             new AgendaPortalLink(
-                'Training Run',
+                'Mission Run',
                 !RoleResolver.isTrainingTrainee(this.roles),
                 'run',
-                'Training Run lets you start or resume a training session or view the results of a completed training.',
+                'Mission Run lets you start or resume a mission session or view the results of a completed mission.',
                 'games',
             ),
         ];
@@ -113,10 +113,10 @@ export class HomeComponent implements OnInit {
                 'event_note',
             ),
             new AgendaPortalLink(
-                'Training Definition',
+                'Mission Definition',
                 !RoleResolver.isTrainingDesigner(this.roles),
                 'linear-definition',
-                'Training Definition is the blueprint for trainings. You can manage existing trainings and design new ones.',
+                'Mission Definition is the blueprint for missions. You can manage existing missions and design new ones.',
                 'assignment',
                 HomeComponent.createExpandedControlButtons([
                     'adaptive-definition',
@@ -143,10 +143,10 @@ export class HomeComponent implements OnInit {
                 'donut_large',
             ),
             new AgendaPortalLink(
-                'Training Instance',
+                'Mission Instance',
                 !RoleResolver.isTrainingOrganizer(this.roles),
                 'linear-instance',
-                'You can create training instances required for organizing hands-on training sessions.',
+                'You can create mission instances required for organizing hands-on mission sessions.',
                 'event',
                 HomeComponent.createExpandedControlButtons([
                     'adaptive-instance',

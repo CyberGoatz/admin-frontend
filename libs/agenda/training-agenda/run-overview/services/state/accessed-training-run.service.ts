@@ -54,7 +54,7 @@ export class AccessedTrainingRunService extends CrczpOffsetElementsPaginatedServ
                 (err) => {
                     this.errorHandler.emitAPIError(
                         err,
-                        'Fetching training runs',
+                        'Fetching mission runs',
                     );
                     this.hasErrorSubject$.next(true);
                 },

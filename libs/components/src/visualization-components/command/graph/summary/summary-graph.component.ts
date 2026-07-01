@@ -42,7 +42,7 @@ export class SummaryGraphComponent implements OnInit {
                         (this.error =
                             err.error.api_sub_error &&
                             err.error.status === 'NOT_FOUND'
-                                ? `The summary graph for training instance hasn't been created yet.`
+                                ? `The summary graph for mission instance hasn't been created yet.`
                                 : 'Error occurred please refresh the page.')
                 )
             )

@@ -553,7 +553,7 @@ export class FinalComponent implements OnInit, OnChanges {
                 `translate(${this.barWidth / 2 - 50}, ${this.svgHeight + 75})`,
             )
             .style('fill', '#4c4a4a')
-            .text('training time');
+            .text('mission time');
         /*.style('font-weight', 'bold');*/
     }
 

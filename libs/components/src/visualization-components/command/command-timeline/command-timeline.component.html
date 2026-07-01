@@ -9,7 +9,7 @@
             <mat-option [value]="trainingRun.id">
               <div class="resource-info">
                 <span class="resource-title">{{ trainingRun.player.name }}</span>
-                <span class="resource-subtitle"> (Training Run ID: {{ trainingRun.id }})</span>
+                <span class="resource-subtitle"> (Mission Run ID: {{ trainingRun.id }})</span>
               </div>
             </mat-option>
           }
@@ -55,7 +55,7 @@
         </mgl-timeline>
       </div>
     } @else {
-      <h3 class="no-commands-content">No commands for selected training run present</h3>
+      <h3 class="no-commands-content">No commands for selected mission run present</h3>
     }
   </div>
 }

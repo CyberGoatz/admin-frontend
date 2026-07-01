@@ -61,7 +61,7 @@ export class TrainingRunSummaryService extends CrczpOffsetElementsPaginatedServi
                 error: (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Downloading training instance scores',
+                        'Downloading mission instance scores',
                     ),
             }),
         );

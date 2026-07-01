@@ -22,7 +22,7 @@ const routes: ValidRouterConfig<'run'> = [
                 (m) => m.AdaptiveTrainingRunDetailComponent,
             ),
         data: {
-            breadcrumb: 'Training',
+            breadcrumb: 'Mission',
             title: undefined,
         },
         resolve: {
@@ -37,7 +37,7 @@ const routes: ValidRouterConfig<'run'> = [
                 (m) => m.AdaptiveTrainingRunDetailComponent,
             ),
         data: {
-            breadcrumb: 'Training',
+            breadcrumb: 'Mission',
             title: undefined,
         },
         resolve: {
@@ -52,7 +52,7 @@ const routes: ValidRouterConfig<'run'> = [
                 (m) => m.LinearTrainingRunDetailComponent,
             ),
         data: {
-            breadcrumb: 'Training',
+            breadcrumb: 'Mission',
             title: undefined,
         },
         resolve: {
@@ -67,7 +67,7 @@ const routes: ValidRouterConfig<'run'> = [
                 (m) => m.LinearTrainingRunDetailComponent,
             ),
         data: {
-            breadcrumb: 'Training',
+            breadcrumb: 'Mission',
             title: undefined,
         },
         resolve: {
@@ -83,7 +83,7 @@ const routes: ValidRouterConfig<'run'> = [
             ),
         data: {
             breadcrumb: 'Results',
-            title: 'Training Run Results',
+            title: 'Mission Run Results',
         },
         resolve: {
             [TrainingRun.name]:
@@ -98,7 +98,7 @@ const routes: ValidRouterConfig<'run'> = [
             ),
         data: {
             breadcrumb: 'Results',
-            title: 'Training Run Results',
+            title: 'Mission Run Results',
         },
         resolve: {
             [TrainingRun.name]:

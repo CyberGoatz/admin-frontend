@@ -257,7 +257,7 @@ export class CombinedDiagramComponent implements OnInit, OnChanges {
      * If nothing has been specified, uses a predefined text
      */
     private setTitle(): void {
-        d3.select('#combinedDiagramPlaceholder').select('mat-card-title').text('Training Instance Results');
+        d3.select('#combinedDiagramPlaceholder').select('mat-card-title').text('Mission Instance Results');
     }
 
     /**
@@ -363,7 +363,7 @@ export class CombinedDiagramComponent implements OnInit, OnChanges {
         const xAxes: d3.Axis<string> = d3.axisBottom(
             d3
                 .scaleBand()
-                .domain(this.trainingInstanceStatistics.map((instance) => `Training ${instance.instanceId}`))
+                .domain(this.trainingInstanceStatistics.map((instance) => `Mission ${instance.instanceId}`))
                 .range([0, this.chartSvgWidth])
                 .padding(0.4)
         );
@@ -395,7 +395,7 @@ export class CombinedDiagramComponent implements OnInit, OnChanges {
             '#combinedDiagramChartSvg',
             this.chartSvgWidth / 2,
             this.svgHeight,
-            'Training events',
+            'Mission events',
             this.axesCreationService.getAxisTitleFontSize('#combinedDiagramPlaceholder'),
             'middle'
         );
@@ -650,7 +650,7 @@ export class CombinedDiagramComponent implements OnInit, OnChanges {
         const dataType: string = id.split('_')[0];
         const trainingData: TrainingInstanceStatistics = this.trainingInstanceStatistics[index];
 
-        const tooltipText: string[] = ['Training ' + trainingData.instanceId + '\xa0\xa0\xa0' + trainingData.date];
+        const tooltipText: string[] = ['Mission ' + trainingData.instanceId + '\xa0\xa0\xa0' + trainingData.date];
         if (dataType === 'participants') {
             tooltipText.push('number of');
             tooltipText.push('participants: ' + trainingData.participants.length);

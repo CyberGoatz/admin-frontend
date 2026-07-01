@@ -7,7 +7,7 @@ export class NavConfigFactory {
     static buildNavConfig(user: User): NavAgendaContainerConfig[] {
         return [
             {
-                label: 'Trainings',
+                label: 'Missions',
                 agendas: [
                     {
                         label: 'Definition',

@@ -152,7 +152,7 @@ export class MistakeComponent implements OnInit {
                             return {
                                 id: trainingRun.id,
                                 title: trainingRun.player.name,
-                                subtitle: `Training Run ID: ${trainingRun.id}`,
+                                subtitle: `Mission Run ID: ${trainingRun.id}`,
                             };
                         });
                     }),

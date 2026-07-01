@@ -1,7 +1,7 @@
 <mat-expansion-panel [expanded]="(definitionInfo !== null)" [disabled]="!definitionInfo">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      <span>Adaptive Training Definition</span>
+      <span>Adaptive Mission Definition</span>
     </mat-panel-title>
     <mat-panel-description>
       <mat-icon>info</mat-icon>
@@ -71,7 +71,7 @@
         <h3>Phases</h3>
         @if (definitionInfo.levels.length >= 0) {
           <span class="phases-info">
-            Training definition contains {{ definitionInfo.levels.length }} phase(s)
+            Mission definition contains {{ definitionInfo.levels.length }} phase(s)
           </span>
         }
         <mat-icon>games</mat-icon>

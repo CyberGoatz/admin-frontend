@@ -206,7 +206,7 @@ export class AuthorsAssignService extends SentinelUserAssignService {
                 (err) =>
                     this.errorHandler.emitAPIError(
                         err,
-                        'Deleting authors from training definition',
+                        'Deleting authors from mission definition',
                     ),
             ),
             switchMap(() =>

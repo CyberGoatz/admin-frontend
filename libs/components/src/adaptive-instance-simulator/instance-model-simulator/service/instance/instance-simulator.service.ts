@@ -49,7 +49,7 @@ export class InstanceSimulatorService {
                 (data) => {
                     this.stateSubject$.next(
                         new SimulatorState(
-                            'Training instance data were uploaded',
+                            'Mission instance data were uploaded',
                             SimulatorStateEventTypeEnum.NOTIFICATION_EVENT
                         )
                     );
@@ -63,7 +63,7 @@ export class InstanceSimulatorService {
                     dialogRef.close();
                     this.stateSubject$.next(
                         new SimulatorState(
-                            'Uploading training instance data',
+                            'Uploading mission instance data',
                             SimulatorStateEventTypeEnum.ERROR_EVENT,
                             err
                         )
@@ -112,7 +112,7 @@ export class InstanceSimulatorService {
                     (err) => {
                         this.stateSubject$.next(
                             new SimulatorState(
-                                'Generating training visualization',
+                                'Generating mission visualization',
                                 SimulatorStateEventTypeEnum.ERROR_EVENT,
                                 err
                             )

@@ -20,7 +20,7 @@
                     [owlDateTimeTrigger]="startTimePicker"
                     appearance="outline"
                     class="multi-line-hint"
-                    hintLabel="When trainees can access training runs - Defaults to current time"
+                    hintLabel="When trainees can access mission runs - Defaults to current time"
                 >
                     <mat-label>Start Time</mat-label>
                     <input
@@ -49,7 +49,7 @@
                     [owlDateTimeTrigger]="endTimePicker"
                     appearance="outline"
                     class="multi-line-hint"
-                    hintLabel="Leave empty to allow trainees to access this training indefinitely"
+                    hintLabel="Leave empty to allow trainees to access this mission indefinitely"
                 >
                     <mat-label>End Time</mat-label>
                     <input
@@ -77,8 +77,8 @@
                 <div class="slide-toggle-container">
                     <mat-slide-toggle
                         [matTooltip]="showStepperBar
-                                        ? 'Show Stepper bar to allow trainees to see their progress through levels during training run.'
-                                        : 'Hide Stepper bar to disallow trainees to see their progress through levels during training run.'"
+                                        ? 'Show Stepper bar to allow trainees to see their progress through levels during mission run.'
+                                        : 'Hide Stepper bar to disallow trainees to see their progress through levels during mission run.'"
                         formControlName="showStepperBar">
                         Show Stepper Bar
                     </mat-slide-toggle>
@@ -86,8 +86,8 @@
                     <mat-slide-toggle
                         [checked]="showStepperBar && backwardMode"
                         [matTooltip]="backwardMode
-                                            ? 'Enable Backward Mode to allow trainees move to previous accessed levels during training run.'
-                                            : 'Disable Backward Mode to disallow trainees move to previous accessed levels during training run.'"
+                                            ? 'Enable Backward Mode to allow trainees move to previous accessed levels during mission run.'
+                                            : 'Disable Backward Mode to disallow trainees move to previous accessed levels during mission run.'"
                         formControlName="backwardMode">
                         Backward Mode
                     </mat-slide-toggle>
@@ -174,9 +174,9 @@
                     class="{{isTrainingDefinitionError() ?
                       'resource-select--error' :
                       trainingDefinition.value ? '' : 'training-definition-select--margin '}}"
-                    label="Training Definition"
-                    noResultsLabel="No Training Definitions"
-                    searchPlaceholder="Search Training Definitions">
+                    label="Mission Definition"
+                    noResultsLabel="No Mission Definitions"
+                    searchPlaceholder="Search Mission Definitions">
                     <ng-container [sentinelSelectorSelectedElement]="selectedTrainingDefinition" />
                     <ng-container [sentinelSelectorElement]="trainingDefinitionListElement" />
                 </sentinel-resource-selector>
@@ -189,7 +189,7 @@
                        mat-button
                        [routerLink]="getTrainingDefinitionUrl(trainingDefinition.value.id)"
                     >
-                        View selected training definition
+                        View selected mission definition
                     </a>
                 }
                 <ng-template #selectedTrainingDefinition let-selectedResource>

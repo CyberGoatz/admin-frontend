@@ -165,7 +165,7 @@ export class SankeyVisualizationComponent implements OnInit, OnChanges {
                 } else if (n.phaseOrder === -2) {
                     return 'FINISH';
                 }
-                return 'Training Phase ' + i;
+                return 'Mission Phase ' + i;
             });
     }
 

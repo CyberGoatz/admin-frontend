@@ -45,7 +45,7 @@ export class LevelOverviewControls {
         return [
             new SentinelControlMenuItem(
                 this.ADD_TRAINING_LEVEL_ID,
-                'Training Level',
+                'Mission Level',
                 'primary',
                 of(false),
                 defer(() => service.add(AbstractLevelTypeEnum.Training)),

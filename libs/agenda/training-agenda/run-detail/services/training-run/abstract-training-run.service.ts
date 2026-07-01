@@ -118,7 +118,7 @@ export abstract class AbstractTrainingRunService {
         );
         if (!targetLevel) {
             this.errorHandlerService.emitFrontendErrorNotification(
-                `Level with order ${levelOrder} not found in current training run`,
+                `Level with order ${levelOrder} not found in current mission run`,
             );
         }
         this.displayLevel(targetLevel.id);
@@ -153,7 +153,7 @@ export abstract class AbstractTrainingRunService {
         );
         if (!targetLevel) {
             this.errorHandlerService.emitFrontendErrorNotification(
-                `Level with ID ${levelId} not found in current training run`,
+                `Level with ID ${levelId} not found in current mission run`,
             );
         }
         return targetLevel;
@@ -166,8 +166,8 @@ export abstract class AbstractTrainingRunService {
     private displayLoadingDialog(): MatDialogRef<LoadingDialogComponent> {
         return this.dialog.open(LoadingDialogComponent, {
             data: new LoadingDialogOptions(
-                'Processing training data for visualization',
-                `Please wait while your training data are being processed`,
+                'Processing mission data for visualization',
+                `Please wait while your mission data are being processed`,
             ),
         });
     }
@@ -180,7 +180,7 @@ export abstract class AbstractTrainingRunService {
             this.errorHandlerService.emitFrontendErrorNotification(
                 `Next level with order ${
                     this.runInfo.currentLevel.order + 1
-                } not found in current training run`,
+                } not found in current mission run`,
             );
         }
         this.updateRunInfo({
