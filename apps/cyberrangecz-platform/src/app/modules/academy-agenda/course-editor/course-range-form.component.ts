@@ -83,7 +83,7 @@ const DEFAULT_TIMEZONE =
                 <div formArrayName="labWindows" class="windows">
                     @for (row of windows.controls; track row; let i = $index) {
                         <div class="window-row" [formGroupName]="i">
-                            <mat-form-field subscriptSizing="dynamic">
+                            <mat-form-field subscriptSizing="dynamic" class="window-day">
                                 <mat-label>Day</mat-label>
                                 <mat-select formControlName="weekday">
                                     @for (day of weekdays; track day; let d = $index) {
@@ -99,12 +99,12 @@ const DEFAULT_TIMEZONE =
                                 <mat-label>To</mat-label>
                                 <input matInput type="time" formControlName="end" />
                             </mat-form-field>
-                            <mat-form-field subscriptSizing="dynamic">
+                            <mat-form-field subscriptSizing="dynamic" class="window-zone">
                                 <mat-label>Time zone</mat-label>
                                 <input matInput formControlName="timezone" />
                             </mat-form-field>
                             @if (!readonly()) {
-                                <button mat-icon-button type="button" (click)="removeWindow(i)" aria-label="Remove lab window">
+                                <button mat-icon-button type="button" class="window-remove" (click)="removeWindow(i)" aria-label="Remove lab window">
                                     <mat-icon>close</mat-icon>
                                 </button>
                             }
@@ -133,11 +133,18 @@ const DEFAULT_TIMEZONE =
         </form>
     `,
     styles: `
+        :host {
+            display: block;
+            min-width: 0;
+        }
         .tab-body {
             padding: 1.25rem 0;
             display: grid;
+            // minmax(0, 1fr): a wide row must not widen the whole form past its card.
+            grid-template-columns: minmax(0, 1fr);
             gap: 1rem;
             max-width: 56rem;
+            min-width: 0;
         }
         h3 {
             margin: 0 0 0.25rem;
@@ -145,17 +152,39 @@ const DEFAULT_TIMEZONE =
         }
         .windows {
             display: grid;
-            gap: 0.5rem;
+            gap: 0.75rem;
             margin-bottom: 0.75rem;
         }
+        // Day, From, To and Time zone wrap onto more lines on narrow screens instead of overflowing.
         .window-row {
-            display: grid;
-            grid-template-columns: 10rem 8rem 8rem 1fr auto;
+            display: flex;
+            flex-wrap: wrap;
             gap: 0.5rem;
             align-items: center;
+            min-width: 0;
+        }
+        .window-row .mat-mdc-form-field {
+            flex: 1 1 8rem;
+            min-width: 0;
+        }
+        .window-row .window-day {
+            flex-basis: 9rem;
+        }
+        .window-row .window-zone {
+            flex: 2 1 12rem;
+        }
+        // The 48px touch target is wider than the 40px button; keep it inside the row.
+        .window-row .window-remove {
+            margin: 0 4px;
+        }
+        // Material gives every field a fixed 180px infix; let these shrink with their column.
+        :host ::ng-deep .mat-mdc-form-field-infix {
+            width: auto;
+            min-width: 0;
         }
         .form-actions {
             display: flex;
+            flex-wrap: wrap;
             gap: 0.5rem;
             justify-content: flex-end;
         }
