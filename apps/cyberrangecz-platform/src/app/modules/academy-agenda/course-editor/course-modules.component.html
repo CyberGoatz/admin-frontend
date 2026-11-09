@@ -9,7 +9,7 @@
     </div>
 
     @for (module of course().modules; track module.id; let first = $first; let last = $last) {
-        <section class="academy-panel" [attr.aria-label]="'Module ' + (module.position + 1)">
+        <section class="academy-panel module-card" [attr.aria-label]="'Module ' + (module.position + 1)">
             <div class="module-head">
                 <span class="module-index">{{ module.position + 1 }}</span>
                 <label>
@@ -65,9 +65,6 @@
                                 <th class="num w-attempts">Attempts</th>
                                 <th class="w-required">Required</th>
                                 <th class="w-hints">Hints</th>
-                                @if (!isDraft()) {
-                                    <th class="w-range">Range</th>
-                                }
                                 @if (!readonly()) {
                                     <th class="actions w-actions"><span class="cdk-visually-hidden">Actions</span></th>
                                 }
@@ -76,13 +73,21 @@
                         <tbody>
                             @for (mission of module.missions; track mission.id; let mFirst = $first; let mLast = $last) {
                                 <tr>
-                                    <td>
+                                    <td class="mission-cell">
                                         <strong>{{ mission.title }}</strong>
                                         @if (!mission.sandboxDefinitionId) {
                                             <span class="cell-error">No sandbox definition</span>
                                         }
+                                        @if (!isDraft() && mission.provisioning) {
+                                            <span class="range-state">
+                                                <span [class]="'pill pill-' + mission.provisioning">{{ label(mission.provisioning) }}</span>
+                                                @if (mission.trainingInstanceId) {
+                                                    <span class="academy-muted">Instance {{ mission.trainingInstanceId }}</span>
+                                                }
+                                            </span>
+                                        }
                                     </td>
-                                    <td class="num w-points">
+                                    <td class="num w-points" data-label="Points">
                                         <input
                                             class="inline-input"
                                             type="number"
@@ -93,7 +98,7 @@
                                             (change)="saveMissionNumber(mission, 'points', $any($event.target).value)"
                                         />
                                     </td>
-                                    <td>
+                                    <td data-label="Due">
                                         <input
                                             class="inline-input"
                                             type="datetime-local"
@@ -106,7 +111,7 @@
                                             <span class="secondary">Module due date</span>
                                         }
                                     </td>
-                                    <td class="num w-attempts">
+                                    <td class="num w-attempts" data-label="Attempts">
                                         <input
                                             class="inline-input"
                                             type="number"
@@ -117,7 +122,7 @@
                                             (change)="saveMissionNumber(mission, 'attemptsAllowed', $any($event.target).value)"
                                         />
                                     </td>
-                                    <td>
+                                    <td data-label="Required">
                                         <input
                                             type="checkbox"
                                             [checked]="mission.required"
@@ -126,7 +131,7 @@
                                             (change)="saveMission(mission, { required: $any($event.target).checked })"
                                         />
                                     </td>
-                                    <td>
+                                    <td data-label="Hints">
                                         <select
                                             class="inline-input"
                                             [disabled]="readonly() || busy()"
@@ -138,16 +143,6 @@
                                             }
                                         </select>
                                     </td>
-                                    @if (!isDraft()) {
-                                        <td>
-                                            @if (mission.provisioning) {
-                                                <span [class]="'pill pill-' + mission.provisioning">{{ label(mission.provisioning) }}</span>
-                                            }
-                                            @if (mission.trainingInstanceId) {
-                                                <span class="secondary">Instance {{ mission.trainingInstanceId }}</span>
-                                            }
-                                        </td>
-                                    }
                                     @if (!readonly()) {
                                         <td class="actions">
                                             <button mat-icon-button type="button" [disabled]="mFirst || busy()" (click)="moveMission(module, mission, -1)" aria-label="Move mission up">

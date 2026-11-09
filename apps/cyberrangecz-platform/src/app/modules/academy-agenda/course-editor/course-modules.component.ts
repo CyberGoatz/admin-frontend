@@ -50,10 +50,15 @@ import { MissionPickerData, MissionPickerDialogComponent } from './mission-picke
             padding: 1.25rem 0;
             display: grid;
             gap: 1rem;
+            min-width: 0;
+        }
+        .module-card {
+            container-type: inline-size;
+            min-width: 0;
         }
         .module-head {
             display: grid;
-            grid-template-columns: 2rem minmax(12rem, 1fr) 14rem 14rem auto;
+            grid-template-columns: 2rem minmax(10rem, 1fr) 14.5rem 14.5rem auto;
             gap: 0.75rem;
             align-items: end;
             margin-bottom: 0.75rem;
@@ -74,6 +79,7 @@ import { MissionPickerData, MissionPickerDialogComponent } from './mission-picke
         .add-module input {
             font: inherit;
             width: 100%;
+            min-width: 0;
             box-sizing: border-box;
             padding: 0.375rem 0.5rem;
             border: 1px solid var(--outline-variant);
@@ -86,8 +92,9 @@ import { MissionPickerData, MissionPickerDialogComponent } from './mission-picke
         }
         .module-foot {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 1rem;
+            gap: 0.5rem 1rem;
             margin-top: 0.5rem;
         }
         .add-module {
@@ -95,6 +102,13 @@ import { MissionPickerData, MissionPickerDialogComponent } from './mission-picke
             gap: 0.5rem;
             align-items: center;
             max-width: 32rem;
+        }
+        .range-state {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.375rem;
+            margin-top: 0.25rem;
         }
         table.missions {
             table-layout: fixed;
@@ -108,9 +122,67 @@ import { MissionPickerData, MissionPickerDialogComponent } from './mission-picke
             width: 190px;
         }
         .w-hints,
-        .w-range,
         .w-actions {
             width: 120px;
+        }
+        /* Narrow cards: dates under the title, and each mission as a block of labeled fields. */
+        @container (max-width: 860px) {
+            .module-head {
+                grid-template-columns: 2rem minmax(0, 1fr) minmax(0, 1fr);
+            }
+            .module-head > label:first-of-type {
+                grid-column: 2 / -1;
+            }
+            .module-head > label:nth-of-type(2) {
+                grid-column: 2;
+            }
+            .module-head > span:last-child {
+                grid-column: 1 / -1;
+                justify-self: end;
+            }
+            table.missions,
+            table.missions tbody,
+            table.missions tr,
+            table.missions td {
+                display: block;
+                width: auto;
+            }
+            table.missions thead {
+                display: none;
+            }
+            table.missions tr {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+                gap: 0.5rem 0.75rem;
+                padding: 0.75rem;
+                border-bottom: 1px solid var(--outline-variant);
+            }
+            table.missions tr:last-child {
+                border-bottom: none;
+            }
+            table.missions td {
+                border: none;
+                padding: 0;
+                text-align: left;
+            }
+            table.missions td[data-label]::before {
+                content: attr(data-label);
+                display: block;
+                font-size: 0.75rem;
+                color: var(--on-surface-variant);
+                margin-bottom: 0.125rem;
+            }
+            table.missions input.inline-input,
+            table.missions select.inline-input {
+                min-width: 0;
+            }
+            table.missions td.mission-cell,
+            table.missions td.actions {
+                grid-column: 1 / -1;
+            }
+            table.missions td.actions {
+                text-align: right;
+            }
         }
     `,
 })

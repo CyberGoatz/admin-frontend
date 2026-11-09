@@ -10,6 +10,8 @@ export type CourseStatus = 'draft' | 'published' | 'archived';
 export type EnrollmentStatus = 'invited' | 'active' | 'dropped' | 'completed';
 export type HintPolicy = 'allowed' | 'penalized' | 'disabled';
 export type StaffRole = 'owner' | 'instructor' | 'ta';
+export type MissionState = 'locked' | 'not_started' | 'in_progress' | 'finished';
+export type GradebookPreset = 'default' | 'canvas' | 'blackboard' | 'moodle';
 
 export interface Branding {
     productName: string;
@@ -314,4 +316,40 @@ export interface AcademyError {
     statusCode: number;
     message: string;
     code?: string;
+}
+
+export interface ProgressCell {
+    missionId: string;
+    state: MissionState;
+    runId?: number | null;
+    score?: number | null;
+    maxScore?: number | null;
+    hintsUsed?: number | null;
+    timeSpentSeconds?: number | null;
+    finishedAt?: string | null;
+    late: boolean;
+}
+
+export interface ProgressMission {
+    id: string;
+    title: string;
+    moduleTitle: string;
+    dueAt?: string | null;
+    points: number;
+}
+
+export interface ProgressStudent {
+    enrollmentId: string;
+    rollNumber: string;
+    displayName: string;
+    section?: string | null;
+    /** 0 to 1 over required missions. */
+    completion: number;
+    cells: ProgressCell[];
+}
+
+export interface ProgressGrid {
+    missions: ProgressMission[];
+    students: ProgressStudent[];
+    engineUnavailable?: boolean;
 }

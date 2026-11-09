@@ -1,6 +1,7 @@
 import {
     HttpErrorResponse,
     HttpEvent,
+    HttpHeaders,
     HttpRequest,
     HttpResponse,
 } from '@angular/common/http';
@@ -12,6 +13,8 @@ import {
     Enrollment,
     Member,
     MemberRole,
+    ProgressCell,
+    ProgressGrid,
     PublishChecklist,
     RosterImport,
     RosterImportDetail,
@@ -131,6 +134,9 @@ export class AcademyMockBackend {
         add('POST', `${c}/publish`, this.publishCourse);
         add('POST', `${c}/archive`, this.archiveCourse);
         add('GET', `${c}/publish-checklist`, this.getChecklist);
+        add('GET', `${c}/progress`, this.getProgress);
+        add('POST', `${c}/grades/freeze`, this.freezeGrades);
+        add('GET', `${c}/grades.csv`, this.gradesCsv);
         add('POST', `${c}/staff`, this.addStaff);
         add('DELETE', `${c}/staff/(?<memberId>[0-9a-f-]+)`, this.removeStaff);
         add('POST', `${c}/enrollments/(?<enrollmentId>[0-9a-f-]+)/resend-invite`, this.resendEnrollmentInvite);
@@ -341,7 +347,118 @@ export class AcademyMockBackend {
         return this.save(req, this.withCounts(course));
     }
 
-    private getChecklist(req: HttpRequest<unknown>, p: Params) {
+    /** Deterministic progress: past-due missions mostly finished, the current one partly. */
+    private buildProgress(course: Course): ProgressGrid {
+        const now = Date.now();
+        const missions = course.modules.flatMap((m) =>
+            m.missions.map((x) => ({
+                id: x.id,
+                title: x.title,
+                moduleTitle: m.title,
+                dueAt: x.dueAt ?? m.dueAt ?? null,
+                points: x.points ?? 100,
+                unlocksAt: m.unlocksAt ?? null,
+                required: x.required !== false,
+            })),
+        );
+        const enrollments = (this.state.enrollments[course.id] ?? []).filter((e) => e.status !== 'dropped');
+        const students = enrollments.map((e) => {
+            const cells: ProgressCell[] = missions.map((m) => {
+                const roll = hash(`${e.id}:${m.id}`);
+                const due = m.dueAt ? Date.parse(m.dueAt) : NaN;
+                const unlocked = !m.unlocksAt || Date.parse(m.unlocksAt) <= now;
+                const pastDue = !isNaN(due) && due < now;
+                const maxScore = 100;
+                if (!unlocked) {
+                    return { missionId: m.id, state: 'locked', late: false };
+                }
+                const finishedShare = pastDue ? 0.82 : 0.45;
+                if (roll < finishedShare) {
+                    const late = pastDue && roll > finishedShare - 0.08;
+                    return {
+                        missionId: m.id,
+                        state: 'finished',
+                        runId: 4000 + Math.floor(roll * 1000),
+                        score: Math.round(55 + (roll / finishedShare) * 45),
+                        maxScore,
+                        hintsUsed: Math.floor(roll * 4),
+                        timeSpentSeconds: 1200 + Math.floor(roll * 2400),
+                        finishedAt: new Date((isNaN(due) ? now : due) - (late ? -86400000 : 86400000)).toISOString(),
+                        late,
+                    };
+                }
+                if (roll < finishedShare + 0.08) {
+                    return { missionId: m.id, state: 'in_progress', runId: 5000 + Math.floor(roll * 1000), maxScore, late: false };
+                }
+                return { missionId: m.id, state: 'not_started', late: pastDue };
+            });
+            const required = missions.filter((m) => m.required);
+            const done = cells.filter((c, i) => missions[i].required && c.state === 'finished').length;
+            return {
+                enrollmentId: e.id,
+                rollNumber: e.member.rollNumber ?? '',
+                displayName: e.member.displayName,
+                section: e.section ?? null,
+                completion: required.length ? done / required.length : 0,
+                cells,
+            };
+        });
+        return {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            missions: missions.map(({ unlocksAt, required, ...m }) => m),
+            students,
+            engineUnavailable: false,
+        };
+    }
+
+    private getProgress(req: HttpRequest<unknown>, p: Params) {
+        const course = this.course(p);
+        return course ? this.ok(req, this.buildProgress(course)) : this.error(req, 404, 'Course not found');
+    }
+
+    private freezeGrades(req: HttpRequest<unknown>, p: Params) {
+        const course = this.course(p);
+        if (!course) {
+            return this.error(req, 404, 'Course not found');
+        }
+        const grid = this.buildProgress(course);
+        const ids = (req.body as { missionIds?: string[] })?.missionIds;
+        const now = Date.now();
+        const chosen = grid.missions.filter((m) => (ids?.length ? ids.includes(m.id) : !!m.dueAt && Date.parse(m.dueAt) < now));
+        const frozen = chosen.length * grid.students.length;
+        return this.ok(req, { frozen });
+    }
+
+    private gradesCsv(req: HttpRequest<unknown>, p: Params, q: URLSearchParams) {
+        const course = this.course(p);
+        if (!course) {
+            return this.error(req, 404, 'Course not found');
+        }
+        const grid = this.buildProgress(course);
+        const preset = q.get('preset') ?? 'default';
+        const idHeader = preset === 'canvas' ? 'SIS User ID' : preset === 'moodle' ? 'ID number' : 'roll_number';
+        const header = [idHeader, 'name', 'section', ...grid.missions.map((m) => `"${m.title} (${m.points})"`), 'total'];
+        const lines = grid.students.map((s) => {
+            const points = s.cells.map((c, i) =>
+                c.state === 'finished' && c.maxScore ? Math.round((grid.missions[i].points * (c.score ?? 0)) / c.maxScore) : 0,
+            );
+            return [s.rollNumber, `"${s.displayName}"`, s.section ?? '', ...points, points.reduce((a, b) => a + b, 0)].join(',');
+        });
+        const body = new Blob([[header.join(','), ...lines].join('\n') + '\n'], { type: 'text/csv' });
+        return of(
+            new HttpResponse({
+                status: 200,
+                body,
+                url: req.url,
+                headers: new HttpHeaders({
+                    'Content-Type': 'text/csv',
+                    'Content-Disposition': `attachment; filename="${course.code}-grades-${preset}.csv"`,
+                }),
+            }),
+        ).pipe(delay(LATENCY_MS));
+    }
+
+        private getChecklist(req: HttpRequest<unknown>, p: Params) {
         const course = this.course(p);
         return course ? this.ok(req, this.checklist(course)) : this.error(req, 404, 'Course not found');
     }
@@ -1115,6 +1232,16 @@ function reorder<T extends { position?: number }>(list: T[], item: T, position: 
     without.splice(Math.max(0, Math.min(position, without.length)), 0, item);
     without.forEach((x, i) => (x.position = i));
     list.splice(0, list.length, ...without);
+}
+
+/** Stable pseudo-random value in [0, 1) for a string. */
+function hash(text: string): number {
+    let h = 2166136261;
+    for (let i = 0; i < text.length; i++) {
+        h ^= text.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+    }
+    return ((h >>> 0) % 10000) / 10000;
 }
 
 function uuid(): string {

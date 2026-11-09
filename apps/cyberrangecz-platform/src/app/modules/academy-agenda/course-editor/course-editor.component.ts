@@ -28,8 +28,9 @@ import { CourseEnrollmentsComponent } from './course-enrollments.component';
 import { CourseModulesComponent } from './course-modules.component';
 import { CourseRangeFormComponent } from './course-range-form.component';
 import { CourseStaffComponent } from './course-staff.component';
+import { CourseProgressComponent } from './course-progress.component';
 
-const TABS = ['details', 'modules', 'range', 'enrollments'] as const;
+const TABS = ['details', 'modules', 'range', 'enrollments', 'progress'] as const;
 const PROVISIONING_POLL_MS = 3000;
 
 export const CHECKLIST_LABELS: Record<ChecklistKey, string> = {
@@ -48,8 +49,13 @@ export const CHECKLIST_LABELS: Record<ChecklistKey, string> = {
     selector: 'crczp-academy-course-editor',
     templateUrl: './course-editor.component.html',
     styles: `
+        .course-heading {
+            flex: 1 1 18rem;
+            min-width: 0;
+        }
         .course-title {
             margin: 0;
+            overflow-wrap: anywhere;
             font-size: 1.375rem;
             font-weight: 600;
         }
@@ -72,6 +78,7 @@ export const CHECKLIST_LABELS: Record<ChecklistKey, string> = {
         CourseRangeFormComponent,
         CourseEnrollmentsComponent,
         CourseStaffComponent,
+        CourseProgressComponent,
     ],
 })
 export class CourseEditorComponent {
@@ -96,6 +103,9 @@ export class CourseEditorComponent {
             this.course()?.status !== 'archived',
     );
     readonly isDraft = computed(() => this.course()?.status === 'draft');
+    readonly canManageGrades = computed(() =>
+        ['professor', 'tenant_admin'].includes(this.member()?.role ?? ''),
+    );
     /** Pools are only provisioned after publish; drafts report `pending` too. */
     readonly provisioning = computed(
         () =>

@@ -1,0 +1,129 @@
+<div class="tab-body">
+    <div class="academy-toolbar">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Search</mat-label>
+            <input matInput [ngModel]="query()" (ngModelChange)="query.set($event)" placeholder="Name or roll number" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Section</mat-label>
+            <mat-select [ngModel]="section()" (ngModelChange)="section.set($event)">
+                <mat-option value="">All sections</mat-option>
+                @for (s of sections(); track s) {
+                    <mat-option [value]="s">{{ s }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        <span class="spacer"></span>
+        @if (canManageGrades()) {
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="preset">
+                <mat-label>Gradebook format</mat-label>
+                <mat-select [ngModel]="preset()" (ngModelChange)="preset.set($event)">
+                    @for (p of presets; track p.value) {
+                        <mat-option [value]="p.value">{{ p.label }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+            <button mat-stroked-button type="button" [disabled]="exporting()" (click)="exportGrades()">
+                <mat-icon>download</mat-icon>
+                Export gradebook
+            </button>
+            <button
+                mat-flat-button
+                color="primary"
+                type="button"
+                [disabled]="freezing() || !grid()"
+                [matTooltip]="pastDueMissions().length + ' missions are past due'"
+                (click)="freeze()"
+            >
+                <mat-icon>lock</mat-icon>
+                Freeze grades
+            </button>
+        }
+    </div>
+
+    @if (grid()?.engineUnavailable) {
+        <div class="academy-note" role="status">
+            The mission engine did not answer, so run states and scores may be missing or out of date. Try again in a minute.
+        </div>
+    }
+    @if (error()) {
+        <div class="academy-error">{{ error() }}</div>
+    }
+
+    @if (grid(); as g) {
+        <div class="academy-counts">
+            <div class="count"><strong>{{ summary().students }}</strong><span>Students</span></div>
+            <div class="count"><strong>{{ summary().completion }}%</strong><span>Average completion</span></div>
+            <div class="count"><strong>{{ summary().inProgress }}</strong><span>Runs in progress</span></div>
+            <div class="count"><strong>{{ summary().late }}</strong><span>Late or missing</span></div>
+        </div>
+
+        @if (g.missions.length === 0) {
+            <div class="academy-empty">This course has no missions yet.</div>
+        } @else if (students().length === 0) {
+            <div class="academy-empty">No students match these filters.</div>
+        } @else {
+            <div class="grid-wrap">
+                <table class="progress-grid">
+                    <thead>
+                        <tr>
+                            <th class="sticky student-col">Student</th>
+                            <th class="num completion-col">Done</th>
+                            @for (m of g.missions; track m.id; let i = $index) {
+                                <th class="mission-col" [title]="m.moduleTitle + ': ' + m.title">
+                                    <span class="module">{{ m.moduleTitle }}</span>
+                                    <span class="title">{{ m.title }}</span>
+                                    <span class="meta">
+                                        {{ m.points }} pts
+                                        @if (m.dueAt) {
+                                            · due {{ formatDate(m.dueAt) }}
+                                        }
+                                    </span>
+                                    <span class="meta">
+                                        {{ missionStats()[i].finishedPct }}% finished
+                                        @if (missionStats()[i].late) {
+                                            · {{ missionStats()[i].late }} late or missing
+                                        }
+                                    </span>
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (s of students(); track s.enrollmentId) {
+                            <tr>
+                                <th class="sticky student-col" scope="row">
+                                    <span class="roll">{{ s.rollNumber }}</span>
+                                    <span class="name">{{ s.displayName }}</span>
+                                    @if (s.section) {
+                                        <span class="section">{{ s.section }}</span>
+                                    }
+                                </th>
+                                <td class="num completion-col">
+                                    {{ (s.completion * 100).toFixed(0) }}%
+                                    <span class="bar"><span [style.width.%]="s.completion * 100"></span></span>
+                                </td>
+                                @for (cell of s.cells; track cell.missionId; let i = $index) {
+                                    <td [class]="cellClass(cell, i)" [title]="cellTitle(s, i)">
+                                        {{ cellLabel(cell, i) }}
+                                        @if (cell.late && cell.state === 'finished') {
+                                            <span class="late-tag">Late</span>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <p class="legend academy-small academy-muted">
+                <span class="swatch state-finished"></span> Finished, score of max
+                <span class="swatch state-in_progress"></span> In progress
+                <span class="swatch state-not_started late"></span> Missing after the due date
+                <span class="swatch state-locked"></span> Locked
+            </p>
+        }
+    } @else if (loading()) {
+        <div class="academy-muted">Loading progress</div>
+    }
+</div>

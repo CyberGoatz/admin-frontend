@@ -1,4 +1,4 @@
-import { HttpClient, HttpContext, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpParams, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PortalConfig } from '@crczp/utils';
 import { SKIPPED_ERROR_CODES } from '@crczp/api-common';
@@ -17,6 +17,7 @@ import {
     CourseSummary,
     Enrollment,
     EnrollmentStatus,
+    GradebookPreset,
     LibraryMission,
     Member,
     MemberInvite,
@@ -26,6 +27,7 @@ import {
     MissionInput,
     MissionPatch,
     ModuleInput,
+    ProgressGrid,
     PublishChecklist,
     RosterCommitRequest,
     RosterImport,
@@ -247,7 +249,30 @@ export class AcademyApiService {
         );
     }
 
-    resendEnrollmentInvite(courseId: string, enrollmentId: string): Observable<void> {
+    // progress and grades
+
+    progress(courseId: string): Observable<ProgressGrid> {
+        return this.http.get<ProgressGrid>(`${this.course(courseId)}/progress`);
+    }
+
+    /** Freezes grade snapshots; without missionIds the server freezes every mission past due. */
+    freezeGrades(courseId: string, missionIds?: string[]): Observable<{ frozen: number }> {
+        return this.http.post<{ frozen: number }>(
+            `${this.course(courseId)}/grades/freeze`,
+            missionIds?.length ? { missionIds } : {},
+        );
+    }
+
+    /** Gradebook CSV as a blob, so the bearer token interceptor applies. */
+    gradesCsv(courseId: string, preset: GradebookPreset): Observable<HttpResponse<Blob>> {
+        return this.http.get(`${this.course(courseId)}/grades.csv`, {
+            params: toParams({ preset }),
+            responseType: 'blob',
+            observe: 'response',
+        });
+    }
+
+        resendEnrollmentInvite(courseId: string, enrollmentId: string): Observable<void> {
         return this.http.post<void>(
             `${this.course(courseId)}/enrollments/${enrollmentId}/resend-invite`,
             {},

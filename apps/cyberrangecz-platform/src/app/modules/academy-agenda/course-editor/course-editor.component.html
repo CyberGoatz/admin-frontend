@@ -5,7 +5,7 @@
 
     @if (course(); as course) {
         <div class="academy-toolbar course-header">
-            <div>
+            <div class="course-heading">
                 <h2 class="course-title">
                     {{ course.code }}
                     <span class="academy-muted">{{ course.title }}</span>
@@ -22,7 +22,6 @@
             @if (provisioning()) {
                 <span class="pill pill-pending">Preparing sandbox pools</span>
             }
-            <span class="spacer"></span>
             @if (canEdit()) {
                 <a mat-stroked-button [routerLink]="['/academy', 'courses', course.id, 'roster']">
                     <mat-icon>upload_file</mat-icon>
@@ -105,6 +104,15 @@
                         [courseId]="course.id"
                         [readonly]="!canEdit()"
                         (changed)="reload()"
+                    />
+                </ng-template>
+            </mat-tab>
+            <mat-tab label="Progress">
+                <ng-template matTabContent>
+                    <crczp-academy-course-progress
+                        [courseId]="course.id"
+                        [courseCode]="course.code"
+                        [canManageGrades]="canManageGrades()"
                     />
                 </ng-template>
             </mat-tab>

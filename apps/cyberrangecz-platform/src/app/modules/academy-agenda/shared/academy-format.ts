@@ -112,3 +112,19 @@ export function downloadText(text: string, fileName: string, type = 'text/csv'):
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+/** Saves a blob as a file in the browser. */
+export function downloadBlob(blob: Blob, fileName: string): void {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/** File name from a Content-Disposition header, if any. */
+export function fileNameFromDisposition(header: string | null, fallback: string): string {
+    const match = header ? /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(header) : null;
+    return match ? decodeURIComponent(match[1]) : fallback;
+}
