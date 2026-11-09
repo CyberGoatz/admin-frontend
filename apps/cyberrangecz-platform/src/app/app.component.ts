@@ -62,7 +62,8 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.authService.activeUser$,
             this.tenantContext.member$,
         ]).pipe(
-            filter(([user, member]) => user != null || member != null),
+            // On campus hosts wait for /me so the native menus never flash.
+            filter(([user, member]) => member !== undefined && (user != null || member != null)),
             map(([user, member]) =>
                 Utils.NavBar.buildNav(
                     NavConfigFactory.buildNavConfig(user, member),

@@ -96,10 +96,13 @@ export class CourseEditorComponent {
             this.course()?.status !== 'archived',
     );
     readonly isDraft = computed(() => this.course()?.status === 'draft');
-    readonly provisioning = computed(() =>
-        (this.course()?.modules ?? [])
-            .flatMap((m) => m.missions)
-            .some((m) => m.provisioning === 'pending'),
+    /** Pools are only provisioned after publish; drafts report `pending` too. */
+    readonly provisioning = computed(
+        () =>
+            this.course()?.status === 'published' &&
+            this.course()
+                .modules.flatMap((m) => m.missions)
+                .some((m) => m.provisioning === 'pending'),
     );
 
     private readonly api = inject(AcademyApiService);

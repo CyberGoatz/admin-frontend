@@ -5,9 +5,12 @@ import { Observable, of } from 'rxjs';
 import {
     catchError,
     distinctUntilChanged,
+    filter,
     map,
     shareReplay,
+    startWith,
     switchMap,
+    take,
 } from 'rxjs/operators';
 import { AcademyApiService } from './academy-api.service';
 import { ACADEMY_RUNTIME } from './academy-runtime';
@@ -29,20 +32,40 @@ export class TenantContextService {
     /** True on a campus tenant's staff host. */
     readonly isCampus = this.runtime.tenant !== null;
 
-    /** Emits the caller's membership, or null when signed out or not a member. */
-    readonly member$: Observable<Member | null> = this.signedInKey$().pipe(
+    /**
+     * The caller's membership: `undefined` while `/me` is loading, `null` when
+     * signed out or not a member. Replays the latest value.
+     */
+    readonly member$: Observable<Member | null | undefined> = this.signedInKey$().pipe(
         switchMap((key) =>
             key && this.isCampus
-                ? this.api.me().pipe(catchError(() => of(null)))
+                ? this.api.me().pipe(
+                      catchError(() => of(null)),
+                      startWith(undefined),
+                  )
                 : of(null),
         ),
         shareReplay({ bufferSize: 1, refCount: false }),
     );
 
-    readonly member = toSignal(this.member$, { initialValue: null });
+    readonly member = toSignal(this.member$, { initialValue: undefined });
+
+    /**
+     * Membership for the signed-in session: waits for a session and for `/me`
+     * to answer, so guards never read the value cached before login.
+     */
+    sessionMember$(): Observable<Member | null> {
+        return this.signedInKey$().pipe(
+            filter((key) => !!key),
+            take(1),
+            switchMap(() => this.member$),
+            filter((m): m is Member | null => m !== undefined),
+            take(1),
+        );
+    }
 
     hasRole$(roles: MemberRole[]): Observable<boolean> {
-        return this.member$.pipe(
+        return this.sessionMember$().pipe(
             map((m) => !!m && m.status === 'active' && roles.includes(m.role)),
         );
     }

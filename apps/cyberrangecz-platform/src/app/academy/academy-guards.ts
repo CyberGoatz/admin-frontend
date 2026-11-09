@@ -39,8 +39,7 @@ export function academyRoleGuard(roles: MemberRole[]): CanActivateFn {
                 if (!ok) {
                     return of(router.createUrlTree(['login']));
                 }
-                return tenant.member$.pipe(
-                    take(1),
+                return tenant.sessionMember$().pipe(
                     map((member) => {
                         if (!member || member.status !== 'active') {
                             return router.createUrlTree(['access-denied']);

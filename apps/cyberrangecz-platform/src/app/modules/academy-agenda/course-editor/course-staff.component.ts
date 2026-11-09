@@ -17,6 +17,7 @@ import { forkJoin } from 'rxjs';
 import { academyErrorMessage, AcademyApiService } from '../../../academy/academy-api.service';
 import { Course, CourseStaffInput, Member } from '../../../academy/academy.model';
 import { STAFF_ROLE_LABELS } from '../shared/academy-format';
+import { TenantContextService } from '../../../academy/tenant-context.service';
 
 /** Course staff (`POST/DELETE /courses/{id}/staff`). The owner cannot be removed here. */
 @Component({
@@ -100,9 +101,15 @@ export class CourseStaffComponent implements OnInit {
 
     private readonly api = inject(AcademyApiService);
     private readonly snack = inject(MatSnackBar);
+    private readonly member = inject(TenantContextService).member;
 
     ngOnInit(): void {
         if (this.readonly()) {
+            return;
+        }
+        // Only tenant admins may list staff members (professors get 403).
+        if (this.member()?.role !== 'tenant_admin') {
+            this.listUnavailable.set(true);
             return;
         }
         forkJoin([

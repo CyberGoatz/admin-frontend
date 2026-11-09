@@ -30,12 +30,17 @@ type Step = 'upload' | 'preview' | 'committing' | 'done';
 
 const POLL_MS = 1000;
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
+/** Canonical fields as the server names them (camelCase) or the mock does (snake_case). */
 const FIELD_LABELS: Record<string, string> = {
     email: 'email',
     first_name: 'first name',
+    firstName: 'first name',
     last_name: 'last name',
+    lastName: 'last name',
     name: 'full name (split on the last space)',
+    fullName: 'full name (split on the last space)',
     roll_number: 'roll number',
+    rollNumber: 'roll number',
     section: 'section',
     role: 'role',
 };

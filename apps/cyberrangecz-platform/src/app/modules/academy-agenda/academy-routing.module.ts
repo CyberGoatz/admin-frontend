@@ -1,7 +1,7 @@
 import { inject, NgModule } from '@angular/core';
 import { CanActivateFn, Router, RouterModule } from '@angular/router';
 import { ValidRouterConfig } from '@crczp/routing-commons';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { academyRoleGuard } from '../../academy/academy-guards';
 import { TenantContextService } from '../../academy/tenant-context.service';
 import { MembersComponent } from './members/members.component';
@@ -13,8 +13,7 @@ import { MissionLibraryComponent } from './library/mission-library.component';
 /** Tenant admins start on Members, everyone else on Courses. */
 const academyLandingGuard: CanActivateFn = () => {
     const router = inject(Router);
-    return inject(TenantContextService).member$.pipe(
-        take(1),
+    return inject(TenantContextService).sessionMember$().pipe(
         map((member) =>
             router.createUrlTree([
                 'academy',
