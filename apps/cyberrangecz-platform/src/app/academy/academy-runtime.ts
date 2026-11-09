@@ -132,6 +132,9 @@ export async function loadRuntimeConfig(
                 faviconUrl: undefined,
                 ...(adminConfig.branding ?? {}),
             };
+            // Tenants without uploaded artwork get the product name set in type.
+            branding.markUrl ||= textMark(branding.productName, branding.colorPrimary, branding.colorOnPrimary);
+            branding.logoUrl ||= textLogo(branding.productName, branding.colorPrimary);
             runtime = {
                 tenant: adminConfig.tenant,
                 title: adminConfig.title || branding.productName,
@@ -315,4 +318,33 @@ function mix(a: string, b: string, amount: number): string {
     };
     const rgb = (channel(16) << 16) | (channel(8) << 8) | channel(0);
     return `#${rgb.toString(16).padStart(6, '0')}`;
+}
+
+const escapeXml = (text: string) =>
+    text.replace(/[<>&"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+const svgUrl = (svg: string) => `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+
+/** Square mark with the product's first letter, for favicon and sign-in. */
+function textMark(name: string, background: string, foreground: string): string {
+    const letter = escapeXml((name.trim().charAt(0) || '?').toUpperCase());
+    return svgUrl(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">` +
+            `<rect width="64" height="64" rx="8" fill="${normalizeHex(background) ?? '#545f72'}"/>` +
+            `<text x="32" y="44" font-family="Inter,Arial,sans-serif" font-size="34" font-weight="700" fill="${normalizeHex(foreground) ?? '#ffffff'}" text-anchor="middle">${letter}</text>` +
+            `</svg>`,
+    );
+}
+
+/** Product name in type, stacked over two lines for the 140px nav rail. */
+function textLogo(name: string, color: string): string {
+    const words = name.trim().split(/\s+/);
+    const first = escapeXml(words[0] ?? '');
+    const rest = escapeXml(words.slice(1).join(' '));
+    return svgUrl(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="110" viewBox="0 0 200 110">` +
+            `<text x="100" y="48" font-family="Inter,Arial,sans-serif" font-size="40" font-weight="700" fill="${normalizeHex(color) ?? '#191c1d'}" text-anchor="middle">${first}</text>` +
+            `<text x="100" y="88" font-family="Inter,Arial,sans-serif" font-size="26" font-weight="500" fill="#191c1d" text-anchor="middle">${rest}</text>` +
+            `</svg>`,
+    );
 }
