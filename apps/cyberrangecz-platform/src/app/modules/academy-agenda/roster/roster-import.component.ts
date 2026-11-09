@@ -90,7 +90,10 @@ export class RosterImportComponent {
     readonly processed = computed(() => {
         const s = this.importState();
         // enrolled counts new and newly enrolled rows; updated rows were already enrolled
-        return s ? s.enrolled + s.updated + s.skipped + s.failed : 0;
+        if (!s) {
+            return 0;
+        }
+        return s.processed ?? s.enrolled + s.updated + s.skipped + s.failed;
     });
     readonly percent = computed(() => {
         const s = this.importState();

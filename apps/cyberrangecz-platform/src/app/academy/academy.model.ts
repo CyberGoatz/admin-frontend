@@ -36,6 +36,8 @@ export interface AdminConfigProvider {
 export interface AdminConfig {
     tenant?: string;
     title?: string;
+    /** IANA zone for dates and lab windows. */
+    timezone?: string;
     branding?: Branding;
     authConfig?: {
         providers?: AdminConfigProvider[];
@@ -105,12 +107,17 @@ export interface CourseInput {
     term: string;
     section?: string | null;
     description?: string;
-    startsAt?: string;
-    endsAt?: string;
+    startsAt?: string | null;
+    endsAt?: string | null;
     leaderboardEnabled?: boolean;
 }
 
 export type CoursePatch = Partial<CourseInput>;
+
+export interface CourseStaffInput {
+    memberId: string;
+    role: 'instructor' | 'ta';
+}
 
 export interface CourseStaff {
     memberId: string;
@@ -270,6 +277,8 @@ export interface RosterImport {
     fileName: string;
     status: RosterImportStatus;
     rowCount: number;
+    /** Rows handled so far while committing. */
+    processed?: number;
     created: number;
     updated: number;
     enrolled: number;

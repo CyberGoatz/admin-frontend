@@ -27,6 +27,7 @@ import { CourseDetailsFormComponent } from './course-details-form.component';
 import { CourseEnrollmentsComponent } from './course-enrollments.component';
 import { CourseModulesComponent } from './course-modules.component';
 import { CourseRangeFormComponent } from './course-range-form.component';
+import { CourseStaffComponent } from './course-staff.component';
 
 const TABS = ['details', 'modules', 'range', 'enrollments'] as const;
 const PROVISIONING_POLL_MS = 3000;
@@ -70,6 +71,7 @@ export const CHECKLIST_LABELS: Record<ChecklistKey, string> = {
         CourseModulesComponent,
         CourseRangeFormComponent,
         CourseEnrollmentsComponent,
+        CourseStaffComponent,
     ],
 })
 export class CourseEditorComponent {
@@ -79,6 +81,9 @@ export class CourseEditorComponent {
 
     readonly course = signal<Course | null>(null);
     readonly checklist = signal<PublishChecklist | null>(null);
+    /** True when the checklist came from a refused publish rather than the read-only check. */
+    readonly publishRefused = signal(false);
+    readonly checklistDismissed = signal(false);
     readonly error = signal<string | null>(null);
     readonly publishing = signal(false);
     readonly tabIndex = signal(0);
@@ -124,6 +129,7 @@ export class CourseEditorComponent {
                 this.course.set(course);
                 this.error.set(null);
                 this.schedulePoll();
+                this.loadChecklist();
             },
             error: (err) => this.error.set(academyErrorMessage(err, 'The course could not be loaded.')),
         });
@@ -131,7 +137,31 @@ export class CourseEditorComponent {
 
     onCourseSaved(course: Course): void {
         this.course.set(course);
-        this.checklist.set(null);
+        this.loadChecklist();
+    }
+
+    dismissChecklist(): void {
+        this.checklistDismissed.set(true);
+        this.publishRefused.set(false);
+    }
+
+    /** Read-only readiness check for drafts; silently absent on older backends. */
+    private loadChecklist(): void {
+        if (this.course()?.status !== 'draft') {
+            this.checklist.set(null);
+            return;
+        }
+        this.api.publishChecklist(this.courseId).subscribe({
+            next: (list) => {
+                this.checklist.set(list);
+                this.publishRefused.set(false);
+            },
+            error: () => {
+                if (!this.publishRefused()) {
+                    this.checklist.set(null);
+                }
+            },
+        });
     }
 
     onTabChange(index: number): void {
@@ -160,6 +190,8 @@ export class CourseEditorComponent {
                 this.publishing.set(false);
                 if (err?.status === 422 && err.error?.items) {
                     this.checklist.set(err.error as PublishChecklist);
+                    this.publishRefused.set(true);
+                    this.checklistDismissed.set(false);
                 } else {
                     this.snack.open(academyErrorMessage(err, 'The course was not published.'), 'Close');
                 }

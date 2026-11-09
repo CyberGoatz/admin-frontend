@@ -11,6 +11,8 @@ import {
     CourseModule,
     CoursePatch,
     CourseRange,
+    CourseStaff,
+    CourseStaffInput,
     CourseStatus,
     CourseSummary,
     Enrollment,
@@ -24,6 +26,7 @@ import {
     MissionInput,
     MissionPatch,
     ModuleInput,
+    PublishChecklist,
     RosterCommitRequest,
     RosterImport,
     RosterImportDetail,
@@ -66,9 +69,11 @@ export class AcademyApiService {
         return this.http.get<Member>(`${this.base}/me`, this.skip(401, 403, 404));
     }
 
-    listMembers(query: MemberQuery = {}): Observable<MemberPage> {
+    /** `quiet` suppresses the global notice when the caller may not list members (403). */
+    listMembers(query: MemberQuery = {}, quiet = false): Observable<MemberPage> {
         return this.http.get<MemberPage>(`${this.base}/members`, {
             params: toParams(query),
+            ...(quiet ? this.skip(403) : {}),
         });
     }
 
@@ -123,6 +128,25 @@ export class AcademyApiService {
     /** 422 carries a PublishChecklist body. */
     publishCourse(courseId: string): Observable<Course> {
         return this.http.post<Course>(`${this.course(courseId)}/publish`, {}, this.skip(422));
+    }
+
+    /** Read-only readiness check; the same items a failed publish returns. */
+    publishChecklist(courseId: string): Observable<PublishChecklist> {
+        return this.http.get<PublishChecklist>(
+            `${this.course(courseId)}/publish-checklist`,
+            this.skip(404, 405, 501),
+        );
+    }
+
+    addStaff(courseId: string, input: CourseStaffInput): Observable<CourseStaff[] | CourseStaff> {
+        return this.http.post<CourseStaff[] | CourseStaff>(`${this.course(courseId)}/staff`, input, this.skip(409));
+    }
+
+    removeStaff(courseId: string, memberId: string): Observable<void> {
+        return this.http.delete<void>(`${this.course(courseId)}/staff`, {
+            body: { memberId },
+            ...this.skip(409),
+        });
     }
 
     archiveCourse(courseId: string): Observable<Course> {
@@ -222,6 +246,14 @@ export class AcademyApiService {
         return this.http.post<Enrollment>(
             `${this.course(courseId)}/enrollments`,
             row,
+            this.skip(409),
+        );
+    }
+
+    resendEnrollmentInvite(courseId: string, enrollmentId: string): Observable<void> {
+        return this.http.post<void>(
+            `${this.course(courseId)}/enrollments/${enrollmentId}/resend-invite`,
+            {},
             this.skip(409),
         );
     }

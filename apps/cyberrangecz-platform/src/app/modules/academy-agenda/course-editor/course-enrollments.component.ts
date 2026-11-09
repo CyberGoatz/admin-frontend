@@ -117,6 +117,9 @@ import { AddStudentDialogComponent } from './add-student-dialog.component';
                                     <td>{{ formatDate(e.enrolledAt) }}</td>
                                     @if (!readonly()) {
                                         <td class="actions">
+                                            @if (e.status !== 'dropped' && e.member.status === 'invited') {
+                                                <button mat-button type="button" [disabled]="busy() === e.id" (click)="resend(e)">Resend invite</button>
+                                            }
                                             @if (e.status === 'dropped') {
                                                 <button mat-button type="button" [disabled]="busy() === e.id" (click)="setStatus(e, e.member.status === 'active' ? 'active' : 'invited')">Restore</button>
                                             } @else {
@@ -230,7 +233,21 @@ export class CourseEnrollmentsComponent implements OnInit {
             });
     }
 
-    setStatus(enrollment: Enrollment, status: EnrollmentStatus): void {
+    resend(enrollment: Enrollment): void {
+        this.busy.set(enrollment.id);
+        this.api.resendEnrollmentInvite(this.courseId(), enrollment.id).subscribe({
+            next: () => {
+                this.busy.set(null);
+                this.snack.open(`Invite sent again to ${enrollment.member.email}`, undefined, { duration: 3000 });
+            },
+            error: (err) => {
+                this.busy.set(null);
+                this.snack.open(academyErrorMessage(err, 'The invite could not be sent.'), 'Close');
+            },
+        });
+    }
+
+        setStatus(enrollment: Enrollment, status: EnrollmentStatus): void {
         this.busy.set(enrollment.id);
         this.api.updateEnrollment(this.courseId(), enrollment.id, { status }).subscribe({
             next: (updated) => {

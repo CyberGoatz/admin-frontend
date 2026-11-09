@@ -130,6 +130,10 @@ export class AcademyMockBackend {
         add('DELETE', c, this.deleteCourse);
         add('POST', `${c}/publish`, this.publishCourse);
         add('POST', `${c}/archive`, this.archiveCourse);
+        add('GET', `${c}/publish-checklist`, this.getChecklist);
+        add('POST', `${c}/staff`, this.addStaff);
+        add('DELETE', `${c}/staff`, this.removeStaff);
+        add('POST', `${c}/enrollments/(?<enrollmentId>[0-9a-f-]+)/resend-invite`, this.resendEnrollmentInvite);
         add('GET', `${c}/range`, this.getRange);
         add('PUT', `${c}/range`, this.putRange);
         add('POST', `${c}/modules`, this.addModule);
@@ -335,6 +339,53 @@ export class AcademyMockBackend {
         });
         this.state.publishedAt[course.id] = Date.now();
         return this.save(req, this.withCounts(course));
+    }
+
+    private getChecklist(req: HttpRequest<unknown>, p: Params) {
+        const course = this.course(p);
+        return course ? this.ok(req, this.checklist(course)) : this.error(req, 404, 'Course not found');
+    }
+
+    private addStaff(req: HttpRequest<unknown>, p: Params) {
+        const course = this.course(p);
+        if (!course) {
+            return this.error(req, 404, 'Course not found');
+        }
+        const body = req.body as { memberId: string; role: 'instructor' | 'ta' };
+        const member = this.state.members.find((m) => m.id === body.memberId);
+        if (!member || !['professor', 'ta', 'tenant_admin'].includes(member.role)) {
+            return this.error(req, 400, 'Only staff can be added to a course');
+        }
+        if (course.staff.some((s) => s.memberId === member.id)) {
+            return this.error(req, 409, 'Already on this course', 'already_staff');
+        }
+        course.staff.push({ memberId: member.id, displayName: member.displayName, role: body.role });
+        return this.save(req, course.staff, 201);
+    }
+
+    private removeStaff(req: HttpRequest<unknown>, p: Params) {
+        const course = this.course(p);
+        if (!course) {
+            return this.error(req, 404, 'Course not found');
+        }
+        const memberId = (req.body as { memberId: string })?.memberId;
+        const entry = course.staff.find((s) => s.memberId === memberId);
+        if (entry?.role === 'owner') {
+            return this.error(req, 409, 'The course owner cannot be removed', 'owner');
+        }
+        course.staff = course.staff.filter((s) => s.memberId !== memberId);
+        return this.save(req, null, 204);
+    }
+
+    private resendEnrollmentInvite(req: HttpRequest<unknown>, p: Params) {
+        const enrollment = (this.state.enrollments[p['courseId']] ?? []).find((e) => e.id === p['enrollmentId']);
+        if (!enrollment) {
+            return this.error(req, 404, 'Enrollment not found');
+        }
+        if (enrollment.member.status !== 'invited') {
+            return this.error(req, 409, 'This person has already signed in', 'already_active');
+        }
+        return this.save(req, null, 204);
     }
 
     private archiveCourse(req: HttpRequest<unknown>, p: Params) {
@@ -673,6 +724,7 @@ export class AcademyMockBackend {
         detail.enrolled = count('create') + count('enroll');
         detail.skipped = count('unchanged');
         detail.failed = count('error');
+        detail.processed = processed.length;
         if (fraction >= 1) {
             this.apply(pending);
             detail.status = 'completed';

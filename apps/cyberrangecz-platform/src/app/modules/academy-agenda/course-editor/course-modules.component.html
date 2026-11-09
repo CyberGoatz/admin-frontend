@@ -150,10 +150,10 @@
                                     }
                                     @if (!readonly()) {
                                         <td class="actions">
-                                            <button mat-icon-button type="button" [disabled]="mFirst || busy()" (click)="moveMission(mission, -1)" aria-label="Move mission up">
+                                            <button mat-icon-button type="button" [disabled]="mFirst || busy()" (click)="moveMission(module, mission, -1)" aria-label="Move mission up">
                                                 <mat-icon>arrow_upward</mat-icon>
                                             </button>
-                                            <button mat-icon-button type="button" [disabled]="mLast || busy()" (click)="moveMission(mission, 1)" aria-label="Move mission down">
+                                            <button mat-icon-button type="button" [disabled]="mLast || busy()" (click)="moveMission(module, mission, 1)" aria-label="Move mission down">
                                                 <mat-icon>arrow_downward</mat-icon>
                                             </button>
                                             <button mat-icon-button type="button" [disabled]="busy()" (click)="removeMission(mission)" aria-label="Remove mission">

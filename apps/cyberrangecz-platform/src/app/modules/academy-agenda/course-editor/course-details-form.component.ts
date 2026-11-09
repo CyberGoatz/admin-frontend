@@ -159,8 +159,8 @@ export class CourseDetailsFormComponent {
                 term: v.term.trim(),
                 section: v.section.trim() || null,
                 description: v.description,
-                startsAt: fromDateInput(v.startsAt) ?? undefined,
-                endsAt: fromDateInput(v.endsAt) ?? undefined,
+                startsAt: fromDateInput(v.startsAt),
+                endsAt: fromDateInput(v.endsAt),
                 leaderboardEnabled: v.leaderboardEnabled,
             })
             .subscribe({

@@ -52,6 +52,7 @@ export function mockAdminConfig(): AdminConfig {
     return {
         tenant: 'vit',
         title: 'VIT Cyber Range Admin',
+        timezone: 'Asia/Kolkata',
         branding: MOCK_BRANDING,
         authConfig: {
             providers: [

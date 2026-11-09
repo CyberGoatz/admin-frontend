@@ -172,8 +172,24 @@ export class CourseModulesComponent {
         }
     }
 
+    /**
+     * Swaps a module with its neighbour. The server does not shift siblings,
+     * so both modules get an explicit position.
+     */
     moveModule(module: CourseModule, delta: number): void {
-        this.run(this.api.updateModule(this.course().id, module.id, { position: module.position + delta }));
+        const list = this.course().modules;
+        const from = list.indexOf(module);
+        const other = list[from + delta];
+        if (!other) {
+            return;
+        }
+        const courseId = this.course().id;
+        this.run(
+            concat(
+                this.api.updateModule(courseId, module.id, { position: from + delta }),
+                this.api.updateModule(courseId, other.id, { position: from }),
+            ).pipe(toArray()),
+        );
     }
 
     deleteModule(module: CourseModule): void {
@@ -235,8 +251,20 @@ export class CourseModulesComponent {
         }
     }
 
-    moveMission(mission: CourseMission, delta: number): void {
-        this.saveMission(mission, { position: (mission.position ?? 0) + delta });
+    /** Swaps a mission with its neighbour, sending both positions explicitly. */
+    moveMission(module: CourseModule, mission: CourseMission, delta: number): void {
+        const from = module.missions.indexOf(mission);
+        const other = module.missions[from + delta];
+        if (!other) {
+            return;
+        }
+        const courseId = this.course().id;
+        this.run(
+            concat(
+                this.api.updateMission(courseId, mission.id, { position: from + delta }),
+                this.api.updateMission(courseId, other.id, { position: from }),
+            ).pipe(toArray()),
+        );
     }
 
     removeMission(mission: CourseMission): void {

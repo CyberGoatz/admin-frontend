@@ -18,9 +18,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { academyErrorMessage, AcademyApiService } from '../../../academy/academy-api.service';
 import { CourseRange, LabWindow } from '../../../academy/academy.model';
+import { getAcademyRuntime } from '../../../academy/academy-runtime';
 import { fromDateTimeInput, toDateTimeInput, WEEKDAYS } from '../shared/academy-format';
 
-const DEFAULT_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata';
+/** Tenant zone from admin-config, else the browser's. */
+const DEFAULT_TIMEZONE =
+    getAcademyRuntime().timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
 /** Range settings (`PUT /courses/{id}/range`): pool size, VM profile, idle timeout, lab windows. */
 @Component({

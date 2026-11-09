@@ -21,6 +21,8 @@ export interface AcademyRuntime {
     branding: Branding;
     /** True when the academy API is served by the in-browser mock. */
     mock: boolean;
+    /** Tenant IANA time zone for dates and lab windows, when known. */
+    timezone?: string;
 }
 
 /** Keys added to config.json for campus deployments. */
@@ -28,6 +30,8 @@ interface AcademyConfigSection {
     academy?: {
         /** `campus` turns on the admin-config lookup at bootstrap. */
         tenancyMode?: 'public' | 'campus';
+        /** `false` keeps the dev mock off even when `?academyMock=1` was set before. */
+        mock?: boolean;
     };
     /** Optional default branding for hosts without a tenant. */
     branding?: Partial<Branding>;
@@ -105,6 +109,9 @@ export async function loadRuntimeConfig(
     mock: boolean,
 ): Promise<void> {
     const config: RawConfig = await fetch(configUrl).then((r) => r.json());
+    if (config.academy?.mock === false) {
+        mock = false;
+    }
     const defaults: Branding = { ...DEFAULT_BRANDING, ...(config.branding ?? {}) };
     runtime = {
         tenant: null,
@@ -130,6 +137,7 @@ export async function loadRuntimeConfig(
                 title: adminConfig.title || branding.productName,
                 branding,
                 mock,
+                timezone: adminConfig.timezone,
             };
             mergeAuthProviders(config, adminConfig, branding);
         }
