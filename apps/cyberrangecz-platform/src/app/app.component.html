@@ -7,10 +7,12 @@
                       [notificationsRoute]="notificationRoute"
                       [user]="authService.activeUser$ | async"
                       [version]="version"
-                      logoSrc="./assets/logo/logo-black.svg">
+                      [logoSrc]="logoSrc">
         <div role="toolbar">
             @if (authService.activeUser$ | async) {
                 <span class="username">{{ (authService.activeUser$ | async).nameWithAcademicTitles }}</span>
+            } @else if (tenantContext.member(); as member) {
+                <span class="username">{{ member.displayName }}</span>
             }
         </div>
         @if (title$ | async; as title) {

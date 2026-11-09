@@ -8,6 +8,7 @@ import { AgendaMenuItem } from '../../model/agenda-menu-item';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PortalAgendaContainerComponent } from './portal-agenda-container/portal-agenda-container.component';
 import { ValidPath } from '@crczp/routing-commons';
+import { getAcademyRuntime } from '../../academy/academy-runtime';
 
 /**
  * Main component of homepage (portal) page. Portal page is a main crossroad of possible sub pages. Only those matching with user
@@ -20,6 +21,7 @@ import { ValidPath } from '@crczp/routing-commons';
     imports: [PortalAgendaContainerComponent],
 })
 export class HomeComponent implements OnInit {
+    readonly portalTitle = `${getAcademyRuntime().title} Portal`;
     elevated: string;
     roles: UserRole[];
     portalAgendaContainers: PortalAgendaContainer[] = [];

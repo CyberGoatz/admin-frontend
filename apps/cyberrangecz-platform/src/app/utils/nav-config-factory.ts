@@ -2,9 +2,81 @@ import { User } from '@sentinel/auth';
 import { RoleResolver } from './role-resolver';
 import { NavAgendaContainerConfig } from '@crczp/utils';
 import { ValidPathPrefix } from '@crczp/routing-commons';
+import { Member } from '../academy/academy.model';
 
 export class NavConfigFactory {
-    static buildNavConfig(user: User): NavAgendaContainerConfig[] {
+    /**
+     * @param user signed-in engine user (null in the academy mock without a session)
+     * @param member the caller's tenant membership on a campus host, otherwise null
+     */
+    static buildNavConfig(
+        user: User | null,
+        member: Member | null = null,
+    ): NavAgendaContainerConfig[] {
+        if (member) {
+            return NavConfigFactory.buildAcademyNavConfig(user, member);
+        }
+        if (!user) {
+            return [];
+        }
+        return NavConfigFactory.buildPlatformNavConfig(user);
+    }
+
+    /**
+     * Tenant staff see the academy menu. Native Pool, Sandbox, Images,
+     * User/Group/Microservice, Tracks and adaptive menus stay hidden: those
+     * objects are global and are managed by backend-cybergoatz for tenants.
+     */
+    static buildAcademyNavConfig(
+        user: User | null,
+        member: Member,
+    ): NavAgendaContainerConfig[] {
+        const roles = user?.roles ?? [];
+        const isAdmin = member.role === 'tenant_admin';
+        const isProfessor = member.role === 'professor';
+        return [
+            {
+                label: 'Academy',
+                agendas: [
+                    {
+                        label: 'Members',
+                        path: 'academy/members' satisfies ValidPathPrefix,
+                        canActivate: () => isAdmin,
+                    },
+                    {
+                        label: 'Courses',
+                        path: 'academy/courses' satisfies ValidPathPrefix,
+                    },
+                    {
+                        label: 'Mission library',
+                        path: 'academy/library' satisfies ValidPathPrefix,
+                        canActivate: () => isAdmin || isProfessor,
+                    },
+                ],
+            },
+            {
+                label: 'Missions',
+                agendas: [
+                    {
+                        label: 'My missions',
+                        path: 'linear-definition' satisfies ValidPathPrefix,
+                        canActivate: () =>
+                            isProfessor &&
+                            RoleResolver.isTrainingDesigner(roles),
+                    },
+                    {
+                        label: 'Instances',
+                        path: 'linear-instance' satisfies ValidPathPrefix,
+                        canActivate: () =>
+                            isProfessor &&
+                            RoleResolver.isTrainingOrganizer(roles),
+                    },
+                ],
+            },
+        ];
+    }
+
+    static buildPlatformNavConfig(user: User): NavAgendaContainerConfig[] {
         return [
             {
                 label: 'Missions',
@@ -68,19 +140,19 @@ export class NavConfigFactory {
                         label: 'Definition',
                         path: 'sandbox-definition' satisfies ValidPathPrefix,
                         canActivate: () =>
-                            RoleResolver.isAdaptiveTrainingDesigner(user.roles),
+                            RoleResolver.isSandboxDesigner(user.roles),
                     },
                     {
                         label: 'Pool',
                         path: 'pool' satisfies ValidPathPrefix,
                         canActivate: () =>
-                            RoleResolver.isTrainingOrganizer(user.roles),
+                            RoleResolver.isSandboxOrganizer(user.roles),
                     },
                     {
                         label: 'Images',
                         path: 'sandbox-image' satisfies ValidPathPrefix,
                         canActivate: () =>
-                            RoleResolver.isTrainingOrganizer(user.roles),
+                            RoleResolver.isSandboxOrganizer(user.roles),
                     },
                 ],
             },

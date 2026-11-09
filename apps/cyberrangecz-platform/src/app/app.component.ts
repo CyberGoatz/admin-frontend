@@ -2,8 +2,9 @@ import { AfterViewInit, Component, inject, OnInit, signal } from '@angular/core'
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SentinelAuthService } from '@sentinel/auth';
 import { AgendaContainer } from '@sentinel/layout';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { TenantContextService } from './academy/tenant-context.service';
 import { NavConfigFactory } from './utils/nav-config-factory';
 import { PortalDynamicEnvironment } from './portal-dynamic-environment';
 
@@ -40,6 +41,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     hideSidebar = signal<boolean>(false);
     protected readonly loadingService = inject(LoadingService);
     protected readonly authService = inject(SentinelAuthService);
+    protected readonly tenantContext = inject(TenantContextService);
+    /** Tenant logo on campus hosts, the CyberGoatz logo otherwise. */
+    protected readonly logoSrc =
+        this.tenantContext.runtime.branding.logoUrl ||
+        this.tenantContext.runtime.branding.markUrl;
     private readonly router = inject(Router);
     private readonly activatedRoute = inject(ActivatedRoute);
 
@@ -52,10 +58,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.title$ = this.getTitleFromRouter();
         this.subtitle$ = this.getSubtitleFromRouter();
-        this.agendaContainers$ = this.authService.activeUser$.pipe(
-            filter((user) => user != null),
-            map((user) =>
-                Utils.NavBar.buildNav(NavConfigFactory.buildNavConfig(user)),
+        this.agendaContainers$ = combineLatest([
+            this.authService.activeUser$,
+            this.tenantContext.member$,
+        ]).pipe(
+            filter(([user, member]) => user != null || member != null),
+            map(([user, member]) =>
+                Utils.NavBar.buildNav(
+                    NavConfigFactory.buildNavConfig(user, member),
+                ),
             ),
         );
 

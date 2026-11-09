@@ -1,0 +1,102 @@
+<div class="academy-page">
+    @if (error()) {
+        <div class="academy-error">{{ error() }}</div>
+    }
+
+    @if (course(); as course) {
+        <div class="academy-toolbar course-header">
+            <div>
+                <h2 class="course-title">
+                    {{ course.code }}
+                    <span class="academy-muted">{{ course.title }}</span>
+                </h2>
+                <div class="academy-muted academy-small">
+                    {{ course.term }}@if (course.section) {, section {{ course.section }}}
+                    · {{ course.missionCount }} missions · {{ course.enrolledCount }} enrolled
+                    @if (course.startsAt) {
+                        · {{ formatDate(course.startsAt) }} to {{ formatDate(course.endsAt) }}
+                    }
+                </div>
+            </div>
+            <span [class]="'pill pill-' + course.status">{{ label(course.status) }}</span>
+            @if (provisioning()) {
+                <span class="pill pill-pending">Preparing sandbox pools</span>
+            }
+            <span class="spacer"></span>
+            @if (canEdit()) {
+                <a mat-stroked-button [routerLink]="['/academy', 'courses', course.id, 'roster']">
+                    <mat-icon>upload_file</mat-icon>
+                    Upload roster
+                </a>
+                @if (isDraft()) {
+                    <button mat-button color="warn" type="button" (click)="remove()">Delete</button>
+                    <button mat-flat-button color="primary" type="button" [disabled]="publishing()" (click)="publish()">
+                        <mat-icon>rocket_launch</mat-icon>
+                        Publish
+                    </button>
+                } @else if (course.status === 'published') {
+                    <button mat-stroked-button type="button" (click)="archive()">Archive</button>
+                }
+            }
+        </div>
+
+        @if (checklist(); as list) {
+            <section class="academy-panel" aria-live="polite">
+                <div class="academy-toolbar">
+                    <strong>This course cannot be published yet</strong>
+                    <span class="spacer"></span>
+                    <button mat-button type="button" (click)="checklist.set(null)">Dismiss</button>
+                </div>
+                <ul class="academy-checklist">
+                    @for (item of list.items; track item.key) {
+                        <li>
+                            <mat-icon [class]="item.ok ? 'ok' : 'fail'">{{ item.ok ? 'check_circle' : 'cancel' }}</mat-icon>
+                            <strong>{{ checklistLabels[item.key] || label(item.key) }}</strong>
+                            <span [class.academy-muted]="item.ok">{{ item.message }}</span>
+                        </li>
+                    }
+                </ul>
+            </section>
+        }
+
+        <mat-tab-group
+            [selectedIndex]="tabIndex()"
+            (selectedIndexChange)="onTabChange($event)"
+            animationDuration="0ms"
+            mat-stretch-tabs="false"
+        >
+            <mat-tab label="Details">
+                <crczp-academy-course-details-form
+                    [course]="course"
+                    [readonly]="!canEdit()"
+                    (saved)="onCourseSaved($event)"
+                />
+            </mat-tab>
+            <mat-tab label="Modules and missions">
+                <crczp-academy-course-modules
+                    [course]="course"
+                    [readonly]="!canEdit()"
+                    (changed)="reload()"
+                />
+            </mat-tab>
+            <mat-tab label="Range">
+                <crczp-academy-course-range-form
+                    [courseId]="course.id"
+                    [range]="course.range"
+                    [enrolledCount]="course.enrolledCount"
+                    [readonly]="!canEdit()"
+                    (saved)="reload()"
+                />
+            </mat-tab>
+            <mat-tab label="Enrollments">
+                <ng-template matTabContent>
+                    <crczp-academy-course-enrollments
+                        [courseId]="course.id"
+                        [readonly]="!canEdit()"
+                        (changed)="reload()"
+                    />
+                </ng-template>
+            </mat-tab>
+        </mat-tab-group>
+    }
+</div>

@@ -9,9 +9,14 @@ import { environment } from './environments/environment';
 import {
     APP_CONFIG,
     appConfigProvider,
-    SentinelBootstrapper,
     SentinelConfig,
 } from '@sentinel/common/dynamic-env';
+import { bootstrapApplication } from '@angular/platform-browser';
+import {
+    loadRuntimeConfig,
+    readAcademyMockFlag,
+} from './app/academy/academy-runtime';
+import { academyMockInterceptor } from './app/academy/mock/academy-mock.interceptor';
 import { AppComponent } from './app/app.component';
 import {
     BrowserAnimationsModule,
@@ -93,8 +98,21 @@ if (environment.production) {
     enableProdMode();
 }
 
-SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
-    providers: [
+// Loads config.json, applies the tenant's auth clients and branding for this
+// host (GET /academy/public/admin-config), then starts Angular.
+loadRuntimeConfig(
+    'assets/config.json',
+    readAcademyMockFlag(environment.production),
+)
+    .then(() =>
+        bootstrapApplication(AppComponent, {
+            providers: buildProviders(),
+        }),
+    )
+    .catch((err) => console.error('Error bootstrapping application:', err));
+
+function buildProviders() {
+    return [
         importProvidersFrom(BrowserAnimationsModule),
         provideAnimations(),
         provideNativeDateAdapter(),
@@ -124,6 +142,7 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
                 loadingInterceptor,
                 errorLogInterceptor,
                 withHttpCacheInterceptor(),
+                academyMockInterceptor,
             ]),
         ),
         {
@@ -145,5 +164,5 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         }),
         provideHttpCache(withLocalStorage()),
         provideRouter(APP_ROUTES),
-    ],
-}).catch((err) => console.error('Error bootstrapping application:', err));
+    ];
+}

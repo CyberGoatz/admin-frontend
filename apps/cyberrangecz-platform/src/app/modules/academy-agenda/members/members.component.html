@@ -1,0 +1,114 @@
+<div class="academy-page">
+    <div class="academy-toolbar">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Search</mat-label>
+            <input matInput [(ngModel)]="query.q" (ngModelChange)="load(true)" placeholder="Name, email or roll number" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Role</mat-label>
+            <mat-select [(ngModel)]="query.role" (selectionChange)="load(true)">
+                <mat-option [value]="undefined">All roles</mat-option>
+                @for (role of roles; track role) {
+                    <mat-option [value]="role">{{ roleLabels[role] }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="query.status" (selectionChange)="load(true)">
+                <mat-option [value]="undefined">All statuses</mat-option>
+                @for (status of statuses; track status) {
+                    <mat-option [value]="status">{{ label(status) }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        <span class="spacer"></span>
+        <button mat-flat-button color="primary" type="button" (click)="invite()">
+            <mat-icon>person_add</mat-icon>
+            Invite staff
+        </button>
+    </div>
+
+    @if (error()) {
+        <div class="academy-error">{{ error() }}</div>
+    }
+
+    @if (!loading() && members().length === 0) {
+        <div class="academy-empty">No members match these filters.</div>
+    } @else {
+        <div class="academy-table-wrap">
+            <table class="academy-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Department</th>
+                        <th>Invited</th>
+                        <th>Signed in</th>
+                        <th class="actions"><span class="cdk-visually-hidden">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (member of members(); track member.id) {
+                        <tr>
+                            <td>
+                                {{ member.displayName }}
+                                <span class="secondary">{{ member.email }}</span>
+                                @if (member.rollNumber) {
+                                    <span class="secondary">{{ member.rollNumber }}</span>
+                                }
+                            </td>
+                            <td>
+                                @if (member.role === 'student' || isSelf(member)) {
+                                    {{ roleLabels[member.role] }}
+                                } @else {
+                                    <select
+                                        class="inline-input role-select"
+                                        [attr.aria-label]="'Role of ' + member.displayName"
+                                        [disabled]="busy() === member.id"
+                                        [value]="member.role"
+                                        (change)="setRole(member, $any($event.target).value)"
+                                    >
+                                        @for (role of staffRoles; track role) {
+                                            <option [value]="role" [selected]="role === member.role">{{ roleLabels[role] }}</option>
+                                        }
+                                    </select>
+                                }
+                            </td>
+                            <td><span [class]="'pill pill-' + member.status">{{ label(member.status) }}</span></td>
+                            <td>{{ member.department }}</td>
+                            <td>{{ formatDate(member.invitedAt) }}</td>
+                            <td>{{ formatDate(member.activatedAt) }}</td>
+                            <td class="actions">
+                                @if (member.status === 'invited') {
+                                    <button mat-button type="button" [disabled]="busy() === member.id" (click)="resend(member)">
+                                        Resend invite
+                                    </button>
+                                }
+                                @if (!isSelf(member)) {
+                                    @if (member.status === 'suspended') {
+                                        <button mat-button type="button" [disabled]="busy() === member.id" (click)="setStatus(member, 'active')">
+                                            Reactivate
+                                        </button>
+                                    } @else {
+                                        <button mat-button color="warn" type="button" [disabled]="busy() === member.id" (click)="setStatus(member, 'suspended')">
+                                            Suspend
+                                        </button>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <mat-paginator
+            [length]="total()"
+            [pageIndex]="query.page"
+            [pageSize]="query.size"
+            [pageSizeOptions]="[25, 50, 100]"
+            (page)="onPage($event)"
+        />
+    }
+</div>

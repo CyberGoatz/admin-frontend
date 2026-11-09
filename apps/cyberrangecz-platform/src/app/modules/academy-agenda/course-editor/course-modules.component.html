@@ -1,0 +1,201 @@
+<div class="tab-body">
+    <div class="academy-toolbar">
+        <span class="academy-muted">
+            {{ course().modules.length }} modules · {{ course().missionCount }} missions · {{ totalPoints() }} points
+        </span>
+        @if (!isDraft()) {
+            <span class="academy-muted academy-small">Published: missions cannot be swapped for another definition.</span>
+        }
+    </div>
+
+    @for (module of course().modules; track module.id; let first = $first; let last = $last) {
+        <section class="academy-panel" [attr.aria-label]="'Module ' + (module.position + 1)">
+            <div class="module-head">
+                <span class="module-index">{{ module.position + 1 }}</span>
+                <label>
+                    <span class="field-label">Module title</span>
+                    <input
+                        class="module-title"
+                        [value]="module.title"
+                        [disabled]="readonly() || busy()"
+                        (change)="saveModule(module, { title: $any($event.target).value.trim() })"
+                    />
+                </label>
+                <label>
+                    <span class="field-label">Unlocks</span>
+                    <input
+                        type="datetime-local"
+                        [value]="toDateTimeInput(module.unlocksAt)"
+                        [disabled]="readonly() || busy()"
+                        (change)="saveModuleDate(module, 'unlocksAt', $any($event.target).value)"
+                    />
+                </label>
+                <label>
+                    <span class="field-label">Due</span>
+                    <input
+                        type="datetime-local"
+                        [value]="toDateTimeInput(module.dueAt)"
+                        [disabled]="readonly() || busy()"
+                        (change)="saveModuleDate(module, 'dueAt', $any($event.target).value)"
+                    />
+                </label>
+                @if (!readonly()) {
+                    <span>
+                        <button mat-icon-button type="button" matTooltip="Move up" [disabled]="first || busy()" (click)="moveModule(module, -1)" aria-label="Move module up">
+                            <mat-icon>arrow_upward</mat-icon>
+                        </button>
+                        <button mat-icon-button type="button" matTooltip="Move down" [disabled]="last || busy()" (click)="moveModule(module, 1)" aria-label="Move module down">
+                            <mat-icon>arrow_downward</mat-icon>
+                        </button>
+                        <button mat-icon-button type="button" matTooltip="Delete module" [disabled]="busy()" (click)="deleteModule(module)" aria-label="Delete module">
+                            <mat-icon>delete_outline</mat-icon>
+                        </button>
+                    </span>
+                }
+            </div>
+
+            @if (module.missions.length) {
+                <div class="academy-table-wrap">
+                    <table class="academy-table missions">
+                        <thead>
+                            <tr>
+                                <th>Mission</th>
+                                <th class="num w-points">Points</th>
+                                <th class="w-due">Due</th>
+                                <th class="num w-attempts">Attempts</th>
+                                <th class="w-required">Required</th>
+                                <th class="w-hints">Hints</th>
+                                @if (!isDraft()) {
+                                    <th class="w-range">Range</th>
+                                }
+                                @if (!readonly()) {
+                                    <th class="actions w-actions"><span class="cdk-visually-hidden">Actions</span></th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (mission of module.missions; track mission.id; let mFirst = $first; let mLast = $last) {
+                                <tr>
+                                    <td>
+                                        <strong>{{ mission.title }}</strong>
+                                        @if (!mission.sandboxDefinitionId) {
+                                            <span class="cell-error">No sandbox definition</span>
+                                        }
+                                    </td>
+                                    <td class="num w-points">
+                                        <input
+                                            class="inline-input"
+                                            type="number"
+                                            min="0"
+                                            [value]="mission.points"
+                                            [disabled]="readonly() || busy()"
+                                            [attr.aria-label]="'Points for ' + mission.title"
+                                            (change)="saveMissionNumber(mission, 'points', $any($event.target).value)"
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            class="inline-input"
+                                            type="datetime-local"
+                                            [value]="toDateTimeInput(mission.dueAt)"
+                                            [disabled]="readonly() || busy()"
+                                            [attr.aria-label]="'Due date for ' + mission.title"
+                                            (change)="saveMissionDue(mission, $any($event.target).value)"
+                                        />
+                                        @if (!mission.dueAt) {
+                                            <span class="secondary">Module due date</span>
+                                        }
+                                    </td>
+                                    <td class="num w-attempts">
+                                        <input
+                                            class="inline-input"
+                                            type="number"
+                                            min="1"
+                                            [value]="mission.attemptsAllowed"
+                                            [disabled]="readonly() || busy()"
+                                            [attr.aria-label]="'Attempts for ' + mission.title"
+                                            (change)="saveMissionNumber(mission, 'attemptsAllowed', $any($event.target).value)"
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            [checked]="mission.required"
+                                            [disabled]="readonly() || busy()"
+                                            [attr.aria-label]="'Required: ' + mission.title"
+                                            (change)="saveMission(mission, { required: $any($event.target).checked })"
+                                        />
+                                    </td>
+                                    <td>
+                                        <select
+                                            class="inline-input"
+                                            [disabled]="readonly() || busy()"
+                                            [attr.aria-label]="'Hint policy for ' + mission.title"
+                                            (change)="saveMission(mission, { hintPolicy: $any($event.target).value })"
+                                        >
+                                            @for (policy of hintPolicies; track policy) {
+                                                <option [value]="policy" [selected]="policy === mission.hintPolicy">{{ hintLabels[policy] }}</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    @if (!isDraft()) {
+                                        <td>
+                                            @if (mission.provisioning) {
+                                                <span [class]="'pill pill-' + mission.provisioning">{{ label(mission.provisioning) }}</span>
+                                            }
+                                            @if (mission.trainingInstanceId) {
+                                                <span class="secondary">Instance {{ mission.trainingInstanceId }}</span>
+                                            }
+                                        </td>
+                                    }
+                                    @if (!readonly()) {
+                                        <td class="actions">
+                                            <button mat-icon-button type="button" [disabled]="mFirst || busy()" (click)="moveMission(mission, -1)" aria-label="Move mission up">
+                                                <mat-icon>arrow_upward</mat-icon>
+                                            </button>
+                                            <button mat-icon-button type="button" [disabled]="mLast || busy()" (click)="moveMission(mission, 1)" aria-label="Move mission down">
+                                                <mat-icon>arrow_downward</mat-icon>
+                                            </button>
+                                            <button mat-icon-button type="button" [disabled]="busy()" (click)="removeMission(mission)" aria-label="Remove mission">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            } @else {
+                <div class="academy-empty">No missions in this module yet.</div>
+            }
+
+            <div class="module-foot">
+                @if (!readonly()) {
+                    <button mat-stroked-button type="button" [disabled]="busy()" (click)="addMissions(module)">
+                        <mat-icon>add</mat-icon>
+                        Add missions from library
+                    </button>
+                }
+                <span class="academy-muted academy-small">{{ module.missions.length }} missions · {{ modulePoints(module) }} points</span>
+            </div>
+        </section>
+    } @empty {
+        <div class="academy-empty">Start by adding a module, for example "Reconnaissance".</div>
+    }
+
+    @if (!readonly()) {
+        <form class="add-module" (ngSubmit)="addModule()">
+            <input
+                name="newModuleTitle"
+                placeholder="New module title"
+                aria-label="New module title"
+                [ngModel]="newModuleTitle()"
+                (ngModelChange)="newModuleTitle.set($event)"
+            />
+            <button mat-flat-button color="primary" type="submit" [disabled]="!newModuleTitle().trim() || busy()">
+                Add module
+            </button>
+        </form>
+    }
+</div>
