@@ -146,7 +146,8 @@ async function fetchAdminConfig(
         return null;
     }
     const base = cybergoatzBase.replace(/\/$/, '');
-    const url = `${base}/academy/public/admin-config?host=${encodeURIComponent(window.location.host)}`;
+    // Hosts are stored and resolved without a port (docs/academy.md).
+    const url = `${base}/academy/public/admin-config?host=${encodeURIComponent(window.location.hostname)}`;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), ADMIN_CONFIG_TIMEOUT_MS);
     try {

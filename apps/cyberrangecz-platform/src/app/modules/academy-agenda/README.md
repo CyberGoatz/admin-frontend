@@ -22,6 +22,17 @@ Supporting code lives in `src/app/academy/`:
 - `tenant-context.service.ts`, `academy-guards.ts`: tenant role from `GET /academy/tenants/{t}/me`.
 - `mock/`: in-browser mock of the whole contract.
 
+## Hosts
+
+| Use | Production | Local |
+|---|---|---|
+| Staff (this app) | `vit-admin.cybergoatz.com` | `vit-admin.localhost:4200` |
+| Students (learner app) | `vit.cybergoatz.com` | `vit.localhost:3000` |
+| Identity (realm `campus`) | `campus-auth.cybergoatz.com` | `localhost:8180` |
+| Academy API | `campus-api.cybergoatz.com` | `localhost:3100` |
+
+The app sends `location.hostname` (no port) to `admin-config`.
+
 ## Configuration
 
 `config.json` keys (both optional):
