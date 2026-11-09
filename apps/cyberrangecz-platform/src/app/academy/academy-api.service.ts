@@ -143,10 +143,7 @@ export class AcademyApiService {
     }
 
     removeStaff(courseId: string, memberId: string): Observable<void> {
-        return this.http.delete<void>(`${this.course(courseId)}/staff`, {
-            body: { memberId },
-            ...this.skip(409),
-        });
+        return this.http.delete<void>(`${this.course(courseId)}/staff/${memberId}`, this.skip(409));
     }
 
     archiveCourse(courseId: string): Observable<Course> {

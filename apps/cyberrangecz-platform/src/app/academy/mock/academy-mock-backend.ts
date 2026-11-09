@@ -132,7 +132,7 @@ export class AcademyMockBackend {
         add('POST', `${c}/archive`, this.archiveCourse);
         add('GET', `${c}/publish-checklist`, this.getChecklist);
         add('POST', `${c}/staff`, this.addStaff);
-        add('DELETE', `${c}/staff`, this.removeStaff);
+        add('DELETE', `${c}/staff/(?<memberId>[0-9a-f-]+)`, this.removeStaff);
         add('POST', `${c}/enrollments/(?<enrollmentId>[0-9a-f-]+)/resend-invite`, this.resendEnrollmentInvite);
         add('GET', `${c}/range`, this.getRange);
         add('PUT', `${c}/range`, this.putRange);
@@ -368,7 +368,7 @@ export class AcademyMockBackend {
         if (!course) {
             return this.error(req, 404, 'Course not found');
         }
-        const memberId = (req.body as { memberId: string })?.memberId;
+        const memberId = p['memberId'];
         const entry = course.staff.find((s) => s.memberId === memberId);
         if (entry?.role === 'owner') {
             return this.error(req, 409, 'The course owner cannot be removed', 'owner');
