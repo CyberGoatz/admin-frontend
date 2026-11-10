@@ -635,7 +635,7 @@ export class AcademyMockBackend {
         return this.ok(
             req,
             'email,first_name,last_name,roll_number,section,role\n' +
-                'aditya.sharma@learners.deployopen.com,Aditya,Sharma,22BCE1101,L1,student\n',
+                'olivia.smith@learners.deployopen.com,Olivia,Smith,N00411001,L1,student\n',
         );
     }
 

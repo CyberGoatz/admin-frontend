@@ -26,12 +26,12 @@ Supporting code lives in `src/app/academy/`:
 
 | Use | Production | Local |
 |---|---|---|
-| Staff (this app) | `vit-admin.cybergoatz.com` | `vit-admin.localhost:4200` |
-| Students (learner app) | `vit.cybergoatz.com` | `vit.localhost:3000` |
+| Staff (this app) | `<tenant>-admin.cybergoatz.com` | `<tenant>-admin.localhost:4200` |
+| Students (learner app) | `<tenant>.cybergoatz.com` | `<tenant>.localhost:3000` |
 | Identity (realm `campus`) | `campus-auth.cybergoatz.com` | `localhost:8180` |
 | Academy API | `campus-api.cybergoatz.com` | `localhost:3100` |
 
-The app sends `location.hostname` (no port) to `admin-config`.
+The app sends `location.hostname` (no port) to `admin-config`; the tenant's record supplies the name, logos, colors and Keycloak client. The local seed uses `northgate`.
 
 ## Configuration
 

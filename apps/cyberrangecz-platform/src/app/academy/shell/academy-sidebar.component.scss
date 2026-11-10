@@ -4,7 +4,7 @@
 :host {
     --sb-bg: var(--tenant-primary, var(--mat-sys-primary));
     --sb-fg: var(--tenant-on-primary, var(--mat-sys-on-primary, #ffffff));
-    --sb-accent: var(--tenant-accent, var(--mat-sys-secondary, #f2a900));
+    --sb-accent: var(--tenant-accent, var(--mat-sys-secondary, var(--sb-fg)));
     --sb-muted: color-mix(in srgb, var(--sb-fg) 70%, transparent);
     --sb-faint: color-mix(in srgb, var(--sb-fg) 50%, transparent);
     --sb-hover: color-mix(in srgb, var(--sb-fg) 6%, transparent);

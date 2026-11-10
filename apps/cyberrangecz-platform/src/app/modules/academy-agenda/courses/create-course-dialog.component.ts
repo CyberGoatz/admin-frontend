@@ -28,7 +28,7 @@ function currentTerm(now = new Date()): string {
                 <div class="academy-form-grid">
                     <mat-form-field>
                         <mat-label>Course code</mat-label>
-                        <input matInput formControlName="code" placeholder="CSE3501" required />
+                        <input matInput formControlName="code" placeholder="CYB 3410" required />
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Term</mat-label>

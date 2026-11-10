@@ -11,7 +11,7 @@ import {
 
 /**
  * Seed state for the in-browser academy mock (dev flag `?academyMock=1`).
- * Mirrors the VIT seed in strategy/university-range-plan.md section 7.
+ * Mirrors the local backend seed: Northgate University, a neutral US campus tenant.
  */
 
 /** Stacked logo sized for the 140px navigation rail. */
@@ -36,30 +36,30 @@ const mark = (color: string) =>
     );
 
 export const MOCK_BRANDING: Branding = {
-    productName: 'VIT Cyber Range',
-    legalName: 'Vellore Institute of Technology',
-    logoUrl: stackedLogo('VIT', 'Cyber Range', '#1f3c88'),
-    markUrl: mark('#1f3c88'),
-    faviconUrl: mark('#1f3c88'),
-    colorPrimary: '#1f3c88',
+    productName: 'Northgate Cyber Range',
+    legalName: 'Northgate University',
+    logoUrl: stackedLogo('NORTHGATE', 'Cyber Range', '#13294b'),
+    markUrl: mark('#13294b'),
+    faviconUrl: mark('#13294b'),
+    colorPrimary: '#13294b',
     colorOnPrimary: '#ffffff',
-    colorAccent: '#f2a900',
+    colorAccent: '#c9a227',
     supportEmail: 'range-support@deployopen.com',
-    emailFromName: 'VIT Cyber Range',
+    emailFromName: 'Northgate Cyber Range',
 };
 
 export function mockAdminConfig(): AdminConfig {
     return {
-        tenant: 'vit',
-        title: 'VIT Cyber Range Admin',
-        timezone: 'Asia/Kolkata',
+        tenant: 'northgate',
+        title: 'Northgate Cyber Range Admin',
+        timezone: 'America/New_York',
         branding: MOCK_BRANDING,
         authConfig: {
             providers: [
                 {
-                    label: 'Sign in with VIT Cyber Range',
+                    label: 'Sign in with Northgate Cyber Range',
                     issuer: 'http://localhost:8180/realms/campus',
-                    clientId: 'vit-admin',
+                    clientId: 'northgate-admin',
                     scope: 'openid email profile organization offline_access',
                     logoutUrl:
                         'http://localhost:8180/realms/campus/protocol/openid-connect/logout',
@@ -92,7 +92,7 @@ function member(
         displayName: `${givenName} ${familyName}`.trim(),
         email: `${local}@${role === 'student' ? LEARNER_DOMAIN : STAFF_DOMAIN}`,
         rollNumber: null,
-        department: 'School of Computer Science and Engineering',
+        department: 'Department of Computer Science',
         invitedAt: '2026-07-14T09:30:00Z',
         activatedAt: status === 'active' ? '2026-07-15T04:12:00Z' : null,
         ...extra,
@@ -100,27 +100,27 @@ function member(
 }
 
 export const MOCK_STAFF: Member[] = [
-    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000001', 'tenant_admin', 'Kavitha', 'Raman', 'active'),
-    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000002', 'professor', 'Arun', 'Prakash', 'active'),
-    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000003', 'professor', 'Meera', 'Krishnan', 'active'),
-    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000004', 'professor', 'Sanjay', 'Iyer', 'invited', { activatedAt: null }),
-    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000005', 'ta', 'Divya', 'Natarajan', 'active'),
-    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000006', 'ta', 'Rahul', 'Menon', 'invited', { activatedAt: null }),
+    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000001', 'tenant_admin', 'Karen', 'Whitfield', 'active'),
+    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000002', 'professor', 'Daniel', 'Brooks', 'active'),
+    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000003', 'professor', 'Maria', 'Alvarez', 'active'),
+    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000004', 'professor', 'Kevin', 'Nguyen', 'invited', { activatedAt: null }),
+    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000005', 'ta', 'Emily', 'Chen', 'active'),
+    member('7d1f1c1e-0a51-4d0e-9c43-0a0000000006', 'ta', 'Tyler', 'Morgan', 'invited', { activatedAt: null }),
 ];
 
 const STUDENT_NAMES: [string, string][] = [
-    ['Aditya', 'Sharma'],
-    ['Priya', 'Venkatesh'],
-    ['Karthik', 'Subramanian'],
-    ['Sneha', 'Reddy'],
-    ['Vikram', 'Joshi'],
-    ['Ananya', 'Pillai'],
-    ['Rohan', 'Gupta'],
-    ['Lakshmi', ''],
-    ['Harish', 'Kumar'],
-    ['Nandini', 'Rao'],
-    ['Siddharth', 'Bose'],
-    ['Ishita', 'Chatterjee'],
+    ['Olivia', 'Smith'],
+    ['Sebastian', 'Davis'],
+    ['Harper', 'Thomas'],
+    ['Owen', 'White'],
+    ['Grace', 'Patel'],
+    ['Ethan', 'Garcia'],
+    ['Layla', 'Wilson'],
+    ['Benjamin', 'Lee'],
+    ['Marcus', 'Thompson'],
+    ['Zoey', 'Young'],
+    ['Lucas', 'Jones'],
+    ['Riley', 'Lopez'],
 ];
 
 export const MOCK_STUDENTS: Member[] = STUDENT_NAMES.map(([g, f], i) =>
@@ -130,7 +130,7 @@ export const MOCK_STUDENTS: Member[] = STUDENT_NAMES.map(([g, f], i) =>
         g,
         f,
         i % 4 === 3 ? 'invited' : 'active',
-        { rollNumber: `22BCE1${String(101 + i * 7).padStart(3, '0')}` },
+        { rollNumber: `N00411${String(1 + i * 3).padStart(3, '0')}` },
     ),
 );
 
@@ -210,12 +210,12 @@ const cm = (
     ...extra,
 });
 
-const [admin, arun, meera, sanjay, divya] = MOCK_STAFF;
+const [admin, daniel, maria, kevin, emily] = MOCK_STAFF;
 
 export const MOCK_COURSES: Course[] = [
     {
         id: 'a1b2c3d4-0000-4000-8000-000000003501',
-        code: 'CSE3501',
+        code: 'CYB 3410',
         title: 'Information Security Analysis and Audit',
         term: 'Fall 2026',
         section: 'A1',
@@ -225,20 +225,20 @@ export const MOCK_COURSES: Course[] = [
         enrolledCount: 0,
         missionCount: 0,
         staff: [
-            { memberId: arun.id, displayName: arun.displayName, role: 'owner' },
-            { memberId: divya.id, displayName: divya.displayName, role: 'ta' },
+            { memberId: daniel.id, displayName: daniel.displayName, role: 'owner' },
+            { memberId: emily.id, displayName: emily.displayName, role: 'ta' },
         ],
         description:
             'Hands-on assessment of systems and networks: reconnaissance, secure configuration and vulnerability management.',
         leaderboardEnabled: false,
-        range: { ...DEFAULT_RANGE, labWindows: [{ weekday: 2, start: '14:00', end: '16:00', timezone: 'Asia/Kolkata' }] },
+        range: { ...DEFAULT_RANGE, labWindows: [{ weekday: 2, start: '14:00', end: '16:00', timezone: 'America/New_York' }] },
         modules: [
             {
                 id: 'b0000000-0000-4000-8000-000000000101',
                 title: 'Reconnaissance',
                 position: 0,
                 unlocksAt: '2026-07-20T00:00:00Z',
-                dueAt: '2026-08-10T18:29:00Z',
+                dueAt: '2026-08-11T03:59:00Z',
                 missions: [cm(41, 0, { trainingInstanceId: 9101, poolId: 701, provisioning: 'ready' })],
             },
             {
@@ -246,7 +246,7 @@ export const MOCK_COURSES: Course[] = [
                 title: 'Secure configuration',
                 position: 1,
                 unlocksAt: '2026-08-11T00:00:00Z',
-                dueAt: '2026-09-14T18:29:00Z',
+                dueAt: '2026-09-15T03:59:00Z',
                 missions: [
                     cm(42, 0, { trainingInstanceId: 9102, poolId: 702, provisioning: 'ready' }),
                     cm(43, 1, { trainingInstanceId: 9103, poolId: 703, provisioning: 'ready', points: 150 }),
@@ -257,14 +257,14 @@ export const MOCK_COURSES: Course[] = [
                 title: 'Vulnerability management',
                 position: 2,
                 unlocksAt: '2026-09-15T00:00:00Z',
-                dueAt: '2026-10-26T18:29:00Z',
+                dueAt: '2026-10-27T03:59:00Z',
                 missions: [cm(44, 0, { trainingInstanceId: 9104, poolId: 704, provisioning: 'ready', points: 200, hintPolicy: 'disabled' })],
             },
         ],
     },
     {
         id: 'a1b2c3d4-0000-4000-8000-000000003502',
-        code: 'CSE3502',
+        code: 'CYB 3420',
         title: 'Network and Web Exploitation Lab',
         term: 'Fall 2026',
         section: 'L1',
@@ -273,7 +273,7 @@ export const MOCK_COURSES: Course[] = [
         endsAt: '2027-03-31T00:00:00Z',
         enrolledCount: 0,
         missionCount: 0,
-        staff: [{ memberId: arun.id, displayName: arun.displayName, role: 'owner' }],
+        staff: [{ memberId: daniel.id, displayName: daniel.displayName, role: 'owner' }],
         description: 'Offensive techniques in a contained lab: credentials, web flaws and privilege escalation.',
         leaderboardEnabled: true,
         range: defaultRange(),
@@ -283,7 +283,7 @@ export const MOCK_COURSES: Course[] = [
                 title: 'Credentials',
                 position: 0,
                 unlocksAt: '2026-11-16T00:00:00Z',
-                dueAt: '2026-12-07T18:29:00Z',
+                dueAt: '2026-12-08T04:59:00Z',
                 missions: [cm(45, 0)],
             },
             {
@@ -291,7 +291,7 @@ export const MOCK_COURSES: Course[] = [
                 title: 'Web',
                 position: 1,
                 unlocksAt: '2026-12-08T00:00:00Z',
-                dueAt: '2027-01-18T18:29:00Z',
+                dueAt: '2027-01-19T04:59:00Z',
                 missions: [cm(46, 0, { points: 150 })],
             },
             {
@@ -306,7 +306,7 @@ export const MOCK_COURSES: Course[] = [
     },
     {
         id: 'a1b2c3d4-0000-4000-8000-000000004003',
-        code: 'CSE4003',
+        code: 'CYB 4510',
         title: 'Security Operations and Incident Response',
         term: 'Fall 2026',
         section: null,
@@ -316,8 +316,8 @@ export const MOCK_COURSES: Course[] = [
         enrolledCount: 0,
         missionCount: 0,
         staff: [
-            { memberId: meera.id, displayName: meera.displayName, role: 'owner' },
-            { memberId: sanjay.id, displayName: sanjay.displayName, role: 'instructor' },
+            { memberId: maria.id, displayName: maria.displayName, role: 'owner' },
+            { memberId: kevin.id, displayName: kevin.displayName, role: 'instructor' },
         ],
         description: '',
         leaderboardEnabled: false,
@@ -349,7 +349,7 @@ export function mockImports(): Record<string, RosterImport[]> {
             {
                 id: 'f0000000-0000-4000-8000-000000000001',
                 courseId: MOCK_COURSES[0].id,
-                fileName: 'cse3501-fall-2026.csv',
+                fileName: 'cyb3410-fall-2026.csv',
                 status: 'completed',
                 rowCount: 12,
                 created: 10,
@@ -358,7 +358,7 @@ export function mockImports(): Record<string, RosterImport[]> {
                 dropped: 0,
                 skipped: 0,
                 failed: 2,
-                uploadedBy: arun.displayName,
+                uploadedBy: daniel.displayName,
                 createdAt: '2026-07-18T05:58:00Z',
                 completedAt: '2026-07-18T06:00:00Z',
             },
