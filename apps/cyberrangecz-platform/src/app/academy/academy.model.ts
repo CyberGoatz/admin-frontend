@@ -10,7 +10,11 @@ export type CourseStatus = 'draft' | 'published' | 'archived';
 export type EnrollmentStatus = 'invited' | 'active' | 'dropped' | 'completed';
 export type HintPolicy = 'allowed' | 'penalized' | 'disabled';
 export type StaffRole = 'owner' | 'instructor' | 'ta';
-export type MissionState = 'locked' | 'not_started' | 'in_progress' | 'finished';
+export type MissionState =
+    | 'locked'
+    | 'not_started'
+    | 'in_progress'
+    | 'finished';
 export type GradebookPreset = 'default' | 'canvas' | 'blackboard' | 'moodle';
 
 export interface Branding {
@@ -101,6 +105,57 @@ export interface LibraryMission {
     sandboxDefinitionId?: number | null;
     topics?: string[];
     mitreTechniques?: string[];
+    /** Catalog details. Missions a university wrote itself have none. */
+    catalogSource?: MissionSource | null;
+    difficulty?: MissionDifficulty | null;
+    work?: MissionWork | null;
+    courseTypes?: string[];
+    levelTitles?: string[];
+    outcomes?: string[];
+    prerequisites?: string[];
+    stack?: string[];
+    tools?: string[];
+    lab?: LabNetwork[];
+    credit?: MissionCredit | null;
+    sourceUrl?: string | null;
+    adaptiveVersion?: boolean;
+    usage?: LibraryUsage;
+}
+
+export type MissionSource = 'cybergoatz' | 'cyberrangecz';
+
+export interface LabHost {
+    name: string;
+    os: string;
+    role: 'attacker' | 'workstation' | 'server' | 'client';
+    hidden?: boolean;
+}
+
+export interface LabNetwork {
+    name: string;
+    hosts: LabHost[];
+}
+
+export interface MissionCredit {
+    text: string;
+    license: string;
+    url: string;
+}
+
+export type MissionDifficulty = 'introductory' | 'intermediate' | 'advanced';
+export type MissionWork = 'attack' | 'defend' | 'investigate';
+
+/** Courses using a mission: counts across universities, and this university's courses. */
+export interface LibraryUsage {
+    courses: number;
+    universities: number;
+    yourCourses: { id: string; code: string; title: string; term: string }[];
+    /** Universities that may be named: this one, and others that opted in. */
+    listedUniversities: {
+        name: string;
+        markUrl: string | null;
+        yours: boolean;
+    }[];
 }
 
 export interface CourseInput {
@@ -240,7 +295,12 @@ export interface RosterRowError {
     message?: string;
 }
 
-export type RosterOutcome = 'create' | 'update' | 'enroll' | 'unchanged' | 'error';
+export type RosterOutcome =
+    | 'create'
+    | 'update'
+    | 'enroll'
+    | 'unchanged'
+    | 'error';
 
 export interface RosterRowOutcome {
     rowNumber: number;

@@ -294,12 +294,20 @@ export class CourseModulesComponent {
     addMissions(module: CourseModule): void {
         const data: MissionPickerData = {
             moduleTitle: module.title,
+            courseCode: this.course().code,
+            courseTitle: this.course().title,
             existing: this.course()
                 .modules.flatMap((m) => m.missions)
                 .map((m) => m.trainingDefinitionId),
         };
         this.dialog
-            .open(MissionPickerDialogComponent, { data, width: '920px', maxWidth: '95vw', maxHeight: '90vh' })
+            .open(MissionPickerDialogComponent, {
+                data,
+                width: '1320px',
+                maxWidth: '96vw',
+                height: '90vh',
+                autoFocus: 'input',
+            })
             .afterClosed()
             .pipe(filter((picked?: LibraryMission[]) => !!picked?.length))
             .subscribe((picked: LibraryMission[]) => {

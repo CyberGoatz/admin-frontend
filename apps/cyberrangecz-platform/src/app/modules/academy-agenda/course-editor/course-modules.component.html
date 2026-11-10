@@ -162,14 +162,14 @@
                     </table>
                 </div>
             } @else {
-                <div class="academy-empty"><span class="empty-title">No missions yet</span>Add missions from the library to this module.</div>
+                <div class="academy-empty"><span class="empty-title">No missions yet</span>Add missions from the CyberGoatz catalog to this module.</div>
             }
 
             <div class="module-foot">
                 @if (!readonly()) {
                     <button mat-stroked-button type="button" [disabled]="busy()" (click)="addMissions(module)">
                         <mat-icon>add</mat-icon>
-                        Add missions from library
+                        Add missions
                     </button>
                 }
                 <span class="academy-muted academy-small">{{ module.missions.length }} missions · {{ modulePoints(module) }} points</span>
