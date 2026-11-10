@@ -26,12 +26,13 @@ export class NavConfigFactory {
      * Tenant staff see the academy menu. Native Pool, Sandbox, Images,
      * User/Group/Microservice, Tracks and adaptive menus stay hidden: those
      * objects are global and are managed by backend-cybergoatz for tenants.
+     * Professors build courses from the mission catalog, so the native
+     * mission authoring (linear definitions) and instance menus are hidden too.
      */
     static buildAcademyNavConfig(
         user: User | null,
         member: Member,
     ): NavAgendaContainerConfig[] {
-        const roles = user?.roles ?? [];
         const isAdmin = member.role === 'tenant_admin';
         const isProfessor = member.role === 'professor';
         return [
@@ -51,25 +52,6 @@ export class NavConfigFactory {
                         label: 'Mission library',
                         path: 'academy/library' satisfies ValidPathPrefix,
                         canActivate: () => isAdmin || isProfessor,
-                    },
-                ],
-            },
-            {
-                label: 'Missions',
-                agendas: [
-                    {
-                        label: 'My missions',
-                        path: 'linear-definition' satisfies ValidPathPrefix,
-                        canActivate: () =>
-                            isProfessor &&
-                            RoleResolver.isTrainingDesigner(roles),
-                    },
-                    {
-                        label: 'Instances',
-                        path: 'linear-instance' satisfies ValidPathPrefix,
-                        canActivate: () =>
-                            isProfessor &&
-                            RoleResolver.isTrainingOrganizer(roles),
                     },
                 ],
             },
