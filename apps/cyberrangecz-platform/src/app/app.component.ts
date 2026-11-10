@@ -14,8 +14,9 @@ import { LoadingService } from './services/loading.service';
 import { ValidPath } from '@crczp/routing-commons';
 import { Utils } from '@crczp/utils';
 import { CommonModule } from '@angular/common';
-import { SentinelLayout1Component } from '@sentinel/layout/layout1';
+import { CustomNavDirective, SentinelLayout1Component } from '@sentinel/layout/layout1';
 import { ToolbarComponent } from '@sentinel/layout/common-components';
+import { AcademySidebarComponent } from './academy/shell/academy-sidebar.component';
 
 /**
  * Main component serving as wrapper for layout and router outlet
@@ -29,7 +30,9 @@ import { ToolbarComponent } from '@sentinel/layout/common-components';
         CommonModule,
         RouterOutlet,
         SentinelLayout1Component,
+        CustomNavDirective,
         ToolbarComponent,
+        AcademySidebarComponent,
     ],
 })
 export class AppComponent implements OnInit, AfterViewInit {
@@ -42,6 +45,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     protected readonly loadingService = inject(LoadingService);
     protected readonly authService = inject(SentinelAuthService);
     protected readonly tenantContext = inject(TenantContextService);
+    /** Campus staff hosts get the tenant-branded sidebar. */
+    protected readonly isCampus = this.tenantContext.isCampus;
     /** Tenant logo on campus hosts, the CyberGoatz logo otherwise. */
     protected readonly logoSrc =
         this.tenantContext.runtime.branding.logoUrl ||

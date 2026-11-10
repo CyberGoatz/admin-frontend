@@ -55,7 +55,7 @@
             }
         }
 
-        .sidebar {
+        .loading-sidebar {
             position: absolute;
             left: 0;
             width: 140px;
@@ -64,7 +64,7 @@
             border-right: 1px solid #d8d2df;
         }
 
-        .toolbar-top {
+        .loading-toolbar-top {
             position: absolute;
             top: 0;
             right: 0;
@@ -74,7 +74,7 @@
             border-bottom: 1px solid #d8d2df;
         }
 
-        .toolbar-bottom {
+        .loading-toolbar-bottom {
             position: absolute;
             top: 50px;
             right: 0;
@@ -82,6 +82,30 @@
             height: 40px;
             background: #ffffff;
             border-bottom: 1px solid #d8d2df;
+        }
+
+        /* Tenant hosts: the runtime sets data-tenant and --tenant-primary before bootstrap,
+           so the placeholder already matches the tenant sidebar. */
+        html[data-tenant] .loading-sidebar {
+            width: 248px;
+            background: var(--tenant-primary, #ffffff);
+            border-right-color: transparent;
+        }
+
+        html[data-tenant] .loading-toolbar-top,
+        html[data-tenant] .loading-toolbar-bottom {
+            width: calc(100% - 248px);
+        }
+
+        @media (max-width: 748px) {
+            html[data-tenant] .loading-sidebar {
+                display: none;
+            }
+
+            html[data-tenant] .loading-toolbar-top,
+            html[data-tenant] .loading-toolbar-bottom {
+                width: 100%;
+            }
         }
 
         .layout-overlay {
@@ -97,9 +121,9 @@
 <crczp-app-root class="mat-typography">
     <div class="loading-container">
         <div class="layout-overlay">
-            <div class="sidebar"></div>
-            <div class="toolbar-bottom"></div>
-            <div class="toolbar-top"></div>
+            <div class="loading-sidebar"></div>
+            <div class="loading-toolbar-bottom"></div>
+            <div class="loading-toolbar-top"></div>
         </div>
         <div class="loading-alignment">
             <img alt="" class="loading-logo" hidden />

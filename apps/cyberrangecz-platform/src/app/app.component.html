@@ -1,18 +1,29 @@
 @if (!hideSidebar()) {
     <sentinel-layout1 (login)="onLogin()"
                       (logout)="onLogout()"
+                      [class.campus-shell]="isCampus"
+                      [hasCustomNav]="isCampus"
+                      customNavExpandedWidth="248px"
+                      customNavSemiCollapsedWidth="72px"
                       [agendaContainers]="agendaContainers$ | async"
                       [displayNotificationsIcon]="true"
                       [isLoading]="loadingService.isLoading$ | async"
                       [notificationsRoute]="notificationRoute"
                       [user]="authService.activeUser$ | async"
-                      [version]="version"
+                      [version]="isCampus ? undefined : version"
                       [logoSrc]="logoSrc">
+        @if (isCampus) {
+            <!-- Tenant-branded sidebar; the brand and the signed-in person live there, not in the top bar. -->
+            <sentinel-custom-nav>
+                <crczp-academy-sidebar
+                    [member]="tenantContext.member()"
+                    [user]="authService.activeUser$ | async"
+                    (logout)="onLogout()" />
+            </sentinel-custom-nav>
+        }
         <div role="toolbar">
-            @if (authService.activeUser$ | async) {
-                <span class="username">{{ (authService.activeUser$ | async).nameWithAcademicTitles }}</span>
-            } @else if (tenantContext.member(); as member) {
-                <span class="username">{{ member.displayName }}</span>
+            @if (!isCampus && (authService.activeUser$ | async); as user) {
+                <span class="username">{{ user.nameWithAcademicTitles }}</span>
             }
         </div>
         @if (title$ | async; as title) {

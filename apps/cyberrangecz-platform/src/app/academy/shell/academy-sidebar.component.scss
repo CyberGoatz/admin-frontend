@@ -1,0 +1,206 @@
+// Flat: solid tenant primary, white text at 70% (100% when active), hairline dividers.
+// Colors use !important only to win over the theme's generic `.mat-drawer a/button/mat-icon` rules.
+
+:host {
+    --sb-bg: var(--tenant-primary, var(--mat-sys-primary));
+    --sb-fg: var(--tenant-on-primary, var(--mat-sys-on-primary, #ffffff));
+    --sb-accent: var(--tenant-accent, var(--mat-sys-secondary, #f2a900));
+    --sb-muted: color-mix(in srgb, var(--sb-fg) 70%, transparent);
+    --sb-faint: color-mix(in srgb, var(--sb-fg) 50%, transparent);
+    --sb-hover: color-mix(in srgb, var(--sb-fg) 6%, transparent);
+    --sb-active: color-mix(in srgb, var(--sb-fg) 10%, transparent);
+    --sb-line: color-mix(in srgb, var(--sb-fg) 14%, transparent);
+
+    display: block;
+    height: 100%;
+    background: var(--sb-bg);
+    color: var(--sb-fg);
+    text-align: left;
+}
+
+.sb-sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+.sb-brand {
+    display: block;
+    padding: 20px;
+    color: var(--sb-fg) !important;
+    text-decoration: none;
+    border-bottom: 1px solid var(--sb-line);
+}
+
+.sb-brand-logo {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.sb-brand-text {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--sb-fg);
+}
+
+.sb-brand-mark {
+    display: block;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+.sb-sections {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 12px 0;
+}
+
+.sb-section + .sb-section {
+    margin-top: 16px;
+}
+
+.sb-section-label {
+    padding: 0 20px 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--sb-faint);
+}
+
+.sb-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    height: 40px;
+    padding: 0 20px 0 17px;
+    box-sizing: border-box;
+    border: 0;
+    border-left: 3px solid transparent;
+    background: transparent;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: left;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    color: var(--sb-muted) !important;
+
+    &:hover {
+        background: var(--sb-hover);
+        color: var(--sb-fg) !important;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--sb-fg);
+        outline-offset: -2px;
+    }
+
+    &.sb-active {
+        background: var(--sb-active);
+        border-left-color: var(--sb-accent);
+        color: var(--sb-fg) !important;
+        font-weight: 600;
+    }
+}
+
+.sb-nav-icon {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    color: inherit !important;
+}
+
+.sb-nav-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sb-footer {
+    flex: 0 0 auto;
+    padding: 8px 0 12px;
+    border-top: 1px solid var(--sb-line);
+}
+
+.sb-person {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px 10px;
+    min-width: 0;
+}
+
+.sb-avatar {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--sb-active);
+    color: var(--sb-fg);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.sb-person-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.sb-person-name,
+.sb-person-role {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sb-person-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--sb-fg);
+}
+
+.sb-person-role {
+    font-size: 0.75rem;
+    color: var(--sb-muted);
+}
+
+// Icon-only rail (72px).
+:host(.compact) {
+    .sb-brand {
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+    }
+
+    .sb-brand-text {
+        font-size: 1.25rem;
+    }
+
+    .sb-nav-item {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .sb-nav-label,
+    .sb-person-text {
+        display: none;
+    }
+
+    .sb-person {
+        justify-content: center;
+        padding: 8px 0 10px;
+    }
+}

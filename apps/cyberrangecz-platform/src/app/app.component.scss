@@ -28,3 +28,26 @@ main {
     font-weight: 700;
     font-stretch: semi-expanded;
 }
+
+// Campus staff hosts: the drawer is painted in the tenant primary by
+// crczp-academy-sidebar; these override the theme's white `.mat-drawer` rules.
+:host ::ng-deep sentinel-layout1.campus-shell {
+    .mat-drawer {
+        background: var(--tenant-primary, var(--mat-sys-primary)) !important;
+        color: var(--tenant-on-primary, #ffffff) !important;
+        border-right: 1px solid color-mix(in srgb, var(--tenant-primary, var(--mat-sys-primary)) 75%, #000000) !important;
+        border-radius: 0;
+    }
+
+    .mat-drawer-inner-container {
+        overflow: hidden;
+    }
+}
+
+// Below Sentinel's 749px breakpoint the drawer overlays the page, so the
+// content must not keep the sidebar's left margin.
+@media (max-width: 748px) {
+    :host ::ng-deep sentinel-layout1.campus-shell mat-drawer-content {
+        margin-left: 0 !important;
+    }
+}

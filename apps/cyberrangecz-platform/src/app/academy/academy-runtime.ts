@@ -272,10 +272,14 @@ export function applyBranding(rt: AcademyRuntime): void {
         '--mat-sys-on-primary-fixed': tone(10),
         '--mat-sys-on-primary-fixed-variant': tone(30),
         '--mat-sys-surface-tint': primary,
+        // Raw brand colors for surfaces painted in the tenant color (sidebar).
+        '--tenant-primary': primary,
+        '--tenant-on-primary': onPrimary,
     };
     const accent = normalizeHex(branding.colorAccent);
     if (accent) {
         Object.assign(vars, {
+            '--tenant-accent': accent,
             '--secondary': accent,
             '--secondary-container': accent,
             '--mat-sys-secondary': accent,

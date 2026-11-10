@@ -43,7 +43,7 @@ export const MOCK_BRANDING: Branding = {
     faviconUrl: mark('#1f3c88'),
     colorPrimary: '#1f3c88',
     colorOnPrimary: '#ffffff',
-    colorAccent: '#c8102e',
+    colorAccent: '#f2a900',
     supportEmail: 'range-support@deployopen.com',
     emailFromName: 'VIT Cyber Range',
 };
