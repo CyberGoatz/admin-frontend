@@ -49,22 +49,12 @@ export const CHECKLIST_LABELS: Record<ChecklistKey, string> = {
     selector: 'crczp-academy-course-editor',
     templateUrl: './course-editor.component.html',
     styles: `
-        .course-heading {
-            flex: 1 1 18rem;
-            min-width: 0;
-        }
-        .course-title {
-            margin: 0;
-            overflow-wrap: anywhere;
-            font-size: 1.375rem;
-            font-weight: 600;
-        }
-        .course-title .academy-muted {
-            font-weight: 400;
-            margin-left: 0.5rem;
+        .course-code {
+            font-weight: 500;
+            color: var(--text);
         }
         mat-tab-group {
-            margin-top: -0.5rem;
+            margin-top: -4px;
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,

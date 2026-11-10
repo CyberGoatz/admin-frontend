@@ -111,6 +111,7 @@ export class CourseProgressComponent implements OnInit {
             students: shown.length,
             completion: Math.round(avg * 100),
             inProgress: cells.filter((c) => c.state === 'in_progress').length,
+            slots: cells.length,
             late: shown.reduce(
                 (sum, s) => sum + s.cells.filter((c, i) => c.late || this.isMissing(c, i)).length,
                 0,

@@ -4,46 +4,50 @@
     }
 
     @if (course(); as course) {
-        <div class="academy-toolbar course-header">
-            <div class="course-heading">
-                <h2 class="course-title">
-                    {{ course.code }}
-                    <span class="academy-muted">{{ course.title }}</span>
-                </h2>
-                <div class="academy-muted academy-small">
+        <header class="academy-header">
+            <div class="academy-header-text">
+                <div class="academy-eyebrow">
+                    <span class="mono course-code">{{ course.code }}</span>
+                    <span [class]="'pill pill-' + course.status">{{ label(course.status) }}</span>
+                    @if (provisioning()) {
+                        <span class="pill pill-provisioning">Preparing sandbox pools</span>
+                    }
+                </div>
+                <h1 class="academy-title">{{ course.title }}</h1>
+                <p class="academy-description">
                     {{ course.term }}@if (course.section) {, section {{ course.section }}}
                     · {{ course.missionCount }} missions · {{ course.enrolledCount }} enrolled
                     @if (course.startsAt) {
                         · {{ formatDate(course.startsAt) }} to {{ formatDate(course.endsAt) }}
                     }
-                </div>
+                </p>
             </div>
-            <span [class]="'pill pill-' + course.status">{{ label(course.status) }}</span>
-            @if (provisioning()) {
-                <span class="pill pill-pending">Preparing sandbox pools</span>
-            }
             @if (canEdit()) {
-                <a mat-stroked-button [routerLink]="['/academy', 'courses', course.id, 'roster']">
-                    <mat-icon>upload_file</mat-icon>
-                    Upload roster
-                </a>
-                @if (isDraft()) {
-                    <button mat-button color="warn" type="button" (click)="remove()">Delete</button>
-                    <button mat-flat-button color="primary" type="button" [disabled]="publishing()" (click)="publish()">
-                        <mat-icon>rocket_launch</mat-icon>
-                        Publish
-                    </button>
-                } @else if (course.status === 'published') {
-                    <button mat-stroked-button type="button" (click)="archive()">Archive</button>
-                }
+                <div class="academy-header-actions">
+                    @if (isDraft()) {
+                        <button mat-button color="warn" type="button" (click)="remove()">Delete</button>
+                    } @else if (course.status === 'published') {
+                        <button mat-stroked-button type="button" (click)="archive()">Archive</button>
+                    }
+                    <a mat-stroked-button [routerLink]="['/academy', 'courses', course.id, 'roster']">
+                        <mat-icon>upload_file</mat-icon>
+                        Upload roster
+                    </a>
+                    @if (isDraft()) {
+                        <button mat-flat-button color="primary" type="button" [disabled]="publishing()" (click)="publish()">
+                            <mat-icon>rocket_launch</mat-icon>
+                            Publish
+                        </button>
+                    }
+                </div>
             }
-        </div>
+        </header>
 
         @if (checklist(); as list) {
             @if (publishRefused() || (!checklistDismissed() && isDraft())) {
                 <section class="academy-panel" aria-live="polite">
                     <div class="academy-toolbar">
-                        <strong>
+                        <h2 class="academy-section-title">
                             @if (publishRefused()) {
                                 This course cannot be published yet
                             } @else if (list.ok) {
@@ -51,7 +55,7 @@
                             } @else {
                                 Before you publish
                             }
-                        </strong>
+                        </h2>
                         <span class="spacer"></span>
                         <button mat-button type="button" (click)="dismissChecklist()">Hide</button>
                     </div>

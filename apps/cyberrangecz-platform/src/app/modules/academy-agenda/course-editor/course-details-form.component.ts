@@ -87,7 +87,7 @@ import { fromDateInput, toDateInput } from '../shared/academy-format';
             justify-content: flex-end;
         }
         .hint-error {
-            color: var(--mat-sys-error);
+            color: var(--danger);
         }
     `,
 })

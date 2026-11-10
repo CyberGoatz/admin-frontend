@@ -87,14 +87,27 @@
         /* Tenant hosts: the runtime sets data-tenant and --tenant-primary before bootstrap,
            so the placeholder already matches the tenant sidebar. */
         html[data-tenant] .loading-sidebar {
-            width: 248px;
+            width: 256px;
             background: var(--tenant-primary, #ffffff);
             border-right-color: transparent;
         }
 
         html[data-tenant] .loading-toolbar-top,
         html[data-tenant] .loading-toolbar-bottom {
-            width: calc(100% - 248px);
+            width: calc(100% - 256px);
+        }
+
+        html[data-tenant] .loading-toolbar-top {
+            height: 56px;
+            border-bottom-color: #e4e7ec;
+        }
+
+        html[data-tenant] .loading-toolbar-bottom {
+            display: none;
+        }
+
+        html[data-tenant] .loading-container {
+            background: #f6f7f9;
         }
 
         @media (max-width: 748px) {

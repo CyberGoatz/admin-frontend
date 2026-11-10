@@ -52,16 +52,22 @@
 
     @if (grid(); as g) {
         <div class="academy-counts">
-            <div class="count"><strong>{{ summary().students }}</strong><span>Students</span></div>
-            <div class="count"><strong>{{ summary().completion }}%</strong><span>Average completion</span></div>
-            <div class="count"><strong>{{ summary().inProgress }}</strong><span>Runs in progress</span></div>
-            <div class="count"><strong>{{ summary().late }}</strong><span>Late or missing</span></div>
+            <div class="count"><strong>{{ summary().students }}<small>students</small></strong><span>Shown</span></div>
+            <div class="count"><strong>{{ summary().completion }}%<small>of {{ g.missions.length }} missions</small></strong><span>Average completion</span></div>
+            <div class="count"><strong>{{ summary().inProgress }}<small>runs</small></strong><span>In progress now</span></div>
+            <div class="count"><strong>{{ summary().late }}<small>of {{ summary().slots }} submissions</small></strong><span>Late or missing</span></div>
         </div>
 
         @if (g.missions.length === 0) {
-            <div class="academy-empty">This course has no missions yet.</div>
+            <div class="academy-empty">
+                <span class="empty-title">No missions yet</span>
+                Add missions on the Modules and missions tab to see progress here.
+            </div>
         } @else if (students().length === 0) {
-            <div class="academy-empty">No students match these filters.</div>
+            <div class="academy-empty">
+                <span class="empty-title">No students match</span>
+                Try another name, roll number or section.
+            </div>
         } @else {
             <div class="grid-wrap">
                 <table class="progress-grid">
@@ -93,7 +99,7 @@
                         @for (s of students(); track s.enrollmentId) {
                             <tr>
                                 <th class="sticky student-col" scope="row">
-                                    <span class="roll">{{ s.rollNumber }}</span>
+                                    <span class="roll mono">{{ s.rollNumber }}</span>
                                     <span class="name">{{ s.displayName }}</span>
                                     @if (s.section) {
                                         <span class="section">{{ s.section }}</span>
@@ -101,7 +107,7 @@
                                 </th>
                                 <td class="num completion-col">
                                     {{ (s.completion * 100).toFixed(0) }}%
-                                    <span class="bar"><span [style.width.%]="s.completion * 100"></span></span>
+                                    <span class="academy-progress bar"><span [style.width.%]="s.completion * 100"></span></span>
                                 </td>
                                 @for (cell of s.cells; track cell.missionId; let i = $index) {
                                     <td [class]="cellClass(cell, i)" [title]="cellTitle(s, i)">
@@ -124,6 +130,8 @@
             </p>
         }
     } @else if (loading()) {
-        <div class="academy-muted">Loading progress</div>
+        <div class="academy-card" aria-busy="true">
+            <div class="academy-skeleton"><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
     }
 </div>

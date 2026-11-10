@@ -162,7 +162,7 @@
                     </table>
                 </div>
             } @else {
-                <div class="academy-empty">No missions in this module yet.</div>
+                <div class="academy-empty"><span class="empty-title">No missions yet</span>Add missions from the library to this module.</div>
             }
 
             <div class="module-foot">
@@ -176,7 +176,7 @@
             </div>
         </section>
     } @empty {
-        <div class="academy-empty">Start by adding a module, for example "Reconnaissance".</div>
+        <div class="academy-empty"><span class="empty-title">No modules yet</span>Start with a module, for example "Reconnaissance".</div>
     }
 
     @if (!readonly()) {

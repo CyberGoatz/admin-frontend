@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { User } from '@sentinel/auth';
@@ -9,6 +8,7 @@ import { NavConfigFactory } from '../../utils/nav-config-factory';
 import { ROLE_LABELS } from '../../modules/academy-agenda/shared/academy-format';
 import { Member } from '../academy.model';
 import { TenantContextService } from '../tenant-context.service';
+import { LucideIconComponent } from './lucide-icon.component';
 
 interface SidebarItem {
     label: string;
@@ -21,13 +21,13 @@ interface SidebarSection {
     items: SidebarItem[];
 }
 
-/** Icons by route; anything unlisted gets a neutral dot. */
+/** Lucide icons by route; anything unlisted gets a neutral dot. */
 const ICONS: Record<string, string> = {
-    'academy/members': 'group',
-    'academy/courses': 'menu_book',
-    'academy/library': 'library_books',
-    'linear-definition': 'edit_note',
-    'linear-instance': 'dns',
+    'academy/members': 'users',
+    'academy/courses': 'book-open',
+    'academy/library': 'library-big',
+    'linear-definition': 'file-pen-line',
+    'linear-instance': 'server',
 };
 
 /**
@@ -39,7 +39,7 @@ const ICONS: Record<string, string> = {
     templateUrl: './academy-sidebar.component.html',
     styleUrls: ['./academy-sidebar.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatIconModule, MatTooltipModule, RouterLink, RouterLinkActive],
+    imports: [LucideIconComponent, MatTooltipModule, RouterLink, RouterLinkActive],
     host: {
         '[class.compact]': 'compact()',
     },
@@ -56,6 +56,12 @@ export class AcademySidebarComponent {
     readonly brand = this.runtime.branding;
     readonly logoSrc = this.brand.logoDarkUrl || null;
     readonly markSrc = this.brand.markUrl || null;
+    /**
+     * One line under the lockup: the product name without the tenant's own
+     * name, which the lockup already shows ("Northgate Cyber Range" under a
+     * Northgate lockup reads "Cyber Range").
+     */
+    readonly productLine = productLine(this.brand.productName, this.brand.legalName, !!this.logoSrc);
 
     private readonly state = toSignal(this.navState.state$, { initialValue: 'expanded' });
     readonly small = toSignal(this.navState.isSmallView$, { initialValue: false });
@@ -113,4 +119,15 @@ export class AcademySidebarComponent {
     toggleCompact(): void {
         this.navState.toggleState();
     }
+}
+
+function productLine(productName: string, legalName: string | undefined, hasLockup: boolean): string {
+    if (!hasLockup) {
+        return '';
+    }
+    const tenantWord = (legalName ?? '').trim().split(/\s+/)[0];
+    if (tenantWord && productName.toLowerCase().startsWith(`${tenantWord.toLowerCase()} `)) {
+        return productName.slice(tenantWord.length + 1);
+    }
+    return productName;
 }

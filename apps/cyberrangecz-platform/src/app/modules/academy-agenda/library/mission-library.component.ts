@@ -12,18 +12,24 @@ import { LibraryMission } from '../../../academy/academy.model';
     imports: [FormsModule, MatFormFieldModule, MatInputModule],
     template: `
         <div class="academy-page">
+            <header class="academy-header">
+                <div class="academy-header-text">
+                    <h1 class="academy-title">Mission library</h1>
+                    <p class="academy-description">Hands-on missions you can place in a course. Each runs in its own sandbox.</p>
+                </div>
+            </header>
             <div class="academy-toolbar">
                 <mat-form-field appearance="outline" subscriptSizing="dynamic">
                     <mat-label>Search</mat-label>
                     <input matInput [ngModel]="query()" (ngModelChange)="query.set($event)" placeholder="Title, topic or ATT&CK technique" />
                 </mat-form-field>
-                <span class="academy-muted academy-small">{{ filtered().length }} of {{ missions().length }} missions</span>
+                <span class="academy-subtle academy-small">{{ filtered().length }} of {{ missions().length }} missions</span>
             </div>
             @if (error()) {
                 <div class="academy-error">{{ error() }}</div>
             }
             <div class="academy-table-wrap">
-                <table class="academy-table">
+                <table class="academy-table academy-table-stack">
                     <thead>
                         <tr>
                             <th>Mission</th>
@@ -38,24 +44,38 @@ import { LibraryMission } from '../../../academy/academy.model';
                     <tbody>
                         @for (m of filtered(); track m.trainingDefinitionId) {
                             <tr>
-                                <td>
-                                    <strong>{{ m.title }}</strong>
+                                <td class="primary">
+                                    <span class="title">{{ m.title }}</span>
                                     <span class="secondary">{{ m.description }}</span>
                                 </td>
-                                <td>{{ m.topics?.join(', ') }}</td>
-                                <td>{{ m.mitreTechniques?.join(', ') }}</td>
-                                <td class="num">{{ m.estimatedDurationMinutes }}</td>
-                                <td class="num">{{ m.levels }}</td>
-                                <td class="num">{{ m.maxScore }}</td>
-                                <td>{{ m.source === 'tenant' ? 'Your university' : 'CyberGoatz library' }}</td>
+                                <td data-label="Topics">{{ m.topics?.join(', ') || '—' }}</td>
+                                <td class="mono academy-small" data-label="ATT&CK">{{ m.mitreTechniques?.join(', ') || '—' }}</td>
+                                <td class="num" data-label="Minutes">{{ m.estimatedDurationMinutes }}</td>
+                                <td class="num" data-label="Levels">{{ m.levels }}</td>
+                                <td class="num mono" data-label="Max score">{{ m.maxScore }}</td>
+                                <td data-label="Source">{{ m.source === 'tenant' ? 'Your university' : 'CyberGoatz library' }}</td>
                             </tr>
                         } @empty {
-                            <tr><td colspan="7" class="academy-muted">{{ loading() ? 'Loading' : 'No missions match.' }}</td></tr>
+                            <tr>
+                                <td colspan="7">
+                                    @if (loading()) {
+                                        <div class="academy-skeleton"><span></span><span></span><span></span></div>
+                                    } @else {
+                                        <span class="academy-muted">No missions match this search.</span>
+                                    }
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
             </div>
         </div>
+    `,
+    styles: `
+        .title {
+            display: block;
+            font-weight: 500;
+        }
     `,
 })
 export class MissionLibraryComponent {

@@ -36,18 +36,18 @@ const routes: ValidRouterConfig<'academy'> = [
         path: 'members',
         component: MembersComponent,
         canActivate: [academyRoleGuard(['tenant_admin'])],
-        data: { breadcrumb: 'Members', title: 'Members' },
+        data: { breadcrumb: 'Members' },
     },
     {
         path: 'library',
         component: MissionLibraryComponent,
         canActivate: [authors],
-        data: { breadcrumb: 'Mission library', title: 'Mission library' },
+        data: { breadcrumb: 'Mission library' },
     },
     {
         path: 'courses',
         component: CoursesComponent,
-        data: { breadcrumb: 'Courses', title: 'Courses' },
+        data: { breadcrumb: 'Courses' },
     },
     {
         path: 'courses/:courseId',

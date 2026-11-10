@@ -36,7 +36,7 @@ export class NavConfigFactory {
         const isProfessor = member.role === 'professor';
         return [
             {
-                label: 'Academy',
+                label: 'Teaching',
                 agendas: [
                     {
                         label: 'Members',

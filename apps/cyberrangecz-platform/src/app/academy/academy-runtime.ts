@@ -275,11 +275,16 @@ export function applyBranding(rt: AcademyRuntime): void {
         // Raw brand colors for surfaces painted in the tenant color (sidebar).
         '--tenant-primary': primary,
         '--tenant-on-primary': onPrimary,
+        // Campus UI spec tokens.
+        '--brand': primary,
+        '--on-brand': onPrimary,
+        '--brand-accent': primary,
     };
     const accent = normalizeHex(branding.colorAccent);
     if (accent) {
         Object.assign(vars, {
             '--tenant-accent': accent,
+            '--brand-accent': accent,
             '--secondary': accent,
             '--secondary-container': accent,
             '--mat-sys-secondary': accent,
@@ -292,6 +297,32 @@ export function applyBranding(rt: AcademyRuntime): void {
         style.setProperty(name, value),
     );
     document.documentElement.dataset['tenant'] = rt.tenant;
+    loadCampusFonts();
+}
+
+const CAMPUS_FONTS_URL =
+    'https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap';
+
+/** Geist and Geist Mono for tenant hosts (campus UI spec); other hosts keep the theme fonts. */
+function loadCampusFonts(): void {
+    if (document.querySelector('link[data-campus-fonts]')) {
+        return;
+    }
+    const head = document.head;
+    for (const origin of ['https://fonts.googleapis.com', 'https://fonts.gstatic.com']) {
+        const preconnect = document.createElement('link');
+        preconnect.rel = 'preconnect';
+        preconnect.href = origin;
+        if (origin.includes('gstatic')) {
+            preconnect.crossOrigin = 'anonymous';
+        }
+        head.appendChild(preconnect);
+    }
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = CAMPUS_FONTS_URL;
+    link.dataset['campusFonts'] = '';
+    head.appendChild(link);
 }
 
 function normalizeHex(value: string | undefined): string | null {

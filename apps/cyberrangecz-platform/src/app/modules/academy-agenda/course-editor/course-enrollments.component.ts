@@ -77,7 +77,10 @@ import { AddStudentDialogComponent } from './add-student-dialog.component';
             }
 
             @if (!loading() && enrollments().length === 0) {
-                <div class="academy-empty">No one is enrolled yet. Upload a roster CSV or add students one at a time.</div>
+                <div class="academy-empty">
+                    <span class="empty-title">No one is enrolled yet</span>
+                    Upload a roster CSV or add students one at a time.
+                </div>
             } @else {
                 <div class="academy-table-wrap">
                     <table class="academy-table">
@@ -98,7 +101,7 @@ import { AddStudentDialogComponent } from './add-student-dialog.component';
                         <tbody>
                             @for (e of filtered(); track e.id) {
                                 <tr>
-                                    <td>{{ e.member.rollNumber }}</td>
+                                    <td class="mono">{{ e.member.rollNumber }}</td>
                                     <td>
                                         {{ e.member.displayName }}
                                         @if (e.member.role === 'ta') {

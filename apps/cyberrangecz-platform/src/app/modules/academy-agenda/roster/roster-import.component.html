@@ -1,18 +1,26 @@
 <div class="academy-page">
-    <div class="academy-toolbar">
-        <div>
-            <h2 class="page-title">Roster upload</h2>
+    <header class="academy-header">
+        <div class="academy-header-text">
             @if (course(); as course) {
-                <div class="academy-muted academy-small">
-                    {{ course.code }} {{ course.title }} · {{ course.term }} · {{ course.enrolledCount }} enrolled now
+                <div class="academy-eyebrow">
+                    <span class="mono course-code">{{ course.code }}</span>
+                    <span>{{ course.title }}</span>
                 </div>
             }
+            <h1 class="academy-title">Roster upload</h1>
+            <p class="academy-description">
+                Upload a CSV of students, review every row, then import.
+                @if (course(); as course) {
+                    {{ course.enrolledCount }} enrolled now.
+                }
+            </p>
         </div>
-        <span class="spacer"></span>
-        <a mat-button [routerLink]="['/academy', 'courses', courseId]" [queryParams]="{ tab: 'enrollments' }">
-            Back to enrollments
-        </a>
-    </div>
+        <div class="academy-header-actions">
+            <a mat-stroked-button [routerLink]="['/academy', 'courses', courseId]" [queryParams]="{ tab: 'enrollments' }">
+                Back to enrollments
+            </a>
+        </div>
+    </header>
 
     <ol class="steps" aria-label="Steps">
         <li [class.current]="step() === 'upload'">1. Upload</li>
@@ -45,7 +53,7 @@
             </section>
 
             <section class="academy-panel columns">
-                <h3>Columns</h3>
+                <h2 class="academy-section-title">Columns</h2>
                 <table class="academy-table">
                     <tbody>
                         <tr><td><code>email</code></td><td>Required. Sign-in identity and invite address.</td></tr>
@@ -143,7 +151,7 @@
                                     </td>
                                     <td>{{ row.normalized.lastName }}</td>
                                     <td>
-                                        <span [class.cell-invalid]="errorFor(row, 'rollNumber')">{{ row.normalized.rollNumber || '(blank)' }}</span>
+                                        <span class="mono" [class.cell-invalid]="errorFor(row, 'rollNumber')">{{ row.normalized.rollNumber || '(blank)' }}</span>
                                         @if (errorFor(row, 'rollNumber'); as msg) {
                                             <div class="cell-error">{{ msg }}</div>
                                         }

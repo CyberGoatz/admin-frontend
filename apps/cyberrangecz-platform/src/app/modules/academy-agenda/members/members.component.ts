@@ -55,7 +55,9 @@ export class MembersComponent {
 
     query: MemberQuery = { role: undefined, status: undefined, q: '', page: 0, size: 50 };
 
-    readonly me = inject(TenantContextService).member;
+    private readonly tenant = inject(TenantContextService);
+    readonly me = this.tenant.member;
+    readonly tenantName = this.tenant.runtime.branding.legalName || this.tenant.runtime.branding.productName;
     private readonly api = inject(AcademyApiService);
     private readonly dialog = inject(MatDialog);
     private readonly snack = inject(MatSnackBar);

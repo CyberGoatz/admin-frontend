@@ -1,4 +1,17 @@
 <div class="academy-page">
+    <header class="academy-header">
+        <div class="academy-header-text">
+            <h1 class="academy-title">Members</h1>
+            <p class="academy-description">Staff and students in {{ tenantName }}. Invite staff here; students join through course rosters.</p>
+        </div>
+        <div class="academy-header-actions">
+            <button mat-flat-button color="primary" type="button" (click)="invite()">
+                <mat-icon>person_add</mat-icon>
+                Invite staff
+            </button>
+        </div>
+    </header>
+
     <div class="academy-toolbar">
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Search</mat-label>
@@ -22,11 +35,6 @@
                 }
             </mat-select>
         </mat-form-field>
-        <span class="spacer"></span>
-        <button mat-flat-button color="primary" type="button" (click)="invite()">
-            <mat-icon>person_add</mat-icon>
-            Invite staff
-        </button>
     </div>
 
     @if (error()) {
@@ -34,10 +42,13 @@
     }
 
     @if (!loading() && members().length === 0) {
-        <div class="academy-empty">No members match these filters.</div>
+        <div class="academy-empty">
+            <span class="empty-title">No members found</span>
+            Try another search, role or status.
+        </div>
     } @else {
         <div class="academy-table-wrap">
-            <table class="academy-table">
+            <table class="academy-table academy-table-stack">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -52,14 +63,14 @@
                 <tbody>
                     @for (member of members(); track member.id) {
                         <tr>
-                            <td>
+                            <td class="primary">
                                 {{ member.displayName }}
                                 <span class="secondary">{{ member.email }}</span>
                                 @if (member.rollNumber) {
-                                    <span class="secondary">{{ member.rollNumber }}</span>
+                                    <span class="secondary mono">{{ member.rollNumber }}</span>
                                 }
                             </td>
-                            <td>
+                            <td data-label="Role">
                                 @if (member.role === 'student' || isSelf(member)) {
                                     {{ roleLabels[member.role] }}
                                 } @else {
@@ -76,10 +87,10 @@
                                     </select>
                                 }
                             </td>
-                            <td><span [class]="'pill pill-' + member.status">{{ label(member.status) }}</span></td>
-                            <td>{{ member.department }}</td>
-                            <td>{{ formatDate(member.invitedAt) }}</td>
-                            <td>{{ formatDate(member.activatedAt) }}</td>
+                            <td data-label="Status"><span [class]="'pill pill-' + member.status">{{ label(member.status) }}</span></td>
+                            <td class="nowrap" data-label="Department">{{ member.department }}</td>
+                            <td class="nowrap" data-label="Invited">{{ formatDate(member.invitedAt) }}</td>
+                            <td class="nowrap" data-label="Signed in">{{ formatDate(member.activatedAt) || '—' }}</td>
                             <td class="actions">
                                 @if (member.status === 'invited') {
                                     <button mat-button type="button" [disabled]="busy() === member.id" (click)="resend(member)">

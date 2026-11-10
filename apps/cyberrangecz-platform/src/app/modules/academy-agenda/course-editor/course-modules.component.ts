@@ -64,16 +64,19 @@ import { MissionPickerData, MissionPickerDialogComponent } from './mission-picke
             margin-bottom: 0.75rem;
         }
         .module-index {
-            font-weight: 700;
-            font-size: 1.125rem;
-            padding-bottom: 0.375rem;
-            color: var(--on-surface-variant);
+            font-family: var(--font-mono);
+            font-weight: 500;
+            font-size: 16px;
+            padding-bottom: 10px;
+            color: var(--text-muted);
         }
         .field-label {
             display: block;
-            font-size: 0.75rem;
-            color: var(--on-surface-variant);
-            margin-bottom: 0.125rem;
+            font-size: 13px;
+            line-height: 18px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 4px;
         }
         .module-head input,
         .add-module input {
@@ -81,11 +84,18 @@ import { MissionPickerData, MissionPickerDialogComponent } from './mission-picke
             width: 100%;
             min-width: 0;
             box-sizing: border-box;
-            padding: 0.375rem 0.5rem;
-            border: 1px solid var(--outline-variant);
-            border-radius: 4px;
-            background: var(--surface-container-lowest);
-            color: var(--on-surface);
+            height: 40px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-control);
+            background: var(--surface);
+            color: var(--text);
+        }
+        .module-head input:focus,
+        .add-module input:focus {
+            outline: 2px solid var(--brand-accent);
+            outline-offset: 2px;
+            border-color: var(--brand);
         }
         .module-title {
             font-weight: 600;
@@ -113,17 +123,25 @@ import { MissionPickerData, MissionPickerDialogComponent } from './mission-picke
         table.missions {
             table-layout: fixed;
         }
+        /* Cells are border-box, so these widths include 12px side padding. */
+        table.missions th,
+        table.missions td {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
         .w-points,
         .w-attempts,
         .w-required {
-            width: 72px;
+            width: 96px;
         }
         .w-due {
-            width: 190px;
+            width: 220px;
         }
-        .w-hints,
+        .w-hints {
+            width: 150px;
+        }
         .w-actions {
-            width: 120px;
+            width: 136px;
         }
         /* Narrow cards: dates under the title, and each mission as a block of labeled fields. */
         @container (max-width: 860px) {
@@ -155,7 +173,7 @@ import { MissionPickerData, MissionPickerDialogComponent } from './mission-picke
                 grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
                 gap: 0.5rem 0.75rem;
                 padding: 0.75rem;
-                border-bottom: 1px solid var(--outline-variant);
+                border-bottom: 1px solid var(--border);
             }
             table.missions tr:last-child {
                 border-bottom: none;
@@ -169,7 +187,7 @@ import { MissionPickerData, MissionPickerDialogComponent } from './mission-picke
                 content: attr(data-label);
                 display: block;
                 font-size: 0.75rem;
-                color: var(--on-surface-variant);
+                color: var(--text-muted);
                 margin-bottom: 0.125rem;
             }
             table.missions input.inline-input,

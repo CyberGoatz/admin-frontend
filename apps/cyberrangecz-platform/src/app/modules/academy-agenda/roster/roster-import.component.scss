@@ -1,34 +1,40 @@
-.page-title {
-    margin: 0;
-    font-size: 1.375rem;
-    font-weight: 600;
+.course-code {
+    font-weight: 500;
+    color: var(--text);
 }
 
-h3 {
-    margin: 0 0 0.5rem;
-    font-size: 1rem;
+.academy-section-title {
+    margin-bottom: 8px;
 }
 
 .steps {
     display: flex;
-    gap: 1.5rem;
+    flex-wrap: wrap;
+    gap: 4px 24px;
     list-style: none;
     margin: 0;
-    padding: 0 0 0.5rem;
-    border-bottom: 1px solid var(--outline-variant);
-    color: var(--on-surface-variant);
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-subtle);
+    font-weight: 500;
+
+    li {
+        padding: 0 0 10px;
+        margin-bottom: -1px;
+        border-bottom: 2px solid transparent;
+    }
 
     li.current {
-        color: var(--primary);
-        font-weight: 600;
+        color: var(--text);
+        border-bottom-color: var(--brand);
     }
 }
 
 .dropzone {
-    border: 2px dashed var(--outline-variant);
-    border-radius: 4px;
-    background: var(--surface-container-lowest);
-    padding: 2.5rem 1rem;
+    border: 1px dashed var(--text-subtle);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    padding: 40px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -36,8 +42,8 @@ h3 {
     text-align: center;
 
     &.over {
-        border-color: var(--primary);
-        background: var(--primary-98);
+        border-color: var(--brand);
+        background: var(--surface-muted);
     }
 
     p {
@@ -50,10 +56,10 @@ h3 {
 }
 
 .dropzone-icon {
-    font-size: 40px;
-    width: 40px;
-    height: 40px;
-    color: var(--primary);
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: var(--text-subtle);
 }
 
 .columns {
@@ -68,7 +74,7 @@ h3 {
 }
 
 .summary .has-errors strong {
-    color: var(--mat-sys-error);
+    color: var(--danger);
 }
 
 .mapping {
@@ -79,9 +85,11 @@ h3 {
 }
 
 .map {
-    background: var(--surface-container);
-    border-radius: 4px;
-    padding: 0.125rem 0.5rem;
+    background: var(--surface-muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
 }
 
 .preview-table {

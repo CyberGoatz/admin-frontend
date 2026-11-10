@@ -14,6 +14,7 @@ import {
 import { bootstrapApplication } from '@angular/platform-browser';
 import {
     loadRuntimeConfig,
+    getAcademyRuntime,
     readAcademyMockFlag,
 } from './app/academy/academy-runtime';
 import { academyMockInterceptor } from './app/academy/mock/academy-mock.interceptor';
@@ -60,6 +61,7 @@ import {
     PortalConfig,
 } from '@crczp/utils';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { RoleService } from './app/services/role.service';
 import { APP_ROUTES } from './app/app-routes';
 import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdown-editor';
@@ -116,6 +118,15 @@ function buildProviders() {
         importProvidersFrom(BrowserAnimationsModule),
         provideAnimations(),
         provideNativeDateAdapter(),
+        // Campus UI spec: outlined 40px fields on tenant hosts.
+        ...(getAcademyRuntime().tenant
+            ? [
+                  {
+                      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+                      useValue: { appearance: 'outline', subscriptSizing: 'dynamic' },
+                  },
+              ]
+            : []),
         appConfigProvider,
         {
             provide: PortalConfig,

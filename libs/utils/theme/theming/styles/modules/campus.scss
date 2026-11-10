@@ -1,0 +1,193 @@
+// Campus UI spec (side-session-notes/.../campus-ui-spec.md): tokens, type and
+// Material overrides for tenant hosts. The runtime sets `data-tenant` on <html>
+// and the brand tokens (--brand, --on-brand, --brand-accent) from tenant branding, so
+// nothing here names a tenant. Flat: no shadows anywhere, hairline borders instead.
+@use '@angular/material' as mat;
+
+$campus-sans: #{'Geist, Inter, ui-sans-serif, system-ui, sans-serif'};
+$campus-mono: #{"'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace"};
+$campus-type: mat.define-theme(
+    (
+        typography: (
+            plain-family: $campus-sans,
+            brand-family: $campus-sans,
+        ),
+    )
+);
+
+html[data-tenant] {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-muted: #f9fafb;
+    --border: #e4e7ec;
+    --text: #101828;
+    --text-muted: #475467;
+    --text-subtle: #667085;
+    --success: #067647;
+    --success-bg: #ecfdf3;
+    --warning: #b54708;
+    --warning-bg: #fffaeb;
+    --danger: #b42318;
+    --danger-bg: #fef3f2;
+    --neutral: #344054;
+    --neutral-bg: #f2f4f7;
+    --skeleton: #eaecf0;
+    --radius-control: 8px;
+    --radius-card: 12px;
+    --font-sans: #{$campus-sans};
+    --font-mono: #{$campus-mono};
+
+    // Geist for every Material component (overrides the theme's :root tokens).
+    @include mat.all-component-typographies($campus-type);
+
+    // Material system colors that leak into components.
+    --mat-sys-surface: var(--surface);
+    --mat-sys-surface-container-lowest: var(--surface);
+    --mat-sys-surface-container-low: var(--surface-muted);
+    --mat-sys-on-surface: var(--text);
+    --mat-sys-on-surface-variant: var(--text-muted);
+    --mat-sys-outline: var(--border);
+    --mat-sys-outline-variant: var(--border);
+    --mat-sys-error: var(--danger);
+
+    // Buttons: 36px, radius 8, 14/500.
+    --mat-button-filled-container-height: 36px;
+    --mat-button-filled-container-shape: var(--radius-control);
+    --mat-button-filled-label-text-weight: 500;
+    --mat-button-outlined-container-height: 36px;
+    --mat-button-outlined-container-shape: var(--radius-control);
+    --mat-button-outlined-outline-color: var(--border);
+    --mat-button-outlined-label-text-color: var(--text);
+    --mat-button-outlined-label-text-weight: 500;
+    --mat-button-text-container-height: 36px;
+    --mat-button-text-container-shape: var(--radius-control);
+    --mat-button-text-label-text-weight: 500;
+    --mat-button-tonal-container-shape: var(--radius-control);
+    --mat-button-protected-container-shape: var(--radius-control);
+
+    // Inputs: 40px, radius 8, hairline border, brand on focus.
+    --mat-form-field-container-height: 40px;
+    --mat-form-field-container-vertical-padding: 8px;
+    --mat-form-field-outlined-container-shape: var(--radius-control);
+    --mat-form-field-outlined-outline-color: var(--border);
+    --mat-form-field-outlined-hover-outline-color: var(--text-subtle);
+    --mat-form-field-outlined-focus-outline-color: var(--brand);
+    --mat-form-field-outlined-focus-outline-width: 1px;
+    --mat-form-field-outlined-label-text-color: var(--text-muted);
+    --mat-form-field-filled-container-color: var(--surface);
+
+    // Overlays: surface, border, radius 12, no shadow.
+    --mat-dialog-container-shape: var(--radius-card);
+    --mat-dialog-container-elevation-shadow: none;
+    --mat-dialog-container-color: var(--surface);
+    --mat-menu-container-shape: var(--radius-control);
+    --mat-menu-container-elevation-shadow: none;
+    --mat-menu-container-color: var(--surface);
+    --mat-select-container-elevation-shadow: none;
+    --mat-select-panel-background-color: var(--surface);
+    --mat-autocomplete-container-elevation-shadow: none;
+    --mat-snack-bar-container-shape: var(--radius-card);
+    --mat-snack-bar-container-color: var(--text);
+    --mat-tooltip-container-shape: 6px;
+    --mat-datepicker-calendar-container-elevation-shadow: none;
+    --mat-datepicker-calendar-container-shape: var(--radius-card);
+
+    // Tabs: brand indicator, 14/500 labels.
+    --mat-tab-active-indicator-color: var(--brand);
+    --mat-tab-active-label-text-color: var(--text);
+    --mat-tab-inactive-label-text-color: var(--text-subtle);
+    --mat-tab-active-focus-label-text-color: var(--text);
+    --mat-tab-active-hover-label-text-color: var(--text);
+    --mat-tab-label-text-weight: 500;
+    --mat-tab-divider-color: var(--border);
+
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    // Campus hosts are light only: the spec defines light values only.
+    color-scheme: light;
+}
+
+html[data-tenant] body {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--text);
+    background: var(--bg);
+}
+
+html[data-tenant] .mat-drawer-container {
+    background: var(--bg);
+    color: var(--text);
+}
+
+// Flat overlays: a border instead of elevation.
+html[data-tenant] {
+    .mat-mdc-dialog-surface,
+    .mat-mdc-menu-panel,
+    .mat-mdc-select-panel,
+    .mat-mdc-autocomplete-panel,
+    .mat-datepicker-content,
+    .mdc-snackbar__surface,
+    .owl-dt-container {
+        box-shadow: none !important;
+        border: 1px solid var(--border);
+    }
+
+    .mdc-snackbar__surface {
+        border-color: transparent;
+    }
+
+    .cdk-overlay-dark-backdrop.cdk-overlay-backdrop-showing {
+        background: rgb(16 24 40 / 40%);
+    }
+
+    .mat-mdc-dialog-title {
+        font-size: 18px;
+        line-height: 28px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--text);
+    }
+
+    // Focus ring: 2px accent at 2px offset.
+    .mat-mdc-button-base:focus-visible,
+    a:focus-visible,
+    button:focus-visible,
+    [tabindex]:focus-visible {
+        outline: 2px solid var(--brand-accent);
+        outline-offset: 2px;
+    }
+
+    .mat-mdc-button-base .mat-mdc-focus-indicator::before {
+        display: none;
+    }
+
+    // Destructive text buttons (color="warn").
+    .mat-mdc-button.mat-warn,
+    .mat-mdc-outlined-button.mat-warn {
+        --mat-button-text-label-text-color: var(--danger);
+        --mat-button-outlined-label-text-color: var(--danger);
+    }
+
+    .mat-mdc-unelevated-button.mat-warn {
+        --mat-button-filled-container-color: var(--danger);
+        --mat-button-filled-label-text-color: #ffffff;
+    }
+
+    .mat-mdc-button-base .mat-icon {
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+    }
+
+    // Brand-colored primary button with on-brand text.
+    .mat-mdc-unelevated-button.mat-primary {
+        --mat-button-filled-container-color: var(--brand);
+        --mat-button-filled-label-text-color: var(--on-brand);
+    }
+
+    .mat-mdc-paginator {
+        background: transparent;
+        color: var(--text-muted);
+    }
+}
