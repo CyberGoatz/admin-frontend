@@ -2,7 +2,7 @@
     <div class="academy-toolbar">
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Search</mat-label>
-            <input matInput [ngModel]="query()" (ngModelChange)="query.set($event)" placeholder="Name or roll number" />
+            <input matInput [ngModel]="query()" (ngModelChange)="query.set($event)" placeholder="Name or student ID" />
         </mat-form-field>
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Section</mat-label>
@@ -66,7 +66,7 @@
         } @else if (students().length === 0) {
             <div class="academy-empty">
                 <span class="empty-title">No students match</span>
-                Try another name, roll number or section.
+                Try another name, student ID or section.
             </div>
         } @else {
             <div class="grid-wrap">

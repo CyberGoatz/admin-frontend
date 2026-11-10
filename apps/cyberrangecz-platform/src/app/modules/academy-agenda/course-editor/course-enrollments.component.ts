@@ -32,7 +32,7 @@ import { AddStudentDialogComponent } from './add-student-dialog.component';
             <div class="academy-toolbar">
                 <mat-form-field appearance="outline" subscriptSizing="dynamic">
                     <mat-label>Search</mat-label>
-                    <input matInput [ngModel]="query()" (ngModelChange)="query.set($event)" placeholder="Name, email or roll number" />
+                    <input matInput [ngModel]="query()" (ngModelChange)="query.set($event)" placeholder="Name, email or student ID" />
                 </mat-form-field>
                 <mat-form-field appearance="outline" subscriptSizing="dynamic">
                     <mat-label>Status</mat-label>
@@ -86,7 +86,7 @@ import { AddStudentDialogComponent } from './add-student-dialog.component';
                     <table class="academy-table">
                         <thead>
                             <tr>
-                                <th>Roll number</th>
+                                <th>Student ID</th>
                                 <th>Name</th>
                                 <th>Section</th>
                                 <th>Enrollment</th>

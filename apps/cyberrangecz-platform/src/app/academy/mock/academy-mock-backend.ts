@@ -198,7 +198,7 @@ export class AcademyMockBackend {
         const body = req.body as { email: string; firstName: string; lastName?: string; role: MemberRole; department?: string };
         const email = (body.email ?? '').trim().toLowerCase();
         if (this.state.members.some((m) => m.email === email)) {
-            return this.error(req, 409, 'Email or roll number already used in this tenant', 'member_exists');
+            return this.error(req, 409, 'Email or student ID already used in this tenant', 'member_exists');
         }
         const member: Member = {
             id: uuid(),
@@ -678,8 +678,8 @@ export class AcademyMockBackend {
         mapping: Record<string, string>,
         rows: string[][],
     ): RosterPreview {
-        const seenEmail = new Set<string>();
-        const seenRoll = new Set<string>();
+        const seenEmail = new Map<string, number>();
+        const seenRoll = new Map<string, number>();
         const enrolled = this.state.enrollments[course.id] ?? [];
         const outcomes: RosterRowOutcome[] = rows.map((cells, i) => {
             const row = normalizeRow(header, mapping, cells);
@@ -690,15 +690,15 @@ export class AcademyMockBackend {
             } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.email)) {
                 errors.push({ code: 'invalid_email', field: 'email', message: `"${row.email}" is not a valid email` });
             } else if (seenEmail.has(row.email)) {
-                errors.push({ code: 'duplicate_email_in_file', field: 'email', message: 'This email appears earlier in the file' });
+                errors.push({ code: 'duplicate_email_in_file', field: 'email', message: `Same email as row ${seenEmail.get(row.email)}.` });
             }
             if (!row.firstName) {
                 errors.push({ code: 'missing_first_name', field: 'firstName', message: 'First name is required' });
             }
             if (!row.rollNumber && role === 'student') {
-                errors.push({ code: 'missing_roll_number', field: 'rollNumber', message: 'Roll number is required for students' });
-            } else if (row.rollNumber && seenRoll.has(row.rollNumber)) {
-                errors.push({ code: 'duplicate_roll_in_file', field: 'rollNumber', message: 'This roll number appears earlier in the file' });
+                errors.push({ code: 'missing_roll_number', field: 'rollNumber', message: 'Student ID is required for students' });
+            } else if (row.rollNumber && seenRoll.has(row.rollNumber.toUpperCase())) {
+                errors.push({ code: 'duplicate_roll_in_file', field: 'rollNumber', message: `Same student ID as row ${seenRoll.get(row.rollNumber.toUpperCase())}.` });
             }
             if ((row.firstName ?? '').length > 80 || (row.lastName ?? '').length > 80 || (row.rollNumber ?? '').length > 32 || (row.section ?? '').length > 40) {
                 errors.push({ code: 'too_long', message: 'A value is longer than allowed' });
@@ -706,13 +706,13 @@ export class AcademyMockBackend {
             const existingByEmail = this.state.members.find((m) => m.email === row.email);
             const existingByRoll = row.rollNumber ? this.state.members.find((m) => m.rollNumber === row.rollNumber) : undefined;
             if (existingByRoll && existingByRoll.email !== row.email) {
-                errors.push({ code: 'roll_belongs_to_other_member', field: 'rollNumber', message: `Roll number belongs to ${existingByRoll.email}` });
+                errors.push({ code: 'roll_belongs_to_other_member', field: 'rollNumber', message: `Student ID already belongs to ${existingByRoll.email}.` });
             }
             if (existingByEmail && !['student', 'ta'].includes(existingByEmail.role)) {
                 errors.push({ code: 'email_belongs_to_other_role', field: 'email', message: `This email is a ${existingByEmail.role.replace('_', ' ')} in this tenant` });
             }
-            if (row.email) seenEmail.add(row.email);
-            if (row.rollNumber) seenRoll.add(row.rollNumber);
+            if (row.email && !seenEmail.has(row.email)) seenEmail.set(row.email, i + 1);
+            if (row.rollNumber && !seenRoll.has(row.rollNumber.toUpperCase())) seenRoll.set(row.rollNumber.toUpperCase(), i + 1);
 
             let outcome: RosterRowOutcome['outcome'] = 'create';
             if (errors.length) {
@@ -937,7 +937,7 @@ export class AcademyMockBackend {
         }
         const rollOwner = this.state.members.find((m) => m.rollNumber === row.rollNumber);
         if (rollOwner && rollOwner.email !== email) {
-            return this.error(req, 409, `Roll number belongs to ${rollOwner.email}`, 'roll_belongs_to_other_member');
+            return this.error(req, 409, `Student ID already belongs to ${rollOwner.email}`, 'roll_belongs_to_other_member');
         }
         if (!member) {
             member = {
@@ -1178,12 +1178,12 @@ export function parseCsv(text: string): string[][] {
 }
 
 const HEADER_ALIASES: Record<string, string[]> = {
-    email: ['email', 'e mail', 'email address', 'mail', 'email id'],
+    email: ['email', 'e mail', 'email address', 'mail', 'email id', 'student email', 'university email', 'campus email', 'school email'],
     first_name: ['first name', 'firstname', 'given name'],
     last_name: ['last name', 'lastname', 'surname', 'family name'],
     name: ['name', 'full name', 'student name'],
-    roll_number: ['roll number', 'roll no', 'roll', 'reg no', 'regno', 'registration number', 'register number', 'student id'],
-    section: ['section', 'lab section', 'batch'],
+    roll_number: ['roll number', 'roll no', 'roll', 'reg no', 'regno', 'registration number', 'register number', 'student id', 'student number', 'emplid', 'university id'],
+    section: ['section', 'lab section', 'class section', 'batch'],
     role: ['role'],
 };
 

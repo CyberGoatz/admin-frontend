@@ -31,7 +31,7 @@ import { Enrollment } from '../../../academy/academy.model';
                         <input matInput type="email" formControlName="email" required />
                     </mat-form-field>
                     <mat-form-field>
-                        <mat-label>Roll number</mat-label>
+                        <mat-label>Student ID</mat-label>
                         <input matInput formControlName="rollNumber" required />
                     </mat-form-field>
                     <mat-form-field>

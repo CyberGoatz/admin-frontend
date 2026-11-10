@@ -39,8 +39,8 @@ const FIELD_LABELS: Record<string, string> = {
     lastName: 'last name',
     name: 'full name (split on the last space)',
     fullName: 'full name (split on the last space)',
-    roll_number: 'roll number',
-    rollNumber: 'roll number',
+    roll_number: 'student ID',
+    rollNumber: 'student ID',
     section: 'section',
     role: 'role',
 };
