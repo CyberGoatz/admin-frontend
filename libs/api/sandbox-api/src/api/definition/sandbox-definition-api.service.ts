@@ -75,6 +75,9 @@ export class SandboxDefinitionApi {
             .post<SandboxDefinitionDTO>(this.apiUrl, {
                 url: sandboxDefinition.url,
                 rev: sandboxDefinition.rev,
+                ...(sandboxDefinition.path
+                    ? { path: sandboxDefinition.path }
+                    : {}),
             })
             .pipe(map((response) => SandboxDefinitionMapper.fromDTO(response)));
     }

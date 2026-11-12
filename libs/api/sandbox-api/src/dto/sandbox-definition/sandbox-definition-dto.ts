@@ -5,5 +5,6 @@ export class SandboxDefinitionDTO {
     name: string;
     rev: string;
     url?: string;
+    path?: string;
     created_by: CreatedByDTO;
 }
