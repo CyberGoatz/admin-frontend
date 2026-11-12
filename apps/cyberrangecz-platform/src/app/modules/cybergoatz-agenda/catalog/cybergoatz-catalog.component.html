@@ -1,0 +1,499 @@
+<div class="catalog-page">
+    <div class="section-header">
+        <h2>Catalog</h2>
+    </div>
+
+    <p class="helper-text">
+        Refresh re-reads the trainings repository and registers new or changed
+        trainings. It does not create pools or training instances and does not
+        release training definitions.
+    </p>
+
+    @if (isLoading()) {
+        <div class="loading">
+            <mat-progress-spinner
+                diameter="32"
+                mode="indeterminate"
+            />
+            <span>Loading catalog</span>
+        </div>
+    } @else {
+        @if (loadError(); as err) {
+            <div
+                class="error-message"
+                role="alert"
+            >
+                {{ err.message }}
+            </div>
+        }
+
+        @if (showForm()) {
+            <mat-card
+                appearance="outlined"
+                class="source-card"
+            >
+                <mat-card-header>
+                    <mat-card-title>
+                        {{
+                            source()
+                                ? 'Edit repository'
+                                : 'Connect trainings repository'
+                        }}
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <form
+                        [formGroup]="form"
+                        class="source-form"
+                        (ngSubmit)="saveSource()"
+                    >
+                        <mat-form-field appearance="outline">
+                            <mat-label>Repository URL</mat-label>
+                            <input
+                                matInput
+                                formControlName="repoUrl"
+                                placeholder="https://github.com/owner/repo"
+                            />
+                            @if (form.controls.repoUrl.hasError('required')) {
+                                <mat-error>
+                                    Repository URL is required.
+                                </mat-error>
+                            } @else if (
+                                form.controls.repoUrl.hasError('githubUrl')
+                            ) {
+                                <mat-error>
+                                    Use a GitHub https URL such as
+                                    https://github.com/owner/repo.
+                                </mat-error>
+                            } @else if (
+                                form.controls.repoUrl.hasError('maxlength')
+                            ) {
+                                <mat-error>At most 512 characters.</mat-error>
+                            }
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Revision</mat-label>
+                            <input
+                                matInput
+                                formControlName="rev"
+                                placeholder="main"
+                            />
+                            <mat-hint>Branch, tag or commit.</mat-hint>
+                            @if (form.controls.rev.hasError('required')) {
+                                <mat-error>Revision is required.</mat-error>
+                            } @else if (
+                                form.controls.rev.hasError('pattern') ||
+                                form.controls.rev.hasError('maxlength')
+                            ) {
+                                <mat-error>
+                                    Revision must be a valid branch, tag or
+                                    commit.
+                                </mat-error>
+                            }
+                        </mat-form-field>
+
+                        @if (saveError(); as err) {
+                            <div
+                                class="error-message"
+                                role="alert"
+                            >
+                                {{ err.message }}
+                            </div>
+                        }
+
+                        <div class="form-actions">
+                            @if (source()) {
+                                <button
+                                    mat-button
+                                    type="button"
+                                    [disabled]="isSaving()"
+                                    (click)="cancelEdit()"
+                                >
+                                    Cancel
+                                </button>
+                            }
+                            <button
+                                mat-flat-button
+                                color="primary"
+                                type="submit"
+                                [disabled]="isSaving()"
+                            >
+                                {{ source() ? 'Save' : 'Connect' }}
+                            </button>
+                        </div>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        }
+
+        @if (source(); as src) {
+            @if (!isEditing()) {
+                <mat-card
+                    appearance="outlined"
+                    class="source-card"
+                >
+                    <mat-card-header>
+                        <mat-card-title>Source</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <dl class="source-details">
+                            <dt>Repository</dt>
+                            <dd>{{ src.repoUrl }}</dd>
+                            <dt>Revision</dt>
+                            <dd>{{ src.rev }}</dd>
+                            <dt>Last synced commit</dt>
+                            <dd [matTooltip]="src.lastSyncedCommit ?? ''">
+                                {{ shortCommit(src.lastSyncedCommit) }}
+                            </dd>
+                            <dt>Last run</dt>
+                            <dd>
+                                {{
+                                    src.lastSyncAt
+                                        ? (src.lastSyncAt | date: 'medium')
+                                        : 'Never'
+                                }}
+                            </dd>
+                            <dt>Status</dt>
+                            <dd>
+                                <span
+                                    class="status-badge"
+                                    [class]="'status-' + src.lastSyncStatus"
+                                >
+                                    {{ src.lastSyncStatus }}
+                                </span>
+                            </dd>
+                        </dl>
+                    </mat-card-content>
+                    <mat-card-actions align="end">
+                        <button
+                            mat-button
+                            type="button"
+                            [disabled]="isRefreshing()"
+                            (click)="startEdit()"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            mat-flat-button
+                            color="primary"
+                            class="refresh-button"
+                            type="button"
+                            [disabled]="isRefreshing()"
+                            (click)="refresh()"
+                        >
+                            {{ isRefreshing() ? 'Refreshing...' : 'Refresh' }}
+                        </button>
+                    </mat-card-actions>
+                    @if (isRefreshing()) {
+                        <mat-progress-bar mode="indeterminate" />
+                        <p class="progress-text">
+                            Refresh in progress. This can take a few minutes;
+                            keep this page open.
+                        </p>
+                    }
+                </mat-card>
+            }
+
+            @if (refreshError(); as err) {
+                <div
+                    class="error-message"
+                    role="alert"
+                >
+                    <strong>{{ err.message }}</strong>
+                    @if (err.details.length > 0) {
+                        <ul>
+                            @for (detail of err.details; track $index) {
+                                <li>{{ detail }}</li>
+                            }
+                        </ul>
+                    }
+                </div>
+            }
+
+            @if (displayedSummary(); as summary) {
+                <mat-card
+                    appearance="outlined"
+                    class="summary-card"
+                >
+                    <mat-card-header>
+                        <mat-card-title>
+                            {{
+                                refreshResult()
+                                    ? 'Refresh result'
+                                    : 'Last run summary'
+                            }}
+                        </mat-card-title>
+                        <mat-card-subtitle>
+                            Commit {{ shortCommit(summary.commit) }} ·
+                            {{ summary.startedAt | date: 'medium' }} to
+                            {{ summary.finishedAt | date: 'mediumTime' }}
+                        </mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        @if (summary.error) {
+                            <div class="error-message">{{ summary.error }}</div>
+                        }
+                        <div class="counts">
+                            @for (count of summaryCounts(); track count.label) {
+                                <div
+                                    class="count"
+                                    [class.count-failed]="
+                                        count.label === 'Failed' &&
+                                        count.value > 0
+                                    "
+                                >
+                                    <span class="count-value">
+                                        {{ count.value }}
+                                    </span>
+                                    <span class="count-label">
+                                        {{ count.label }}
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        <p>
+                            Tracks created: {{ createdTracks().length }}
+                            @if (createdTracks().length > 0) {
+                                ({{ createdTrackSlugs() }})
+                            }
+                        </p>
+                        @for (track of failedTracks(); track track.slug) {
+                            <p class="failed-text">
+                                Track {{ track.slug }} failed:
+                                {{ truncate(track.error ?? '', 200) }}
+                            </p>
+                        }
+                    </mat-card-content>
+                </mat-card>
+            }
+
+            <div class="section-header">
+                <h3>Items</h3>
+                <div class="filters">
+                    <mat-form-field
+                        appearance="outline"
+                        subscriptSizing="dynamic"
+                    >
+                        <mat-label>State</mat-label>
+                        <mat-select
+                            [value]="stateFilter()"
+                            (selectionChange)="onStateFilter($event.value)"
+                        >
+                            <mat-option value="">All</mat-option>
+                            @for (state of states; track state) {
+                                <mat-option [value]="state">
+                                    {{ state }}
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field
+                        appearance="outline"
+                        subscriptSizing="dynamic"
+                    >
+                        <mat-label>Course</mat-label>
+                        <mat-select
+                            [value]="courseFilter()"
+                            (selectionChange)="onCourseFilter($event.value)"
+                        >
+                            <mat-option value="">All</mat-option>
+                            @for (course of courses(); track course.id) {
+                                <mat-option [value]="course.id">
+                                    {{ course.title }}
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            @if (items().length === 0) {
+                <mat-card
+                    appearance="outlined"
+                    class="empty-card"
+                >
+                    No catalog items. Press Refresh to read the repository.
+                </mat-card>
+            } @else {
+                <div class="table-wrapper">
+                    <table
+                        mat-table
+                        [dataSource]="items()"
+                    >
+                        <ng-container matColumnDef="catalogId">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                Catalog id
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                            >
+                                {{ item.catalogId }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="title">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                Title
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                            >
+                                {{ item.title }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="course">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                Course
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                            >
+                                {{ item.courseTitle }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="unit">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                Unit
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                            >
+                                {{ item.unit }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="difficulty">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                Difficulty
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                            >
+                                {{ item.difficulty }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="type">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                Type
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                            >
+                                {{ item.type }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="state">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                State
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                            >
+                                <span
+                                    class="status-badge"
+                                    [class]="'state-' + item.state"
+                                >
+                                    {{ item.state }}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="trainingDefinitionId">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                Training def. id
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                            >
+                                {{ item.trainingDefinitionId ?? '-' }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="sandboxDefinitionId">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                Sandbox def. id
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                            >
+                                {{ item.sandboxDefinitionId ?? '-' }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="path">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                Path
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                            >
+                                {{ item.path ?? '-' }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="lastError">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                Last error
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                                class="error-cell"
+                                [matTooltip]="item.lastError ?? ''"
+                            >
+                                {{ truncate(item.lastError, 60) }}
+                            </td>
+                        </ng-container>
+
+                        <tr
+                            mat-header-row
+                            *matHeaderRowDef="columns"
+                        ></tr>
+                        <tr
+                            mat-row
+                            *matRowDef="let item; columns: columns"
+                            [class.failed-row]="isFailed(item)"
+                        ></tr>
+                    </table>
+                </div>
+            }
+        }
+    }
+</div>

@@ -59,6 +59,12 @@ export class NavConfigFactory {
                         canActivate: () =>
                             RoleResolver.isTrainingOrganizer(user.roles),
                     },
+                    {
+                        label: 'Catalog',
+                        path: 'catalog' satisfies ValidPathPrefix,
+                        canActivate: () =>
+                            RoleResolver.isTrainingOrganizer(user.roles),
+                    },
                 ],
             },
             {

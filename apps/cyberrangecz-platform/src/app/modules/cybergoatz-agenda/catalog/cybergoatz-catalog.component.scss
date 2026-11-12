@@ -1,0 +1,159 @@
+.catalog-page {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.section-header {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+}
+
+.section-header h2,
+.section-header h3 {
+    margin: 0;
+}
+
+.helper-text {
+    margin: 0;
+    opacity: 0.8;
+}
+
+.source-card {
+    max-width: 48rem;
+}
+
+.source-form {
+    display: grid;
+    gap: 0.5rem;
+    padding-top: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.source-details {
+    column-gap: 1.5rem;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    margin: 1rem 0 0;
+    row-gap: 0.5rem;
+}
+
+.source-details dt {
+    font-weight: 600;
+}
+
+.source-details dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.refresh-button {
+    min-width: 8rem;
+}
+
+.progress-text {
+    margin: 0.75rem 1rem;
+}
+
+.summary-card {
+    max-width: 48rem;
+}
+
+.counts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.count {
+    display: grid;
+    min-width: 5rem;
+    text-align: center;
+}
+
+.count-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.count-label {
+    font-size: 0.75rem;
+}
+
+.count-failed,
+.failed-text {
+    color: var(--mat-sys-error);
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+}
+
+.failed-row {
+    background: var(--mat-sys-error-container);
+    color: var(--mat-sys-on-error-container);
+}
+
+.error-cell {
+    max-width: 18rem;
+}
+
+.status-badge {
+    border: 1px solid currentColor;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    white-space: nowrap;
+}
+
+.status-failed,
+.state-failed {
+    font-weight: 700;
+}
+
+.status-failed,
+.state-failed,
+.status-partial {
+    color: var(--mat-sys-error);
+}
+
+.failed-row .status-badge {
+    color: inherit;
+}
+
+.empty-card {
+    padding: 1rem;
+    width: 100%;
+}
+
+.loading {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+}
+
+.error-message {
+    background: var(--mat-sys-error-container);
+    color: var(--mat-sys-on-error-container);
+    padding: 0.75rem 1rem;
+}
+
+.error-message ul {
+    margin: 0.5rem 0 0;
+}

@@ -113,6 +113,8 @@ export const DEFINED_ROUTES = {
         },
     },
 
+    catalog: {},
+
     ['sandbox-image']: {},
 
     ['sandbox-definition']: {

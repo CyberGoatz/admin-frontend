@@ -157,6 +157,19 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         },
     },
     {
+        path: 'catalog',
+        loadChildren: () =>
+            import(
+                './modules/cybergoatz-agenda/catalog/cybergoatz-catalog-routing.module'
+            ).then((m) => m.CyberGoatzCatalogRoutingModule),
+        canActivate: [RoleGuards.trainingOrganizerGuard],
+        data: {
+            breadcrumb: 'CyberGoatz Catalog',
+            title: 'CyberGoatz Catalog',
+            preloadRoleCondition: 'trainingOrganizer',
+        },
+    },
+    {
         path: 'user',
         loadChildren: () =>
             import('./modules/user-and-group-agenda/user-routing.module').then(
