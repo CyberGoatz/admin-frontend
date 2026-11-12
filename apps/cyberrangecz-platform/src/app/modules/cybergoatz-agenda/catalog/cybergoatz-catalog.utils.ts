@@ -167,10 +167,31 @@ export function summaryCounts(summary: CatalogSyncSummary): SummaryCount[] {
         { label: 'Updated', value: summary.updated },
         { label: 'Skipped', value: summary.skipped },
         { label: 'Metadata updated', value: summary.metadataUpdated },
+        { label: 'Resumed', value: summary.resumed },
+        { label: 'Older versions kept', value: summary.supersededKept },
         { label: 'Failed', value: summary.failed },
         { label: 'Not built', value: summary.notBuilt },
         { label: 'Removed', value: summary.removed },
     ];
+}
+
+export function hasOlderVersions(item: CatalogItem): boolean {
+    return (item.previousVersions?.length ?? 0) > 0;
+}
+
+/** Multi-line tooltip text describing superseded versions still in place. */
+export function previousVersionsText(item: CatalogItem): string {
+    return (item.previousVersions ?? [])
+        .map((version) =>
+            [
+                `Reason: ${version.keptReason ?? 'cleanup not attempted yet'}`,
+                `definition ${version.trainingDefinitionId ?? '-'}`,
+                `pool ${version.poolId ?? '-'}`,
+                `instance ${version.trainingInstanceId ?? '-'}`,
+                `mission ${version.trackItemId ?? '-'}`,
+            ].join(', '),
+        )
+        .join('\n');
 }
 
 export function tracksCreated(
