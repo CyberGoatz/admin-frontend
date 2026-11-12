@@ -154,7 +154,11 @@ export class PoolEditComponent implements OnInit {
         if (!sandboxDefinition) {
             return '';
         }
-        return sandboxDefinition.title + ' [' + sandboxDefinition.rev + ']';
+        return sandboxDefinition.title +
+            ' [' +
+            sandboxDefinition.rev +
+            ']' +
+            (sandboxDefinition.path ? ' /' + sandboxDefinition.path : '');
     }
 
     onSandboxDefinitionFilter($event: string) {

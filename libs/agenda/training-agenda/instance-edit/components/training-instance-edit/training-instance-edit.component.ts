@@ -273,7 +273,11 @@ export class TrainingInstanceEditComponent implements OnChanges, AfterViewInit {
         if (!sandboxDefinition) {
             return '';
         }
-        return sandboxDefinition.title + ' [' + sandboxDefinition.rev + ']';
+        return sandboxDefinition.title +
+            ' [' +
+            sandboxDefinition.rev +
+            ']' +
+            (sandboxDefinition.path ? ' /' + sandboxDefinition.path : '');
     }
 
     onTrainingDefinitionFilter(search: string) {
