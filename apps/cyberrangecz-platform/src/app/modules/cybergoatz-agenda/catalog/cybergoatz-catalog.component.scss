@@ -157,3 +157,19 @@ table {
 .error-message ul {
     margin: 0.5rem 0 0;
 }
+
+.delivery-cell {
+    min-width: 11rem;
+    overflow-wrap: anywhere;
+}
+
+.older-version {
+    cursor: help;
+    display: inline-block;
+    margin-top: 0.25rem;
+    white-space: normal;
+}
+
+::ng-deep .multiline-tooltip {
+    white-space: pre-line;
+}

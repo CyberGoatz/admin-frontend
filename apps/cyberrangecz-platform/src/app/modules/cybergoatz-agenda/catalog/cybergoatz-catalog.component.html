@@ -5,7 +5,10 @@
 
     <p class="helper-text">
         Refresh re-reads the trainings repository and registers new or changed
-        trainings. It does not create pools or training instances and does not
+        trainings. For each lab it creates an empty pool (size 1 by default, no
+        sandboxes are allocated), creates a training instance that starts now
+        and never expires, and adds an unpublished mission to the course track.
+        It does not allocate sandboxes, does not publish missions and does not
         release training definitions.
     </p>
 
@@ -449,6 +452,47 @@
                                 *matCellDef="let item"
                             >
                                 {{ item.sandboxDefinitionId ?? '-' }}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="delivery">
+                            <th
+                                mat-header-cell
+                                *matHeaderCellDef
+                            >
+                                Pool / Instance / Mission
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let item"
+                                class="delivery-cell"
+                            >
+                                <div>
+                                    Pool:
+                                    {{
+                                        item.type === 'mcq'
+                                            ? '-'
+                                            : (item.poolId ?? '-')
+                                    }}
+                                </div>
+                                <div>
+                                    Instance:
+                                    {{ item.trainingInstanceId ?? '-' }}
+                                </div>
+                                <div>
+                                    Mission:
+                                    {{ item.trackItemId ? 'yes' : '-' }}
+                                </div>
+                                @if (hasOlderVersions(item)) {
+                                    <span
+                                        class="status-badge older-version"
+                                        [matTooltip]="
+                                            previousVersionsText(item)
+                                        "
+                                        matTooltipClass="multiline-tooltip"
+                                    >
+                                        older version still in place
+                                    </span>
+                                }
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="path">

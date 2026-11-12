@@ -35,7 +35,9 @@ import {
     CatalogErrorView,
     REV_PATTERN,
     distinctCourses,
+    hasOlderVersions,
     isGithubHttpsUrl,
+    previousVersionsText,
     shortCommit,
     sortCatalogItems,
     summaryCounts,
@@ -81,6 +83,7 @@ export class CyberGoatzCatalogComponent {
         'state',
         'trainingDefinitionId',
         'sandboxDefinitionId',
+        'delivery',
         'path',
         'lastError',
     ];
@@ -146,6 +149,8 @@ export class CyberGoatzCatalogComponent {
 
     protected readonly shortCommit = shortCommit;
     protected readonly truncate = truncate;
+    protected readonly hasOlderVersions = hasOlderVersions;
+    protected readonly previousVersionsText = previousVersionsText;
 
     private readonly api = inject(CyberGoatzCatalogApiService);
     private readonly destroyRef = inject(DestroyRef);
