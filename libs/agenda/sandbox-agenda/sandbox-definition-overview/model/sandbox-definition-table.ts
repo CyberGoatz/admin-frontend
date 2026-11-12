@@ -69,7 +69,11 @@ export class SandboxDefinitionTable extends ExpandableSentinelTable<
         const rowAdapter = sandboxDefinition as SandboxDefinitionRowAdapter;
         rowAdapter.createdByName = sandboxDefinition.createdBy.fullName;
         rowAdapter.titleWithRevision =
-            sandboxDefinition.title + ' (' + sandboxDefinition.rev + ')';
+            sandboxDefinition.title +
+            ' (' +
+            sandboxDefinition.rev +
+            ')' +
+            (sandboxDefinition.path ? ' /' + sandboxDefinition.path : '');
         const row = new Row(rowAdapter, actions);
         row.addLink(
             'titleWithRevision',
