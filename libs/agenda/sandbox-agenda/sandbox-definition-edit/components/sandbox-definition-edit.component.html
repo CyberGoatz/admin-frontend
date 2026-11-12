@@ -37,6 +37,26 @@
                     <mat-error>This field is required</mat-error>
                 }
             </mat-form-field>
+
+            <!-- PATH field-->
+            <mat-form-field (keydown.enter)="$event.preventDefault()"
+                            appearance="outline">
+                <mat-label>Folder in repository</mat-label>
+                <input formControlName="path" matInput placeholder="labs/course/training-name">
+                @if (path.value) {
+                    <button (click)="path.setValue('');" aria-label="Clear"
+                            mat-icon-button matSuffix>
+                        <mat-icon>close</mat-icon>
+                    </button>
+                }
+                <mat-hint>Leave empty when the definition is at the repository root</mat-hint>
+                @if (path.hasError('pathCharacters')) {
+                    <mat-error>Only letters, digits and the characters . _ / - are allowed</mat-error>
+                }
+                @if (path.hasError('pathParentSegment')) {
+                    <mat-error>The folder must not contain a ".." segment</mat-error>
+                }
+            </mat-form-field>
         </div>
     </form>
 </mat-card>
