@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { CatalogItem, CatalogSyncSummary } from './cybergoatz-catalog.model';
 import {
     distinctCourses,
+    hasOlderVersions,
+    previousVersionsText,
     isGithubHttpsUrl,
     shortCommit,
     sortCatalogItems,
@@ -32,6 +34,10 @@ function item(partial: Partial<CatalogItem>): CatalogItem {
         contentHash: null,
         trainingDefinitionId: null,
         sandboxDefinitionId: null,
+        poolId: null,
+        trainingInstanceId: null,
+        trackItemId: null,
+        previousVersions: null,
         state: 'synced',
         lastError: null,
         createdAt: '',
@@ -139,6 +145,43 @@ describe('item helpers', () => {
     });
 });
 
+describe('previous versions', () => {
+    const version = {
+        trainingDefinitionId: '10',
+        poolId: '20',
+        trainingInstanceId: '30',
+        trackItemId: null,
+        keptReason: 'instance has training runs',
+    };
+
+    it('detects older versions only when the list is non-empty', () => {
+        expect(hasOlderVersions(item({}))).toBe(false);
+        expect(hasOlderVersions(item({ previousVersions: [] }))).toBe(false);
+        expect(hasOlderVersions(item({ previousVersions: [version] }))).toBe(
+            true,
+        );
+    });
+
+    it('describes reason and old ids, one line per version', () => {
+        const text = previousVersionsText(
+            item({
+                previousVersions: [
+                    version,
+                    { ...version, poolId: null, keptReason: null },
+                ],
+            }),
+        );
+        const lines = text.split('\n');
+        expect(lines).toHaveLength(2);
+        expect(lines[0]).toBe(
+            'Reason: instance has training runs, definition 10, pool 20, instance 30, mission -',
+        );
+        expect(lines[1]).toContain('cleanup not attempted yet');
+        expect(lines[1]).toContain('pool -');
+        expect(previousVersionsText(item({}))).toBe('');
+    });
+});
+
 describe('summary helpers', () => {
     const summary: CatalogSyncSummary = {
         commit: 'abc',
@@ -148,6 +191,8 @@ describe('summary helpers', () => {
         updated: 2,
         skipped: 3,
         metadataUpdated: 4,
+        resumed: 8,
+        supersededKept: 9,
         failed: 5,
         notBuilt: 6,
         removed: 7,
@@ -158,9 +203,9 @@ describe('summary helpers', () => {
         ],
     };
 
-    it('lists all seven counts', () => {
+    it('lists all counts including resumed and superseded kept', () => {
         expect(summaryCounts(summary).map((c) => c.value)).toEqual([
-            1, 2, 3, 4, 5, 6, 7,
+            1, 2, 3, 4, 8, 9, 5, 6, 7,
         ]);
     });
 
