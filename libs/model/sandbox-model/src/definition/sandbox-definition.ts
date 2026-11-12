@@ -9,6 +9,8 @@ export class SandboxDefinition {
     title!: string;
     url?: string;
     rev!: string;
+    /** Folder in the repository, empty string means the repository root */
+    path = '';
     createdBy!: CreatedBy;
 
     toString(): string {

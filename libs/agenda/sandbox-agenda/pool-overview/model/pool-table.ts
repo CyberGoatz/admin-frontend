@@ -78,7 +78,7 @@ export class PoolTable extends ExpandableSentinelTable<
         const rowAdapter = pool as PoolRowAdapter;
         rowAdapter.title = `Pool ${rowAdapter.id}`;
         rowAdapter.createdByName = pool.createdBy.fullName;
-        rowAdapter.sandboxDefinitionNameAndRevision = `${pool.definition.title} (${pool.definition.rev})`;
+        rowAdapter.sandboxDefinitionNameAndRevision = `${pool.definition.title} (${pool.definition.rev})${pool.definition.path ? ' /' + pool.definition.path : ''}`;
         rowAdapter.comment = pool.comment;
         rowAdapter.instancesUtilization = pool.hardwareUsage.instances * 100;
         rowAdapter.vcpuUtilization = pool.hardwareUsage.vcpu * 100;

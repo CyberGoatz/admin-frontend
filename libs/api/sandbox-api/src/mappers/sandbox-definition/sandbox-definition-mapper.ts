@@ -9,6 +9,7 @@ export class SandboxDefinitionMapper {
         sandbox.title = dto.name;
         sandbox.url = dto.url;
         sandbox.rev = dto.rev;
+        sandbox.path = dto.path ?? '';
         sandbox.createdBy = CreatedByMapper.fromDTO(dto.created_by);
         return sandbox;
     }

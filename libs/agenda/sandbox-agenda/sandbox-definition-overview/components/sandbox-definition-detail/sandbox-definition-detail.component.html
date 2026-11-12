@@ -1,5 +1,6 @@
 @if (data) {
     <div class="block-content">
         <p><span>URL: </span>{{ data.url }}</p>
+        <p><span>Folder in repository: </span>{{ data.path || '-' }}</p>
     </div>
 }

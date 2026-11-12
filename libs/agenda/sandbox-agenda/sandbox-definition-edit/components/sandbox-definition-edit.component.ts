@@ -8,7 +8,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { SandboxDefinitionEditConcreteService } from '../services/sandbox-definition-edit-concrete.service';
 import { MatCard } from '@angular/material/card';
-import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { MatError, MatFormField, MatHint, MatInput, MatLabel } from '@angular/material/input';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
@@ -27,6 +27,7 @@ import { MatIcon } from '@angular/material/icon';
         MatFormField,
         MatLabel,
         MatError,
+        MatHint,
         MatInput,
         MatIcon,
         MatIconButton,
@@ -50,6 +51,10 @@ export class SandboxDefinitionEditComponent implements OnInit {
 
     get revision(): AbstractControl {
         return this.sandboxDefinitionFormGroup.formGroup.get('revision');
+    }
+
+    get path(): AbstractControl {
+        return this.sandboxDefinitionFormGroup.formGroup.get('path');
     }
 
     ngOnInit(): void {
