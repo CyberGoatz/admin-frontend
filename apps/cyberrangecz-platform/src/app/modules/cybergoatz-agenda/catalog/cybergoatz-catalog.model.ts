@@ -25,6 +25,7 @@ export type CatalogItemOutcome =
     | 'updated'
     | 'skipped'
     | 'metadata_updated'
+    | 'resumed'
     | 'failed'
     | 'not_built'
     | 'removed';
@@ -34,6 +35,11 @@ export interface CatalogItemResult {
     outcome: CatalogItemOutcome;
     trainingDefinitionId?: string | null;
     sandboxDefinitionId?: string | null;
+    poolId?: string | null;
+    trainingInstanceId?: string | null;
+    trackItemId?: string | null;
+    /** Set when an older version could not be cleaned up and was kept. */
+    supersededKept?: string[];
     error?: string;
 }
 
@@ -51,6 +57,10 @@ export interface CatalogSyncSummary {
     updated: number;
     skipped: number;
     metadataUpdated: number;
+    /** Entries where earlier steps were completed (pool, instance, track item). */
+    resumed: number;
+    /** Entries whose previous version was kept because cleanup was not safe. */
+    supersededKept: number;
     failed: number;
     notBuilt: number;
     removed: number;
@@ -70,6 +80,15 @@ export interface CatalogSource {
     lastSyncSummary: CatalogSyncSummary | null;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface CatalogPreviousVersion {
+    trainingDefinitionId: string | null;
+    poolId: string | null;
+    trainingInstanceId: string | null;
+    trackItemId: string | null;
+    /** Why this version was kept; null while cleanup has not been tried. */
+    keptReason: string | null;
 }
 
 /** Definition ids are Postgres bigint values, serialized as strings. */
@@ -92,6 +111,11 @@ export interface CatalogItem {
     contentHash: string | null;
     trainingDefinitionId: string | null;
     sandboxDefinitionId: string | null;
+    /** Null for MCQs, which have no pool. */
+    poolId: string | null;
+    trainingInstanceId: string | null;
+    trackItemId: string | null;
+    previousVersions: CatalogPreviousVersion[] | null;
     state: CatalogItemState;
     lastError: string | null;
     createdAt: string;
