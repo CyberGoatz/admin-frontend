@@ -28,3 +28,111 @@ main {
     font-weight: 700;
     font-stretch: semi-expanded;
 }
+
+// Campus staff hosts: the drawer is painted in the tenant primary by
+// crczp-academy-sidebar; these override the theme's white `.mat-drawer` rules.
+:host ::ng-deep sentinel-layout1.campus-shell {
+    .mat-drawer {
+        background: var(--tenant-primary, var(--mat-sys-primary)) !important;
+        color: var(--tenant-on-primary, #ffffff) !important;
+        border-right: 1px solid color-mix(in srgb, var(--tenant-primary, var(--mat-sys-primary)) 75%, #000000) !important;
+        border-radius: 0;
+    }
+
+    .mat-drawer-inner-container {
+        overflow: hidden;
+    }
+
+    // Top bar (campus UI spec): one 56px row on the surface. Sidebar toggle,
+    // breadcrumb on the left, notifications on the right. Identity lives in
+    // the sidebar footer, so Sentinel's avatar menu is hidden here.
+    sentinel-toolbar .mat-toolbar {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 4px;
+        height: 56px;
+        min-height: 56px;
+        padding: 0 16px 0 24px;
+        background: var(--surface) !important;
+        color: var(--text) !important;
+        border-bottom: 1px solid var(--border);
+    }
+
+    sentinel-toolbar mat-toolbar-row.first,
+    sentinel-toolbar mat-toolbar-row.second {
+        display: contents !important;
+    }
+
+    sentinel-toolbar #hamburger-menu-toggle {
+        order: 0;
+        margin-left: -8px;
+    }
+
+    sentinel-toolbar sentinel-breadcrumbs {
+        order: 1;
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+        --sentinel-breadcrumbs-text-color: var(--text-subtle);
+    }
+
+    sentinel-toolbar .spacer {
+        display: none;
+    }
+
+    sentinel-toolbar [role='toolbar'] {
+        order: 2;
+    }
+
+    sentinel-toolbar sentinel-notification-menu {
+        order: 3;
+    }
+
+    sentinel-toolbar sentinel-user-menu {
+        display: none !important;
+    }
+
+    sentinel-toolbar .mat-icon {
+        color: var(--text-muted) !important;
+    }
+
+    sentinel-breadcrumbs .sentinel-breadcrumb-text {
+        height: 32px;
+        padding: 0 2px;
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    sentinel-breadcrumbs .sentinel-breadcrumb-text,
+    sentinel-breadcrumbs .sentinel-breadcrumb-text span {
+        color: var(--text-subtle) !important;
+    }
+
+    sentinel-breadcrumbs .sentinel-breadcrumb-text b {
+        color: var(--text) !important;
+        font-weight: 500;
+    }
+
+    .padded-content {
+        padding: 32px;
+    }
+}
+
+// Below Sentinel's 749px breakpoint the drawer overlays the page, so the
+// content must not keep the sidebar's left margin.
+@media (max-width: 748px) {
+    :host ::ng-deep sentinel-layout1.campus-shell {
+        mat-drawer-content {
+            margin-left: 0 !important;
+        }
+
+        .padded-content {
+            padding: 16px;
+        }
+
+        sentinel-toolbar .mat-toolbar {
+            padding: 0 8px 0 16px;
+        }
+    }
+}

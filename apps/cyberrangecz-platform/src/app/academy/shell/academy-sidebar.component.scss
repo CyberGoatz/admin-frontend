@@ -1,0 +1,256 @@
+// Campus UI spec, shell sidebar. Flat: solid --brand, white text, hairline dividers.
+// Colors use !important only to win over the theme's generic `.mat-drawer a/button` rules.
+
+:host {
+    --sb-bg: var(--brand, var(--mat-sys-primary));
+    --sb-fg: var(--on-brand, var(--mat-sys-on-primary, #ffffff));
+    --sb-accent: var(--brand-accent, var(--sb-fg));
+    --sb-muted: color-mix(in srgb, var(--sb-fg) 72%, transparent);
+    --sb-label: color-mix(in srgb, var(--sb-fg) 60%, transparent);
+    --sb-hover: color-mix(in srgb, var(--sb-fg) 6%, transparent);
+    --sb-active: color-mix(in srgb, var(--sb-fg) 10%, transparent);
+    --sb-chip: color-mix(in srgb, var(--sb-fg) 12%, transparent);
+    --sb-line: color-mix(in srgb, var(--sb-fg) 12%, transparent);
+
+    display: block;
+    height: 100%;
+    background: var(--sb-bg);
+    color: var(--sb-fg);
+    text-align: left;
+    font-family: var(--font-sans, inherit);
+}
+
+.sb-sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.sb-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 20px;
+    color: var(--sb-fg) !important;
+    text-decoration: none;
+    border-bottom: 1px solid var(--sb-line);
+}
+
+.sb-brand-logo {
+    display: block;
+    height: 44px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.sb-product {
+    font-size: 12px;
+    line-height: 16px;
+    color: color-mix(in srgb, var(--sb-fg) 70%, transparent);
+}
+
+.sb-brand-text {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    color: var(--sb-fg);
+}
+
+.sb-brand-mark {
+    display: block;
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.sb-sections {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 16px 12px;
+}
+
+.sb-section + .sb-section {
+    margin-top: 20px;
+}
+
+.sb-section-label {
+    padding: 0 12px 6px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    color: var(--sb-label);
+}
+
+.sb-nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    margin: 2px 0;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: var(--radius-control, 8px);
+    background: transparent;
+    font: inherit;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    text-align: left;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    color: var(--sb-muted) !important;
+
+    &:hover {
+        background: var(--sb-hover);
+        color: var(--sb-fg) !important;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--sb-accent);
+        outline-offset: 2px;
+    }
+
+    &.sb-active {
+        background: var(--sb-active);
+        color: var(--sb-fg) !important;
+
+        // 3px accent bar on the left edge.
+        &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            border-radius: 0 3px 3px 0;
+            background: var(--sb-accent);
+        }
+    }
+}
+
+.sb-nav-icon {
+    color: inherit;
+}
+
+.sb-nav-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sb-footer {
+    flex: 0 0 auto;
+    padding: 12px;
+    border-top: 1px solid var(--sb-line);
+}
+
+.sb-person {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 4px 8px 8px;
+    min-width: 0;
+}
+
+.sb-avatar {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--sb-chip);
+    color: var(--sb-fg);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.sb-person-text {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.sb-person-name,
+.sb-person-role {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sb-person-name {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    color: var(--sb-fg);
+}
+
+.sb-person-role {
+    font-family: var(--font-mono, monospace);
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--sb-muted);
+}
+
+.sb-icon-button {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: var(--radius-control, 8px);
+    background: transparent;
+    color: var(--sb-muted) !important;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--sb-hover);
+        color: var(--sb-fg) !important;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--sb-accent);
+        outline-offset: 2px;
+    }
+}
+
+// Icon-only rail (72px).
+:host(.compact) {
+    .sb-brand {
+        align-items: center;
+        padding: 20px 0;
+    }
+
+    .sb-sections,
+    .sb-footer {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .sb-nav-item {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .sb-nav-label,
+    .sb-person-text,
+    .sb-icon-button {
+        display: none;
+    }
+
+    .sb-person {
+        justify-content: center;
+        padding: 4px 0 8px;
+    }
+}

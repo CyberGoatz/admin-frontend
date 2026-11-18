@@ -1,0 +1,182 @@
+.tab-body {
+    padding: 20px 0;
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+}
+
+.preset {
+    min-width: 11rem;
+}
+
+.grid-wrap {
+    overflow: auto;
+    max-height: 70vh;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+}
+
+.progress-grid {
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--text);
+
+    th,
+    td {
+        border-bottom: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        padding: 8px 12px;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    tr > :last-child {
+        border-right: none;
+    }
+
+    tbody tr:last-child > * {
+        border-bottom: none;
+    }
+
+    thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: var(--surface-muted);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+        color: var(--text-muted);
+    }
+
+    .sticky {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background: var(--surface);
+    }
+
+    thead th.sticky {
+        z-index: 3;
+        background: var(--surface-muted);
+    }
+
+    .student-col {
+        min-width: 13rem;
+        max-width: 13rem;
+        font-weight: 400;
+    }
+
+    .roll {
+        display: block;
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    .name,
+    .section {
+        display: block;
+        color: var(--text-muted);
+        font-size: 12px;
+        line-height: 16px;
+    }
+
+    .completion-col {
+        min-width: 5rem;
+        text-align: right;
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .bar {
+        margin-top: 6px;
+    }
+
+    .mission-col {
+        min-width: 9rem;
+        max-width: 11rem;
+
+        span {
+            display: block;
+        }
+
+        .title {
+            color: var(--text);
+            font-weight: 500;
+        }
+    }
+
+    .module,
+    .meta {
+        font-weight: 400;
+        color: var(--text-subtle);
+        font-size: 12px;
+    }
+
+    .cell {
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+    }
+
+    // Scores in mono; state words ("In progress", "Missing") stay in the UI font.
+    .cell.state-finished {
+        font-family: var(--font-mono);
+    }
+}
+
+// Cell states: colored text on the matching status background.
+.state-finished {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.state-in_progress {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.state-not_started {
+    color: var(--text-subtle);
+}
+
+.state-not_started.late {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.state-locked {
+    background: var(--surface-muted);
+    color: var(--text-subtle);
+}
+
+.late-tag {
+    margin-left: 4px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--warning-bg);
+    color: var(--warning);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    margin: 0;
+}
+
+.swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    vertical-align: middle;
+}

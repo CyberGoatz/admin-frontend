@@ -15,7 +15,12 @@
     gap: 1rem;
     border-color: var(--outline-variant);
     background: var(--surface-container-lowest);
-    box-shadow: 0 12px 32px rgba(26, 32, 44, 0.06);
+    box-shadow: none;
+}
+
+.login-card__logo {
+    width: 3rem;
+    height: 3rem;
 }
 
 .login-card__mark {

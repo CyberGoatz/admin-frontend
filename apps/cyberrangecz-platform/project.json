@@ -59,6 +59,35 @@
                             "with": "apps/cyberrangecz-platform/src/environments/environment.development.ts"
                         }
                     ]
+                },
+                "campus-local": {
+                    "optimization": false,
+                    "extractLicenses": false,
+                    "sourceMap": true,
+                    "fileReplacements": [
+                        {
+                            "replace": "apps/cyberrangecz-platform/src/environments/environment.ts",
+                            "with": "apps/cyberrangecz-platform/src/environments/environment.development.ts"
+                        }
+                    ],
+                    "assets": [
+                        {
+                            "glob": "**/*",
+                            "input": "apps/cyberrangecz-platform/public",
+                            "output": "./assets",
+                            "ignore": ["config.json"]
+                        },
+                        {
+                            "glob": "config.json",
+                            "input": "apps/cyberrangecz-platform/campus-local",
+                            "output": "./assets"
+                        },
+                        {
+                            "glob": "**/*",
+                            "input": "dist/libs/utils/theme/assets/",
+                            "output": "/assets/"
+                        }
+                    ]
                 }
             },
             "defaultConfiguration": "production"
@@ -73,6 +102,11 @@
                 "development": {
                     "buildTarget": "cyberrangecz-platform:build:development",
                     "ssl": true
+                },
+                "campus-local": {
+                    "buildTarget": "cyberrangecz-platform:build:campus-local",
+                    "ssl": false,
+                    "port": 4200
                 }
             },
             "defaultConfiguration": "development"

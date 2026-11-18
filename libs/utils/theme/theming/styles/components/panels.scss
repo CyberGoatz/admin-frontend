@@ -41,7 +41,7 @@ mat-card.mat-mdc-card {
     border-radius: 8px;
     background-color: var(--surface-container-lowest);
     color: var(--on-surface);
-    box-shadow: 0 8px 24px rgba(26, 32, 44, 0.04);
+    box-shadow: none;
 }
 
 // Remove padding from expansion panel content when the class is applied to the expansion panel

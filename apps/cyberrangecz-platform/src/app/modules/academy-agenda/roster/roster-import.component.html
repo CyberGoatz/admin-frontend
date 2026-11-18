@@ -1,0 +1,277 @@
+<div class="academy-page">
+    <header class="academy-header">
+        <div class="academy-header-text">
+            @if (course(); as course) {
+                <div class="academy-eyebrow">
+                    <span class="mono course-code">{{ course.code }}</span>
+                    <span>{{ course.title }}</span>
+                </div>
+            }
+            <h1 class="academy-title">Roster upload</h1>
+            <p class="academy-description">
+                Upload a CSV of students, review every row, then import.
+                @if (course(); as course) {
+                    {{ course.enrolledCount }} enrolled now.
+                }
+            </p>
+        </div>
+        <div class="academy-header-actions">
+            <a mat-stroked-button [routerLink]="['/academy', 'courses', courseId]" [queryParams]="{ tab: 'enrollments' }">
+                Back to enrollments
+            </a>
+        </div>
+    </header>
+
+    <ol class="steps" aria-label="Steps">
+        <li [class.current]="step() === 'upload'">1. Upload</li>
+        <li [class.current]="step() === 'preview'">2. Review</li>
+        <li [class.current]="step() === 'committing' || step() === 'done'">3. Import</li>
+    </ol>
+
+    @if (error()) {
+        <div class="academy-error" role="alert">{{ error() }}</div>
+    }
+
+    @switch (step()) {
+        @case ('upload') {
+            <section
+                class="dropzone"
+                [class.over]="dragOver()"
+                (dragover)="onDragOver($event)"
+                (dragleave)="dragOver.set(false)"
+                (drop)="onDrop($event)"
+            >
+                <mat-icon class="dropzone-icon">upload_file</mat-icon>
+                <p><strong>Drop a roster CSV here</strong> or choose a file.</p>
+                <input #fileInput type="file" accept=".csv,text/csv" hidden (change)="onFileInput($event)" />
+                <button mat-flat-button color="primary" type="button" [disabled]="uploading()" (click)="fileInput.click()">
+                    Choose CSV file
+                </button>
+                @if (uploading()) {
+                    <mat-progress-bar mode="indeterminate" />
+                }
+            </section>
+
+            <section class="academy-panel columns">
+                <h2 class="academy-section-title">Columns</h2>
+                <table class="academy-table">
+                    <tbody>
+                        <tr><td><code>email</code></td><td>Required. Sign-in identity and invite address. <code>University Email</code> also works.</td></tr>
+                        <tr><td><code>first_name</code></td><td>Required. A single <code>name</code> column also works.</td></tr>
+                        <tr><td><code>last_name</code></td><td>May be blank for students with one name.</td></tr>
+                        <tr><td><code>Student ID</code></td><td>Required for students. Common headers work, such as <code>Student ID</code>, <code>Emplid</code>, <code>Student Number</code> and <code>Reg No</code>.</td></tr>
+                        <tr><td><code>section</code></td><td>Optional lab section, for example L1. <code>Class Section</code> also works.</td></tr>
+                        <tr><td><code>role</code></td><td>Optional: <code>student</code> (default) or <code>ta</code>.</td></tr>
+                    </tbody>
+                </table>
+                <p class="academy-muted academy-small">
+                    UTF-8, up to 2,000 rows. Nothing is saved until you review the file and confirm.
+                    Passwords, phone numbers and dates of birth are never collected.
+                </p>
+                <button mat-stroked-button type="button" (click)="downloadTemplate()">
+                    <mat-icon>download</mat-icon>
+                    Download template
+                </button>
+            </section>
+        }
+
+        @case ('preview') {
+            @if (preview(); as p) {
+                <section class="academy-panel">
+                    <div class="academy-toolbar">
+                        <strong>{{ p.fileName }}</strong>
+                        <span class="academy-muted academy-small">Preview valid until {{ formatDateTime(p.expiresAt) }}</span>
+                    </div>
+                    <div class="academy-counts summary">
+                        <div class="count"><strong>{{ p.counts.total }}</strong><span>Rows</span></div>
+                        <div class="count"><strong>{{ p.counts.create }}</strong><span>New accounts</span></div>
+                        <div class="count"><strong>{{ p.counts.enroll }}</strong><span>Existing, newly enrolled</span></div>
+                        <div class="count"><strong>{{ p.counts.update }}</strong><span>Updated</span></div>
+                        <div class="count"><strong>{{ p.counts.unchanged }}</strong><span>No change</span></div>
+                        <div class="count" [class.has-errors]="p.counts.error > 0"><strong>{{ p.counts.error }}</strong><span>With errors</span></div>
+                    </div>
+                    @if (mapping().length) {
+                        <p class="academy-small mapping">
+                            <span class="academy-muted">Columns read:</span>
+                            @for (m of mapping(); track m[0]) {
+                                <span class="map">{{ m[0] }} → {{ fieldLabels[m[1]] || m[1] }}</span>
+                            }
+                        </p>
+                    }
+                </section>
+
+                @if (p.counts.error > 0) {
+                    <div class="academy-note">
+                        {{ p.counts.error }} {{ p.counts.error === 1 ? 'row has' : 'rows have' }} errors and will be skipped.
+                        Fix them in the file and upload again, or import the other rows now.
+                    </div>
+                }
+
+                <div class="academy-toolbar">
+                    <mat-slide-toggle [checked]="onlyErrors()" (change)="onlyErrors.set($event.checked)" [disabled]="p.counts.error === 0">
+                        Only rows with errors
+                    </mat-slide-toggle>
+                </div>
+
+                <div class="academy-table-wrap preview-table">
+                    <table class="academy-table">
+                        <thead>
+                            <tr>
+                                <th class="num">Row</th>
+                                <th>Result</th>
+                                <th>Email</th>
+                                <th>First name</th>
+                                <th>Last name</th>
+                                <th>Student ID</th>
+                                <th>Section</th>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (row of rows(); track row.rowNumber) {
+                                <tr [class.row-error]="row.outcome === 'error'">
+                                    <td class="num">{{ row.rowNumber }}</td>
+                                    <td>
+                                        <span [class]="'pill pill-' + row.outcome">{{ outcomeLabel(row.outcome) }}</span>
+                                        @for (msg of rowErrors(row); track msg) {
+                                            <div class="cell-error">{{ msg }}</div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span [class.cell-invalid]="errorFor(row, 'email')">{{ row.normalized.email || '(blank)' }}</span>
+                                        @if (errorFor(row, 'email'); as msg) {
+                                            <div class="cell-error">{{ msg }}</div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span [class.cell-invalid]="errorFor(row, 'firstName')">{{ row.normalized.firstName || '(blank)' }}</span>
+                                        @if (errorFor(row, 'firstName'); as msg) {
+                                            <div class="cell-error">{{ msg }}</div>
+                                        }
+                                    </td>
+                                    <td>{{ row.normalized.lastName }}</td>
+                                    <td>
+                                        <span class="mono" [class.cell-invalid]="errorFor(row, 'rollNumber')">{{ row.normalized.rollNumber || '(blank)' }}</span>
+                                        @if (errorFor(row, 'rollNumber'); as msg) {
+                                            <div class="cell-error">{{ msg }}</div>
+                                        }
+                                    </td>
+                                    <td>{{ row.normalized.section }}</td>
+                                    <td>{{ row.normalized.role === 'ta' ? 'TA' : 'Student' }}</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <section class="academy-panel options">
+                    <mat-checkbox [checked]="sendInvites()" (change)="sendInvites.set($event.checked)">
+                        Email invites to people without an account
+                    </mat-checkbox>
+                    @if (p.counts.missingFromFile > 0) {
+                        <mat-checkbox [checked]="dropMissing()" (change)="dropMissing.set($event.checked)">
+                            Drop the {{ p.counts.missingFromFile }} enrolled
+                            {{ p.counts.missingFromFile === 1 ? 'student who is' : 'students who are' }} not in this file
+                        </mat-checkbox>
+                    }
+                    <div class="academy-toolbar">
+                        <button mat-button type="button" (click)="restart()">Choose a different file</button>
+                        <span class="spacer"></span>
+                        <button mat-flat-button color="primary" type="button" [disabled]="applicable() === 0 || uploading()" (click)="commit()">
+                            Import {{ applicable() }} {{ applicable() === 1 ? 'row' : 'rows' }}
+                        </button>
+                    </div>
+                </section>
+            }
+        }
+
+        @case ('committing') {
+            @if (importState(); as s) {
+                <section class="academy-panel progress">
+                    <strong>Importing {{ s.fileName }}</strong>
+                    <mat-progress-bar mode="determinate" [value]="percent()" />
+                    <span class="academy-muted academy-small">
+                        {{ processed() }} of {{ s.rowCount }} rows processed. Accounts and invite emails are created in the background; you can leave this page.
+                    </span>
+                    <div class="academy-counts">
+                        <div class="count"><strong>{{ s.created }}</strong><span>Accounts created</span></div>
+                        <div class="count"><strong>{{ s.enrolled }}</strong><span>Enrolled</span></div>
+                        <div class="count"><strong>{{ s.updated }}</strong><span>Updated</span></div>
+                        <div class="count"><strong>{{ s.failed }}</strong><span>Skipped with errors</span></div>
+                    </div>
+                </section>
+            }
+        }
+
+        @case ('done') {
+            @if (importState(); as s) {
+                <section class="academy-panel progress">
+                    <strong>
+                        @if (s.status === 'completed') {
+                            Roster imported
+                        } @else {
+                            The import stopped: {{ label(s.status) }}
+                        }
+                    </strong>
+                    <mat-progress-bar mode="determinate" [value]="100" />
+                    <div class="academy-counts">
+                        <div class="count"><strong>{{ s.created }}</strong><span>Accounts created</span></div>
+                        <div class="count"><strong>{{ s.enrolled }}</strong><span>Enrolled</span></div>
+                        <div class="count"><strong>{{ s.updated }}</strong><span>Updated</span></div>
+                        <div class="count"><strong>{{ s.dropped }}</strong><span>Dropped</span></div>
+                        <div class="count"><strong>{{ s.skipped }}</strong><span>No change</span></div>
+                        <div class="count"><strong>{{ s.failed }}</strong><span>Skipped with errors</span></div>
+                    </div>
+                    <div class="academy-toolbar">
+                        <a mat-flat-button color="primary" [routerLink]="['/academy', 'courses', courseId]" [queryParams]="{ tab: 'enrollments' }">
+                            View enrollments
+                        </a>
+                        @if (s.failed > 0) {
+                            <button mat-stroked-button type="button" (click)="downloadErrors()">
+                                <mat-icon>download</mat-icon>
+                                Download error report
+                            </button>
+                        }
+                        <button mat-button type="button" (click)="restart()">Upload another file</button>
+                    </div>
+                </section>
+            }
+        }
+    }
+
+    @if (history().length) {
+        <section>
+            <h3>Earlier uploads</h3>
+            <div class="academy-table-wrap">
+                <table class="academy-table">
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Uploaded</th>
+                            <th>Status</th>
+                            <th class="num">Rows</th>
+                            <th class="num">Created</th>
+                            <th class="num">Enrolled</th>
+                            <th class="num">Dropped</th>
+                            <th class="num">Errors</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (h of history(); track h.id) {
+                            <tr>
+                                <td>{{ h.fileName }}</td>
+                                <td>{{ formatDateTime(h.createdAt) }}<span class="secondary">{{ h.uploadedBy }}</span></td>
+                                <td><span [class]="'pill pill-' + h.status">{{ label(h.status) }}</span></td>
+                                <td class="num">{{ h.rowCount }}</td>
+                                <td class="num">{{ h.created }}</td>
+                                <td class="num">{{ h.enrolled }}</td>
+                                <td class="num">{{ h.dropped }}</td>
+                                <td class="num">{{ h.failed }}</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+</div>

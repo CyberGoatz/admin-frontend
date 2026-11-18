@@ -1,0 +1,80 @@
+<nav class="sb-sidebar" aria-label="Main">
+    <a class="sb-brand" routerLink="/academy" [attr.aria-label]="brand.productName + ' home'" (click)="onNavigate()">
+        @if (compact() && markSrc) {
+            <img class="sb-brand-mark" [src]="markSrc" alt="" />
+        } @else if (!compact() && logoSrc) {
+            <img class="sb-brand-logo" [src]="logoSrc" [alt]="brand.legalName || brand.productName" />
+            @if (productLine) {
+                <span class="sb-product">{{ productLine }}</span>
+            }
+        } @else {
+            <span class="sb-brand-text">{{ compact() ? brand.productName.charAt(0) : brand.productName }}</span>
+        }
+    </a>
+
+    <div class="sb-sections">
+        @for (section of sections(); track section.label) {
+            <div class="sb-section">
+                @if (!compact()) {
+                    <div class="sb-section-label">{{ section.label }}</div>
+                }
+                @for (item of section.items; track item.route) {
+                    <a
+                        class="sb-nav-item"
+                        [routerLink]="item.route"
+                        routerLinkActive="sb-active"
+                        ariaCurrentWhenActive="page"
+                        [matTooltip]="compact() ? item.label : ''"
+                        matTooltipPosition="right"
+                        (click)="onNavigate()"
+                    >
+                        <crczp-lucide-icon class="sb-nav-icon" [name]="item.icon" />
+                        <span class="sb-nav-label">{{ item.label }}</span>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="sb-footer">
+        @if (member() || user()) {
+            <div class="sb-person">
+                <span
+                    class="sb-avatar"
+                    [matTooltip]="compact() ? personName() + ' · ' + roleLabel() : ''"
+                    matTooltipPosition="right"
+                    aria-hidden="true"
+                >{{ initials() }}</span>
+                <span class="sb-person-text">
+                    <span class="sb-person-name">{{ personName() }}</span>
+                    @if (roleLabel()) {
+                        <span class="sb-person-role">{{ roleLabel() }}</span>
+                    }
+                </span>
+                <button
+                    type="button"
+                    class="sb-icon-button"
+                    aria-label="Sign out"
+                    matTooltip="Sign out"
+                    matTooltipPosition="right"
+                    (click)="logout.emit()"
+                >
+                    <crczp-lucide-icon name="log-out" />
+                </button>
+            </div>
+        }
+        @if (!small()) {
+            <button
+                type="button"
+                class="sb-nav-item sb-collapse-toggle"
+                [attr.aria-label]="compact() ? 'Expand sidebar' : 'Collapse sidebar'"
+                [matTooltip]="compact() ? 'Expand sidebar' : ''"
+                matTooltipPosition="right"
+                (click)="toggleCompact()"
+            >
+                <crczp-lucide-icon class="sb-nav-icon" [name]="compact() ? 'chevrons-right' : 'chevrons-left'" />
+                <span class="sb-nav-label">Collapse</span>
+            </button>
+        }
+    </div>
+</nav>

@@ -7,6 +7,8 @@ import {
 import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 import { ValidRouterConfig } from '@crczp/routing-commons';
 import { RoleGuards } from './utils/guards';
+import { academyRoleGuard, ACADEMY_STAFF_ROLES } from './academy/academy-guards';
+import { campusHomeRedirectGuard } from './academy/campus-home-redirect.guard';
 
 export const APP_ROUTES: ValidRouterConfig<''> = [
     {
@@ -157,6 +159,17 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
         },
     },
     {
+        path: 'academy',
+        loadChildren: () =>
+            import('./modules/academy-agenda/academy-routing.module').then(
+                (m) => m.AcademyRoutingModule,
+            ),
+        canActivate: [academyRoleGuard(ACADEMY_STAFF_ROLES)],
+        data: {
+            breadcrumb: 'Academy',
+        },
+    },
+    {
         path: 'user',
         loadChildren: () =>
             import('./modules/user-and-group-agenda/user-routing.module').then(
@@ -223,7 +236,10 @@ export const APP_ROUTES: ValidRouterConfig<''> = [
     {
         path: 'home',
         component: HomeComponent,
-        canActivate: [RoleGuards.adminPlatformAccessGuard],
+        canActivate: [
+            campusHomeRedirectGuard,
+            RoleGuards.adminPlatformAccessGuard,
+        ],
     },
     {
         path: 'access-denied',

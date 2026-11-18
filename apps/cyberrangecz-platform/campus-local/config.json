@@ -1,0 +1,65 @@
+{
+    "enableLocalMode": true,
+    "defaultPageSize": 15,
+    "academy": {
+        "tenancyMode": "campus",
+        "mock": false
+    },
+    "polling": {
+        "pollingPeriodShort": 3000,
+        "pollingPeriodLong": 5000,
+        "retryCount": 3
+    },
+    "basePaths": {
+        "linearTraining": "http://localhost:3100/training/api/v1",
+        "adaptiveTraining": "http://localhost:3100/adaptive-training/api/v1",
+        "sandbox": "http://localhost:3100/sandbox-service/api/v1",
+        "userAndGroup": "http://localhost:3100/cybergoatz/api/v1/academy/dev/uag",
+        "cybergoatz": "http://localhost:3100/cybergoatz/api/v1",
+        "mitre": "http://localhost:3100/mitre-technique-service/api/v1",
+        "guacamole": "http://localhost:3100/guacamole"
+    },
+    "roleMapping": {
+        "uagAdmin": "ROLE_USER_AND_GROUP_ADMINISTRATOR",
+        "trainingDesigner": "ROLE_TRAINING_DESIGNER",
+        "trainingOrganizer": "ROLE_TRAINING_ORGANIZER",
+        "adaptiveTrainingDesigner": "ROLE_ADAPTIVE_TRAINING_DESIGNER",
+        "adaptiveTrainingOrganizer": "ROLE_ADAPTIVE_TRAINING_ORGANIZER",
+        "trainingTrainee": "ROLE_TRAINING_TRAINEE",
+        "cyberGoatzAccess": "ROLE_CYBERGOATZ_ACCESS",
+        "cyberGoatzWaitlisted": "ROLE_CYBERGOATZ_WAITLISTED",
+        "sandboxDesigner": "ROLE_SANDBOX-SERVICE_DESIGNER",
+        "sandboxOrganizer": "ROLE_SANDBOX-SERVICE_ORGANIZER"
+    },
+    "authConfig": {
+        "guardMainPageRedirect": "home",
+        "guardLoginPageRedirect": "login",
+        "interceptorAllowedUrls": ["http://localhost:3100"],
+        "authorizationStrategyConfig": {
+            "authorizationUrl": "http://localhost:3100/cybergoatz/api/v1/academy/dev/uag/users/info"
+        },
+        "navigateToRequestedRoutePostLogin": true,
+        "providers": [
+            {
+                "label": "Sign in",
+                "textColor": "white",
+                "backgroundColor": "#545f72",
+                "oidcConfig": {
+                    "requireHttps": false,
+                    "issuer": "http://localhost:8180/realms/campus",
+                    "clientId": "northgate-admin",
+                    "redirectUri": "http://northgate-admin.localhost:4200",
+                    "scope": "openid email profile organization",
+                    "logoutUrl": "http://localhost:8180/realms/campus/protocol/openid-connect/logout",
+                    "postLogoutRedirectUri": "http://northgate-admin.localhost:4200/logout-confirmed",
+                    "silentRefreshRedirectUri": "http://northgate-admin.localhost:4200/silent-refresh.html",
+                    "clearHashAfterLogin": true,
+                    "strictDiscoveryDocumentValidation": false,
+                    "skipIssuerCheck": true,
+                    "responseType": "code",
+                    "oidc": true
+                }
+            }
+        ]
+    }
+}

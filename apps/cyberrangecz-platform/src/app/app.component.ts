@@ -2,8 +2,9 @@ import { AfterViewInit, Component, inject, OnInit, signal } from '@angular/core'
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SentinelAuthService } from '@sentinel/auth';
 import { AgendaContainer } from '@sentinel/layout';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { TenantContextService } from './academy/tenant-context.service';
 import { NavConfigFactory } from './utils/nav-config-factory';
 import { PortalDynamicEnvironment } from './portal-dynamic-environment';
 
@@ -13,8 +14,9 @@ import { LoadingService } from './services/loading.service';
 import { ValidPath } from '@crczp/routing-commons';
 import { Utils } from '@crczp/utils';
 import { CommonModule } from '@angular/common';
-import { SentinelLayout1Component } from '@sentinel/layout/layout1';
+import { CustomNavDirective, SentinelLayout1Component } from '@sentinel/layout/layout1';
 import { ToolbarComponent } from '@sentinel/layout/common-components';
+import { AcademySidebarComponent } from './academy/shell/academy-sidebar.component';
 
 /**
  * Main component serving as wrapper for layout and router outlet
@@ -28,7 +30,9 @@ import { ToolbarComponent } from '@sentinel/layout/common-components';
         CommonModule,
         RouterOutlet,
         SentinelLayout1Component,
+        CustomNavDirective,
         ToolbarComponent,
+        AcademySidebarComponent,
     ],
 })
 export class AppComponent implements OnInit, AfterViewInit {
@@ -40,6 +44,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     hideSidebar = signal<boolean>(false);
     protected readonly loadingService = inject(LoadingService);
     protected readonly authService = inject(SentinelAuthService);
+    protected readonly tenantContext = inject(TenantContextService);
+    /** Campus staff hosts get the tenant-branded sidebar. */
+    protected readonly isCampus = this.tenantContext.isCampus;
+    /** Tenant logo on campus hosts, the CyberGoatz logo otherwise. */
+    protected readonly logoSrc =
+        this.tenantContext.runtime.branding.logoUrl ||
+        this.tenantContext.runtime.branding.markUrl;
     private readonly router = inject(Router);
     private readonly activatedRoute = inject(ActivatedRoute);
 
@@ -52,10 +63,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.title$ = this.getTitleFromRouter();
         this.subtitle$ = this.getSubtitleFromRouter();
-        this.agendaContainers$ = this.authService.activeUser$.pipe(
-            filter((user) => user != null),
-            map((user) =>
-                Utils.NavBar.buildNav(NavConfigFactory.buildNavConfig(user)),
+        this.agendaContainers$ = combineLatest([
+            this.authService.activeUser$,
+            this.tenantContext.member$,
+        ]).pipe(
+            // On campus hosts wait for /me so the native menus never flash.
+            filter(([user, member]) => member !== undefined && (user != null || member != null)),
+            map(([user, member]) =>
+                Utils.NavBar.buildNav(
+                    NavConfigFactory.buildNavConfig(user, member),
+                ),
             ),
         );
 

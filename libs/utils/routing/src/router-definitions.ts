@@ -113,6 +113,16 @@ export const DEFINED_ROUTES = {
         },
     },
 
+    academy: {
+        members: {},
+        library: {},
+        courses: {
+            VAR_courseId: {
+                roster: {},
+            },
+        },
+    },
+
     ['sandbox-image']: {},
 
     ['sandbox-definition']: {

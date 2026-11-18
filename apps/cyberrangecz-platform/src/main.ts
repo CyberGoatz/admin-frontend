@@ -9,9 +9,15 @@ import { environment } from './environments/environment';
 import {
     APP_CONFIG,
     appConfigProvider,
-    SentinelBootstrapper,
     SentinelConfig,
 } from '@sentinel/common/dynamic-env';
+import { bootstrapApplication } from '@angular/platform-browser';
+import {
+    loadRuntimeConfig,
+    getAcademyRuntime,
+    readAcademyMockFlag,
+} from './app/academy/academy-runtime';
+import { academyMockInterceptor } from './app/academy/mock/academy-mock.interceptor';
 import { AppComponent } from './app/app.component';
 import {
     BrowserAnimationsModule,
@@ -55,6 +61,7 @@ import {
     PortalConfig,
 } from '@crczp/utils';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { RoleService } from './app/services/role.service';
 import { APP_ROUTES } from './app/app-routes';
 import { provideSentinelMarkdownEditorConfig } from '@sentinel/components/markdown-editor';
@@ -93,11 +100,33 @@ if (environment.production) {
     enableProdMode();
 }
 
-SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
-    providers: [
+// Loads config.json, applies the tenant's auth clients and branding for this
+// host (GET /academy/public/admin-config), then starts Angular.
+loadRuntimeConfig(
+    'assets/config.json',
+    readAcademyMockFlag(environment.production),
+)
+    .then(() =>
+        bootstrapApplication(AppComponent, {
+            providers: buildProviders(),
+        }),
+    )
+    .catch((err) => console.error('Error bootstrapping application:', err));
+
+function buildProviders() {
+    return [
         importProvidersFrom(BrowserAnimationsModule),
         provideAnimations(),
         provideNativeDateAdapter(),
+        // Campus UI spec: outlined 40px fields on tenant hosts.
+        ...(getAcademyRuntime().tenant
+            ? [
+                  {
+                      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+                      useValue: { appearance: 'outline', subscriptSizing: 'dynamic' },
+                  },
+              ]
+            : []),
         appConfigProvider,
         {
             provide: PortalConfig,
@@ -124,6 +153,7 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
                 loadingInterceptor,
                 errorLogInterceptor,
                 withHttpCacheInterceptor(),
+                academyMockInterceptor,
             ]),
         ),
         {
@@ -145,5 +175,5 @@ SentinelBootstrapper.bootstrapApplication('assets/config.json', AppComponent, {
         }),
         provideHttpCache(withLocalStorage()),
         provideRouter(APP_ROUTES),
-    ],
-}).catch((err) => console.error('Error bootstrapping application:', err));
+    ];
+}
