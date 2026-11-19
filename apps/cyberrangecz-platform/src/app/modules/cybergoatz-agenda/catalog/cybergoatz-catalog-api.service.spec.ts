@@ -91,7 +91,6 @@ describe('CyberGoatzCatalogApiService', () => {
             notBuilt: 0,
             removed: 0,
             items: [],
-            tracks: [],
         });
         expect(count).toBe(3);
     });

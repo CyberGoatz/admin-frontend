@@ -14,10 +14,15 @@ import {
     ValidatorFn,
     Validators,
 } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { Routing } from '@crczp/routing-commons';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -25,25 +30,33 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CyberGoatzCatalogApiService } from './cybergoatz-catalog-api.service';
 import {
-    CATALOG_ITEM_STATES,
     CatalogItem,
-    CatalogItemState,
     CatalogSource,
     CatalogSyncSummary,
 } from './cybergoatz-catalog.model';
 import {
     CatalogErrorView,
+    CatalogStatusFilter,
+    CatalogTypeFilter,
     REV_PATTERN,
     distinctCourses,
+    filterCatalogItems,
     hasOlderVersions,
     isGithubHttpsUrl,
+    isListed,
+    levelLabel,
+    libraryName,
     previousVersionsText,
     shortCommit,
     sortCatalogItems,
+    sourceStatusLabel,
+    statusLabel,
     summaryCounts,
+    summarySentence,
     toCatalogError,
-    tracksCreated,
     truncate,
+    typeLabel,
+    usedCertifications,
 } from './cybergoatz-catalog.utils';
 
 const githubUrlValidator: ValidatorFn = (control) =>
@@ -60,10 +73,14 @@ const githubUrlValidator: ValidatorFn = (control) =>
     imports: [
         CommonModule,
         ReactiveFormsModule,
+        RouterLink,
         MatButtonModule,
+        MatButtonToggleModule,
+        MatIconModule,
         MatCardModule,
         MatFormFieldModule,
         MatInputModule,
+        MatPaginatorModule,
         MatProgressBarModule,
         MatProgressSpinnerModule,
         MatSelectModule,
@@ -72,28 +89,19 @@ const githubUrlValidator: ValidatorFn = (control) =>
     ],
 })
 export class CyberGoatzCatalogComponent {
-    readonly states = CATALOG_ITEM_STATES;
-    readonly columns = [
-        'catalogId',
-        'title',
-        'course',
-        'unit',
-        'difficulty',
-        'type',
-        'state',
-        'trainingDefinitionId',
-        'sandboxDefinitionId',
-        'delivery',
-        'path',
-        'lastError',
-    ];
+    readonly columns = ['title', 'course', 'level', 'type', 'status', 'open'];
 
     readonly source = signal<CatalogSource | null>(null);
     readonly items = signal<CatalogItem[]>([]);
     /** Courses are taken from the unfiltered list so the filter keeps its options. */
     readonly courses = signal<{ id: string; title: string }[]>([]);
-    readonly stateFilter = signal<CatalogItemState | ''>('');
+    readonly search = signal('');
     readonly courseFilter = signal('');
+    readonly typeFilter = signal<CatalogTypeFilter>('');
+    readonly statusFilter = signal<CatalogStatusFilter>('');
+    readonly certificationFilter = signal('');
+    /** Library details (repository, commits, run counts) under the library name. */
+    readonly technical = signal(false);
     readonly isLoading = signal(true);
     readonly isSaving = signal(false);
     readonly isRefreshing = signal(false);
@@ -112,22 +120,70 @@ export class CyberGoatzCatalogComponent {
         const summary = this.displayedSummary();
         return summary ? summaryCounts(summary) : [];
     });
-    readonly createdTracks = computed(() => {
+    readonly summaryText = computed(() => {
         const summary = this.displayedSummary();
-        return summary ? tracksCreated(summary) : [];
+        return summary ? summarySentence(summary) : '';
     });
-    readonly createdTrackSlugs = computed(() =>
-        this.createdTracks()
-            .map((track) => track.slug)
-            .join(', '),
+    readonly sourceStatus = computed(() =>
+        sourceStatusLabel(this.source()?.lastSyncStatus ?? 'never'),
     );
-    readonly failedTracks = computed(
+    /** Certifications that at least one listed training is tagged with. */
+    readonly certificationOptions = computed(() =>
+        usedCertifications(
+            this.source()?.certifications ?? [],
+            this.listedItems(),
+        ),
+    );
+    private readonly certificationsById = computed(
         () =>
-            this.displayedSummary()?.tracks.filter(
-                (track) => track.outcome === 'failed',
-            ) ?? [],
+            new Map(
+                (this.source()?.certifications ?? []).map((c) => [c.id, c]),
+            ),
     );
-
+    readonly listedItems = computed(() =>
+        this.items().filter((item) => isListed(item, false)),
+    );
+    readonly visibleItems = computed(() =>
+        filterCatalogItems(
+            this.items(),
+            {
+                search: this.search(),
+                course: this.courseFilter(),
+                type: this.typeFilter(),
+                status: this.statusFilter(),
+                certification: this.certificationFilter(),
+            },
+            false,
+        ),
+    );
+    /** Same page sizes as the platform's other tables. */
+    readonly pageSizeOptions = [5, 10, 25, 100];
+    readonly pageSize = signal(10);
+    readonly pageIndex = signal(0);
+    readonly pagedItems = computed(() => {
+        const items = this.visibleItems();
+        const size = this.pageSize();
+        const lastPage = Math.max(0, Math.ceil(items.length / size) - 1);
+        const page = Math.min(this.pageIndex(), lastPage);
+        return items.slice(page * size, page * size + size);
+    });
+    readonly stats = computed(() => {
+        const listed = this.listedItems();
+        return {
+            total: listed.length,
+            labs: listed.filter((item) => item.type === 'hands-on').length,
+            quizzes: listed.filter((item) => item.type === 'mcq').length,
+            attention: listed.filter((item) => item.state === 'failed').length,
+        };
+    });
+    readonly hasFilters = computed(
+        () =>
+            !!this.search() ||
+            !!this.courseFilter() ||
+            !!this.typeFilter() ||
+            !!this.statusFilter() ||
+            !!this.certificationFilter(),
+    );
     readonly form = inject(FormBuilder).nonNullable.group({
         repoUrl: [
             '',
@@ -151,6 +207,10 @@ export class CyberGoatzCatalogComponent {
     protected readonly truncate = truncate;
     protected readonly hasOlderVersions = hasOlderVersions;
     protected readonly previousVersionsText = previousVersionsText;
+    protected readonly statusLabel = statusLabel;
+    protected readonly typeLabel = typeLabel;
+    protected readonly levelLabel = levelLabel;
+    protected readonly libraryName = libraryName;
 
     private readonly api = inject(CyberGoatzCatalogApiService);
     private readonly destroyRef = inject(DestroyRef);
@@ -171,7 +231,7 @@ export class CyberGoatzCatalogComponent {
                     this.source.set(source);
                     this.isLoading.set(false);
                     if (source) {
-                        this.loadItems(source.id, true);
+                        this.loadItems(source.id);
                     }
                 },
                 error: (error: unknown) => {
@@ -219,7 +279,7 @@ export class CyberGoatzCatalogComponent {
                     this.source.set(saved);
                     this.isSaving.set(false);
                     this.isEditing.set(false);
-                    this.loadItems(saved.id, true);
+                    this.loadItems(saved.id);
                 },
                 error: (error: unknown) => {
                     this.saveError.set(toCatalogError(error, 'save'));
@@ -254,25 +314,65 @@ export class CyberGoatzCatalogComponent {
             });
     }
 
-    onStateFilter(state: CatalogItemState | ''): void {
-        this.stateFilter.set(state);
-        this.reloadItems();
+    onSearch(value: string): void {
+        this.search.set(value);
+        this.pageIndex.set(0);
     }
 
-    onCourseFilter(course: string): void {
+    setCourseFilter(course: string): void {
         this.courseFilter.set(course);
-        this.reloadItems();
+        this.pageIndex.set(0);
+    }
+
+    setTypeFilter(type: CatalogTypeFilter): void {
+        this.typeFilter.set(type);
+        this.pageIndex.set(0);
+    }
+
+    setCertificationFilter(certification: string): void {
+        this.certificationFilter.set(certification);
+        this.pageIndex.set(0);
+    }
+
+    setStatusFilter(status: CatalogStatusFilter): void {
+        this.statusFilter.set(status);
+        this.pageIndex.set(0);
+    }
+
+    onPage(event: PageEvent): void {
+        this.pageSize.set(event.pageSize);
+        this.pageIndex.set(event.pageIndex);
+    }
+
+    clearFilters(): void {
+        this.pageIndex.set(0);
+        this.search.set('');
+        this.courseFilter.set('');
+        this.typeFilter.set('');
+        this.statusFilter.set('');
+        this.certificationFilter.set('');
+    }
+
+    setTechnical(on: boolean): void {
+        this.technical.set(on);
+    }
+
+    instanceLink(item: CatalogItem): string | null {
+        return item.trainingInstanceId
+            ? Routing.RouteBuilder.linear_instance
+                  .instanceId(Number(item.trainingInstanceId))
+                  .detail.build()
+            : null;
+    }
+
+    poolLink(item: CatalogItem): string | null {
+        return item.type === 'hands-on' && item.poolId
+            ? Routing.RouteBuilder.pool.poolId(Number(item.poolId)).build()
+            : null;
     }
 
     isFailed(item: CatalogItem): boolean {
         return item.state === 'failed';
-    }
-
-    private reloadItems(): void {
-        const source = this.source();
-        if (source) {
-            this.loadItems(source.id, false);
-        }
     }
 
     private reloadSourceAndItems(sourceId: string): void {
@@ -283,24 +383,22 @@ export class CyberGoatzCatalogComponent {
                 next: (source) => this.source.set(source),
                 error: () => undefined,
             });
-        this.loadItems(sourceId, true);
+        this.loadItems(sourceId);
     }
 
-    private loadItems(sourceId: string, updateCourses: boolean): void {
-        const state = this.stateFilter();
-        const course = this.courseFilter();
+    private loadItems(sourceId: string): void {
         this.api
-            .getItems(sourceId, {
-                state: state || undefined,
-                course: course || undefined,
-            })
+            .getItems(sourceId, {})
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
                 next: (items) => {
-                    this.items.set(sortCatalogItems(items));
-                    if (updateCourses && !state && !course) {
-                        this.courses.set(distinctCourses(items));
-                    }
+                    const sorted = sortCatalogItems(items);
+                    this.items.set(sorted);
+                    this.courses.set(
+                        distinctCourses(
+                            sorted.filter((item) => item.state !== 'not_built'),
+                        ),
+                    );
                 },
                 error: (error: unknown) =>
                     this.loadError.set(toCatalogError(error, 'load')),

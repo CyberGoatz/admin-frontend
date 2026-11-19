@@ -37,15 +37,8 @@ export interface CatalogItemResult {
     sandboxDefinitionId?: string | null;
     poolId?: string | null;
     trainingInstanceId?: string | null;
-    trackItemId?: string | null;
     /** Set when an older version could not be cleaned up and was kept. */
     supersededKept?: string[];
-    error?: string;
-}
-
-export interface CatalogTrackResult {
-    slug: string;
-    outcome: 'created' | 'exists' | 'failed';
     error?: string;
 }
 
@@ -57,7 +50,7 @@ export interface CatalogSyncSummary {
     updated: number;
     skipped: number;
     metadataUpdated: number;
-    /** Entries where earlier steps were completed (pool, instance, track item). */
+    /** Entries where earlier steps were completed (pool, instance). */
     resumed: number;
     /** Entries whose previous version was kept because cleanup was not safe. */
     supersededKept: number;
@@ -67,7 +60,6 @@ export interface CatalogSyncSummary {
     /** Set when the whole run failed before any entry was processed. */
     error?: string;
     items: CatalogItemResult[];
-    tracks: CatalogTrackResult[];
 }
 
 export interface CatalogSource {
@@ -78,15 +70,24 @@ export interface CatalogSource {
     lastSyncAt: string | null;
     lastSyncStatus: CatalogSyncStatus;
     lastSyncSummary: CatalogSyncSummary | null;
+    /** Certification list from the catalog read by the last refresh. */
+    certifications?: CatalogCertification[] | null;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface CatalogCertification {
+    id: string;
+    name: string;
+    issuer?: string;
+    area?: string;
+    level?: string;
 }
 
 export interface CatalogPreviousVersion {
     trainingDefinitionId: string | null;
     poolId: string | null;
     trainingInstanceId: string | null;
-    trackItemId: string | null;
     /** Why this version was kept; null while cleanup has not been tried. */
     keptReason: string | null;
 }
@@ -107,6 +108,8 @@ export interface CatalogItem {
     title: string;
     definitionTitle: string;
     description: string;
+    /** Certification ids; absent before the first refresh with certifications. */
+    certifications?: string[] | null;
     path: string | null;
     contentHash: string | null;
     trainingDefinitionId: string | null;
@@ -114,7 +117,6 @@ export interface CatalogItem {
     /** Null for MCQs, which have no pool. */
     poolId: string | null;
     trainingInstanceId: string | null;
-    trackItemId: string | null;
     previousVersions: CatalogPreviousVersion[] | null;
     state: CatalogItemState;
     lastError: string | null;

@@ -1,16 +1,16 @@
 <div class="catalog-page">
-    <div class="section-header">
-        <h2>Catalog</h2>
-    </div>
-
-    <p class="helper-text">
-        Refresh re-reads the trainings repository and registers new or changed
-        trainings. For each lab it creates an empty pool (size 1 by default, no
-        sandboxes are allocated), creates a training instance that starts now
-        and never expires, and adds an unpublished mission to the course track.
-        It does not allocate sandboxes, does not publish missions and does not
-        release training definitions.
-    </p>
+    <header class="page-header">
+        <div>
+            <h2>Training library</h2>
+            <p class="page-intro">
+                All trainings available to your organisation. Press
+                <strong>Check for updates</strong>
+                to get new and improved trainings. Each one is added as a
+                ready-to-use training instance; to offer it to students, add it
+                to a track on the Tracks page.
+            </p>
+        </div>
+    </header>
 
     @if (isLoading()) {
         <div class="loading">
@@ -18,31 +18,36 @@
                 diameter="32"
                 mode="indeterminate"
             />
-            <span>Loading catalog</span>
+            <span>Loading the training library</span>
         </div>
     } @else {
         @if (loadError(); as err) {
             <div
-                class="error-message"
+                class="notice notice-error"
                 role="alert"
             >
-                {{ err.message }}
+                <mat-icon>error_outline</mat-icon>
+                <span>{{ err.message }}</span>
             </div>
         }
 
         @if (showForm()) {
             <mat-card
                 appearance="outlined"
-                class="source-card"
+                class="panel connect-panel"
             >
                 <mat-card-header>
                     <mat-card-title>
                         {{
                             source()
-                                ? 'Edit repository'
-                                : 'Connect trainings repository'
+                                ? 'Change training library'
+                                : 'Connect a training library'
                         }}
                     </mat-card-title>
+                    <mat-card-subtitle>
+                        The GitHub repository that holds your trainings. Your
+                        platform team gives you this address.
+                    </mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                     <form
@@ -51,21 +56,19 @@
                         (ngSubmit)="saveSource()"
                     >
                         <mat-form-field appearance="outline">
-                            <mat-label>Repository URL</mat-label>
+                            <mat-label>Library address</mat-label>
                             <input
                                 matInput
                                 formControlName="repoUrl"
                                 placeholder="https://github.com/owner/repo"
                             />
                             @if (form.controls.repoUrl.hasError('required')) {
-                                <mat-error>
-                                    Repository URL is required.
-                                </mat-error>
+                                <mat-error>The address is required.</mat-error>
                             } @else if (
                                 form.controls.repoUrl.hasError('githubUrl')
                             ) {
                                 <mat-error>
-                                    Use a GitHub https URL such as
+                                    Use a GitHub address such as
                                     https://github.com/owner/repo.
                                 </mat-error>
                             } @else if (
@@ -75,32 +78,35 @@
                             }
                         </mat-form-field>
                         <mat-form-field appearance="outline">
-                            <mat-label>Revision</mat-label>
+                            <mat-label>Version</mat-label>
                             <input
                                 matInput
                                 formControlName="rev"
                                 placeholder="main"
                             />
-                            <mat-hint>Branch, tag or commit.</mat-hint>
+                            <mat-hint>
+                                Leave as "main" unless your platform team says
+                                otherwise.
+                            </mat-hint>
                             @if (form.controls.rev.hasError('required')) {
-                                <mat-error>Revision is required.</mat-error>
+                                <mat-error>The version is required.</mat-error>
                             } @else if (
                                 form.controls.rev.hasError('pattern') ||
                                 form.controls.rev.hasError('maxlength')
                             ) {
                                 <mat-error>
-                                    Revision must be a valid branch, tag or
-                                    commit.
+                                    Use a branch, tag or commit name.
                                 </mat-error>
                             }
                         </mat-form-field>
 
                         @if (saveError(); as err) {
                             <div
-                                class="error-message"
+                                class="notice notice-error"
                                 role="alert"
                             >
-                                {{ err.message }}
+                                <mat-icon>error_outline</mat-icon>
+                                <span>{{ err.message }}</span>
                             </div>
                         }
 
@@ -121,7 +127,7 @@
                                 type="submit"
                                 [disabled]="isSaving()"
                             >
-                                {{ source() ? 'Save' : 'Connect' }}
+                                {{ source() ? 'Save' : 'Connect library' }}
                             </button>
                         </div>
                     </form>
@@ -133,410 +139,482 @@
             @if (!isEditing()) {
                 <mat-card
                     appearance="outlined"
-                    class="source-card"
+                    class="panel library-panel"
                 >
-                    <mat-card-header>
-                        <mat-card-title>Source</mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content>
-                        <dl class="source-details">
+                    <div class="library-row">
+                        <div class="library-info">
+                            <button
+                                type="button"
+                                class="library-name"
+                                [attr.aria-expanded]="technical()"
+                                aria-controls="library-details"
+                                (click)="setTechnical(!technical())"
+                            >
+                                <mat-icon>menu_book</mat-icon>
+                                <span>{{ libraryName(src.repoUrl) }}</span>
+                                <mat-icon class="chevron">
+                                    {{
+                                        technical()
+                                            ? 'expand_less'
+                                            : 'expand_more'
+                                    }}
+                                </mat-icon>
+                            </button>
+                            <div class="library-status">
+                                <span
+                                    class="pill"
+                                    [class]="'pill pill-' + sourceStatus().tone"
+                                >
+                                    {{
+                                        isRefreshing()
+                                            ? 'Checking for updates'
+                                            : sourceStatus().text
+                                    }}
+                                </span>
+                                <span class="muted">
+                                    Last checked
+                                    {{
+                                        src.lastSyncAt
+                                            ? (src.lastSyncAt | date: 'medium')
+                                            : 'never'
+                                    }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="library-actions">
+                            <button
+                                mat-button
+                                type="button"
+                                [disabled]="isRefreshing()"
+                                (click)="startEdit()"
+                            >
+                                Change library
+                            </button>
+                            <button
+                                mat-flat-button
+                                color="primary"
+                                type="button"
+                                [disabled]="isRefreshing()"
+                                (click)="refresh()"
+                            >
+                                <mat-icon>sync</mat-icon>
+                                {{
+                                    isRefreshing()
+                                        ? 'Checking...'
+                                        : 'Check for updates'
+                                }}
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (technical()) {
+                        <dl
+                            id="library-details"
+                            class="tech-details"
+                        >
                             <dt>Repository</dt>
                             <dd>{{ src.repoUrl }}</dd>
                             <dt>Revision</dt>
                             <dd>{{ src.rev }}</dd>
-                            <dt>Last synced commit</dt>
-                            <dd [matTooltip]="src.lastSyncedCommit ?? ''">
-                                {{ shortCommit(src.lastSyncedCommit) }}
-                            </dd>
-                            <dt>Last run</dt>
+                            <dt>Last run commit</dt>
                             <dd>
-                                {{
-                                    src.lastSyncAt
-                                        ? (src.lastSyncAt | date: 'medium')
-                                        : 'Never'
-                                }}
+                                {{ displayedSummary()?.commit ?? '-' }}
                             </dd>
-                            <dt>Status</dt>
-                            <dd>
-                                <span
-                                    class="status-badge"
-                                    [class]="'status-' + src.lastSyncStatus"
-                                >
-                                    {{ src.lastSyncStatus }}
-                                </span>
-                            </dd>
+                            <dt>Last fully synced commit</dt>
+                            <dd>{{ src.lastSyncedCommit ?? '-' }}</dd>
+                            <dt>Run status</dt>
+                            <dd>{{ src.lastSyncStatus }}</dd>
+                            @if (displayedSummary(); as summary) {
+                                <dt>Run counts</dt>
+                                <dd>
+                                    @for (
+                                        count of summaryCounts();
+                                        track count.label
+                                    ) {
+                                        <span class="tech-count">
+                                            {{ count.label }}:
+                                            {{ count.value }}
+                                        </span>
+                                    }
+                                </dd>
+                            }
                         </dl>
-                    </mat-card-content>
-                    <mat-card-actions align="end">
-                        <button
-                            mat-button
-                            type="button"
-                            [disabled]="isRefreshing()"
-                            (click)="startEdit()"
-                        >
-                            Edit
-                        </button>
-                        <button
-                            mat-flat-button
-                            color="primary"
-                            class="refresh-button"
-                            type="button"
-                            [disabled]="isRefreshing()"
-                            (click)="refresh()"
-                        >
-                            {{ isRefreshing() ? 'Refreshing...' : 'Refresh' }}
-                        </button>
-                    </mat-card-actions>
+                    }
+
                     @if (isRefreshing()) {
                         <mat-progress-bar mode="indeterminate" />
-                        <p class="progress-text">
-                            Refresh in progress. This can take a few minutes;
-                            keep this page open.
+                        <p class="muted progress-text">
+                            This can take a few minutes. Please keep this page
+                            open.
                         </p>
+                    }
+
+                    @if (displayedSummary(); as summary) {
+                        <div
+                            class="update-result"
+                            [class.update-result-warn]="
+                                summary.failed > 0 || !!summary.error
+                            "
+                        >
+                            <mat-icon>
+                                {{
+                                    summary.failed > 0 || summary.error
+                                        ? 'info'
+                                        : 'check_circle'
+                                }}
+                            </mat-icon>
+                            <span>
+                                {{
+                                    refreshResult()
+                                        ? 'Update finished: '
+                                        : 'Last update: '
+                                }}{{ summaryText() }}
+                                @if (summary.failed > 0) {
+                                    These are marked "Needs attention" below.
+                                }
+                            </span>
+                        </div>
                     }
                 </mat-card>
             }
 
             @if (refreshError(); as err) {
                 <div
-                    class="error-message"
+                    class="notice notice-error"
                     role="alert"
                 >
-                    <strong>{{ err.message }}</strong>
-                    @if (err.details.length > 0) {
-                        <ul>
-                            @for (detail of err.details; track $index) {
-                                <li>{{ detail }}</li>
-                            }
-                        </ul>
-                    }
+                    <mat-icon>error_outline</mat-icon>
+                    <div>
+                        <strong>{{ err.message }}</strong>
+                        @if (err.details.length > 0 && technical()) {
+                            <ul>
+                                @for (detail of err.details; track $index) {
+                                    <li>{{ detail }}</li>
+                                }
+                            </ul>
+                        }
+                    </div>
                 </div>
             }
 
-            @if (displayedSummary(); as summary) {
+            <section class="stats">
+                <div class="stat">
+                    <span class="stat-value">{{ stats().total }}</span>
+                    <span class="stat-label">Trainings</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">{{ stats().labs }}</span>
+                    <span class="stat-label">Hands-on labs</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">{{ stats().quizzes }}</span>
+                    <span class="stat-label">Quizzes</span>
+                </div>
+                @if (stats().attention > 0) {
+                    <button
+                        type="button"
+                        class="stat stat-attention"
+                        (click)="setStatusFilter('attention')"
+                    >
+                        <span class="stat-value">{{ stats().attention }}</span>
+                        <span class="stat-label">Need attention</span>
+                    </button>
+                }
+            </section>
+
+            <section class="toolbar">
+                <mat-form-field
+                    appearance="outline"
+                    subscriptSizing="dynamic"
+                    class="search-field"
+                >
+                    <mat-icon matPrefix>search</mat-icon>
+                    <mat-label>Search trainings</mat-label>
+                    <input
+                        matInput
+                        [value]="search()"
+                        (input)="onSearch($any($event.target).value)"
+                    />
+                </mat-form-field>
+                <mat-form-field
+                    appearance="outline"
+                    subscriptSizing="dynamic"
+                >
+                    <mat-label>Course</mat-label>
+                    <mat-select
+                        [value]="courseFilter()"
+                        (selectionChange)="setCourseFilter($event.value)"
+                    >
+                        <mat-option value="">All courses</mat-option>
+                        @for (course of courses(); track course.id) {
+                            <mat-option [value]="course.id">
+                                {{ course.title }}
+                            </mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+                @if (certificationOptions().length > 0) {
+                    <mat-form-field
+                        appearance="outline"
+                        subscriptSizing="dynamic"
+                        class="certification-field"
+                    >
+                        <mat-label>Certification</mat-label>
+                        <mat-select
+                            [value]="certificationFilter()"
+                            (selectionChange)="
+                                setCertificationFilter($event.value)
+                            "
+                        >
+                            <mat-option value="">All certifications</mat-option>
+                            @for (
+                                certification of certificationOptions();
+                                track certification.id
+                            ) {
+                                <mat-option [value]="certification.id">
+                                    {{ certification.name }}
+                                </mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                }
+                <mat-button-toggle-group
+                    hideSingleSelectionIndicator
+                    [value]="typeFilter()"
+                    (change)="setTypeFilter($event.value)"
+                    aria-label="Training type"
+                >
+                    <mat-button-toggle value="">All</mat-button-toggle>
+                    <mat-button-toggle value="hands-on">Labs</mat-button-toggle>
+                    <mat-button-toggle value="mcq">Quizzes</mat-button-toggle>
+                </mat-button-toggle-group>
+                @if (hasFilters()) {
+                    <button
+                        mat-button
+                        type="button"
+                        (click)="clearFilters()"
+                    >
+                        Clear filters
+                    </button>
+                }
+            </section>
+
+            @if (listedItems().length === 0) {
                 <mat-card
                     appearance="outlined"
-                    class="summary-card"
+                    class="panel empty-panel"
                 >
-                    <mat-card-header>
-                        <mat-card-title>
-                            {{
-                                refreshResult()
-                                    ? 'Refresh result'
-                                    : 'Last run summary'
-                            }}
-                        </mat-card-title>
-                        <mat-card-subtitle>
-                            Commit {{ shortCommit(summary.commit) }} ·
-                            {{ summary.startedAt | date: 'medium' }} to
-                            {{ summary.finishedAt | date: 'mediumTime' }}
-                        </mat-card-subtitle>
-                    </mat-card-header>
-                    <mat-card-content>
-                        @if (summary.error) {
-                            <div class="error-message">{{ summary.error }}</div>
-                        }
-                        <div class="counts">
-                            @for (count of summaryCounts(); track count.label) {
-                                <div
-                                    class="count"
-                                    [class.count-failed]="
-                                        count.label === 'Failed' &&
-                                        count.value > 0
-                                    "
-                                >
-                                    <span class="count-value">
-                                        {{ count.value }}
-                                    </span>
-                                    <span class="count-label">
-                                        {{ count.label }}
-                                    </span>
-                                </div>
-                            }
-                        </div>
-                        <p>
-                            Tracks created: {{ createdTracks().length }}
-                            @if (createdTracks().length > 0) {
-                                ({{ createdTrackSlugs() }})
-                            }
-                        </p>
-                        @for (track of failedTracks(); track track.slug) {
-                            <p class="failed-text">
-                                Track {{ track.slug }} failed:
-                                {{ truncate(track.error ?? '', 200) }}
-                            </p>
-                        }
-                    </mat-card-content>
+                    <mat-icon>library_books</mat-icon>
+                    <p>
+                        No trainings yet. Press
+                        <strong>Check for updates</strong>
+                        to load them from the library.
+                    </p>
                 </mat-card>
-            }
-
-            <div class="section-header">
-                <h3>Items</h3>
-                <div class="filters">
-                    <mat-form-field
-                        appearance="outline"
-                        subscriptSizing="dynamic"
-                    >
-                        <mat-label>State</mat-label>
-                        <mat-select
-                            [value]="stateFilter()"
-                            (selectionChange)="onStateFilter($event.value)"
-                        >
-                            <mat-option value="">All</mat-option>
-                            @for (state of states; track state) {
-                                <mat-option [value]="state">
-                                    {{ state }}
-                                </mat-option>
-                            }
-                        </mat-select>
-                    </mat-form-field>
-                    <mat-form-field
-                        appearance="outline"
-                        subscriptSizing="dynamic"
-                    >
-                        <mat-label>Course</mat-label>
-                        <mat-select
-                            [value]="courseFilter()"
-                            (selectionChange)="onCourseFilter($event.value)"
-                        >
-                            <mat-option value="">All</mat-option>
-                            @for (course of courses(); track course.id) {
-                                <mat-option [value]="course.id">
-                                    {{ course.title }}
-                                </mat-option>
-                            }
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-            </div>
-
-            @if (items().length === 0) {
+            } @else if (visibleItems().length === 0) {
                 <mat-card
                     appearance="outlined"
-                    class="empty-card"
+                    class="panel empty-panel"
                 >
-                    No catalog items. Press Refresh to read the repository.
+                    <p>No trainings match these filters.</p>
+                    <button
+                        mat-button
+                        type="button"
+                        (click)="clearFilters()"
+                    >
+                        Clear filters
+                    </button>
                 </mat-card>
             } @else {
-                <div class="table-wrapper">
-                    <table
-                        mat-table
-                        [dataSource]="items()"
-                    >
-                        <ng-container matColumnDef="catalogId">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                Catalog id
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                            >
-                                {{ item.catalogId }}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="title">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                Title
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                            >
-                                {{ item.title }}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="course">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                Course
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                            >
-                                {{ item.courseTitle }}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="unit">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                Unit
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                            >
-                                {{ item.unit }}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="difficulty">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                Difficulty
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                            >
-                                {{ item.difficulty }}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="type">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                Type
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                            >
-                                {{ item.type }}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="state">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                State
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                            >
-                                <span
-                                    class="status-badge"
-                                    [class]="'state-' + item.state"
+                <mat-card
+                    appearance="outlined"
+                    class="panel table-panel"
+                >
+                    <div class="table-wrapper">
+                        <table
+                            mat-table
+                            [dataSource]="pagedItems()"
+                        >
+                            <ng-container matColumnDef="title">
+                                <th
+                                    mat-header-cell
+                                    *matHeaderCellDef
                                 >
-                                    {{ item.state }}
-                                </span>
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="trainingDefinitionId">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                Training def. id
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                            >
-                                {{ item.trainingDefinitionId ?? '-' }}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="sandboxDefinitionId">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                Sandbox def. id
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                            >
-                                {{ item.sandboxDefinitionId ?? '-' }}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="delivery">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                Pool / Instance / Mission
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                                class="delivery-cell"
-                            >
-                                <div>
-                                    Pool:
-                                    {{
-                                        item.type === 'mcq'
-                                            ? '-'
-                                            : (item.poolId ?? '-')
-                                    }}
-                                </div>
-                                <div>
-                                    Instance:
-                                    {{ item.trainingInstanceId ?? '-' }}
-                                </div>
-                                <div>
-                                    Mission:
-                                    {{ item.trackItemId ? 'yes' : '-' }}
-                                </div>
-                                @if (hasOlderVersions(item)) {
-                                    <span
-                                        class="status-badge older-version"
-                                        [matTooltip]="
-                                            previousVersionsText(item)
-                                        "
-                                        matTooltipClass="multiline-tooltip"
+                                    Training
+                                </th>
+                                <td
+                                    mat-cell
+                                    *matCellDef="let item"
+                                    class="title-cell"
+                                >
+                                    <div class="training-title">
+                                        {{ item.title }}
+                                    </div>
+                                    <div
+                                        class="training-description"
+                                        [matTooltip]="item.description"
+                                        matTooltipShowDelay="400"
                                     >
-                                        older version still in place
+                                        {{ item.description }}
+                                    </div>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="course">
+                                <th
+                                    mat-header-cell
+                                    *matHeaderCellDef
+                                >
+                                    Course
+                                </th>
+                                <td
+                                    mat-cell
+                                    *matCellDef="let item"
+                                    class="course-cell"
+                                >
+                                    <div>{{ item.courseTitle }}</div>
+                                    <div class="muted">{{ item.unit }}</div>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="level">
+                                <th
+                                    mat-header-cell
+                                    *matHeaderCellDef
+                                >
+                                    Level
+                                </th>
+                                <td
+                                    mat-cell
+                                    *matCellDef="let item"
+                                >
+                                    <span
+                                        class="pill"
+                                        [class]="
+                                            'pill pill-level-' + item.difficulty
+                                        "
+                                    >
+                                        {{ levelLabel(item.difficulty) }}
                                     </span>
-                                }
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="path">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                Path
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                            >
-                                {{ item.path ?? '-' }}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="lastError">
-                            <th
-                                mat-header-cell
-                                *matHeaderCellDef
-                            >
-                                Last error
-                            </th>
-                            <td
-                                mat-cell
-                                *matCellDef="let item"
-                                class="error-cell"
-                                [matTooltip]="item.lastError ?? ''"
-                            >
-                                {{ truncate(item.lastError, 60) }}
-                            </td>
-                        </ng-container>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="type">
+                                <th
+                                    mat-header-cell
+                                    *matHeaderCellDef
+                                >
+                                    Type
+                                </th>
+                                <td
+                                    mat-cell
+                                    *matCellDef="let item"
+                                >
+                                    <span class="type-label">
+                                        <mat-icon>
+                                            {{
+                                                item.type === 'mcq'
+                                                    ? 'quiz'
+                                                    : 'terminal'
+                                            }}
+                                        </mat-icon>
+                                        {{ typeLabel(item.type) }}
+                                    </span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="status">
+                                <th
+                                    mat-header-cell
+                                    *matHeaderCellDef
+                                >
+                                    Status
+                                </th>
+                                <td
+                                    mat-cell
+                                    *matCellDef="let item"
+                                >
+                                    <span
+                                        class="pill"
+                                        [class]="
+                                            'pill pill-state-' + item.state
+                                        "
+                                    >
+                                        {{ statusLabel(item.state) }}
+                                    </span>
+                                    @if (
+                                        item.state === 'failed' &&
+                                        item.lastError
+                                    ) {
+                                        <div
+                                            class="row-error"
+                                            [matTooltip]="item.lastError"
+                                        >
+                                            {{ truncate(item.lastError, 70) }}
+                                        </div>
+                                    }
+                                    @if (hasOlderVersions(item)) {
+                                        <div
+                                            class="muted older-version"
+                                            [matTooltip]="
+                                                previousVersionsText(item)
+                                            "
+                                            matTooltipClass="multiline-tooltip"
+                                        >
+                                            Previous version still in use
+                                        </div>
+                                    }
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="open">
+                                <th
+                                    mat-header-cell
+                                    *matHeaderCellDef
+                                >
+                                    <span class="visually-hidden">Actions</span>
+                                </th>
+                                <td
+                                    mat-cell
+                                    *matCellDef="let item"
+                                    class="actions-cell"
+                                >
+                                    @if (instanceLink(item); as link) {
+                                        <a
+                                            mat-stroked-button
+                                            [routerLink]="link"
+                                        >
+                                            Open
+                                        </a>
+                                    }
+                                    @if (poolLink(item); as link) {
+                                        <a
+                                            mat-button
+                                            [routerLink]="link"
+                                            matTooltip="Lab machines for this training. Allocate them here before students start."
+                                        >
+                                            Lab machines
+                                        </a>
+                                    }
+                                </td>
+                            </ng-container>
 
-                        <tr
-                            mat-header-row
-                            *matHeaderRowDef="columns"
-                        ></tr>
-                        <tr
-                            mat-row
-                            *matRowDef="let item; columns: columns"
-                            [class.failed-row]="isFailed(item)"
-                        ></tr>
-                    </table>
-                </div>
+                            <tr
+                                mat-header-row
+                                *matHeaderRowDef="columns"
+                            ></tr>
+                            <tr
+                                mat-row
+                                *matRowDef="let item; columns: columns"
+                                [class.attention-row]="isFailed(item)"
+                            ></tr>
+                        </table>
+                    </div>
+                    <mat-paginator
+                        showFirstLastButtons
+                        [length]="visibleItems().length"
+                        [pageIndex]="pageIndex()"
+                        [pageSize]="pageSize()"
+                        [pageSizeOptions]="pageSizeOptions"
+                        (page)="onPage($event)"
+                        aria-label="Choose page of trainings"
+                    />
+                </mat-card>
             }
         }
     }

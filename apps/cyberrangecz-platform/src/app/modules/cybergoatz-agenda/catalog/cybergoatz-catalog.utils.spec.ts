@@ -2,7 +2,18 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { describe, expect, it } from 'vitest';
 import { CatalogItem, CatalogSyncSummary } from './cybergoatz-catalog.model';
 import {
+    CatalogViewFilters,
     distinctCourses,
+    filterCatalogItems,
+    isListed,
+    levelLabel,
+    libraryName,
+    sourceStatusLabel,
+    statusLabel,
+    summarySentence,
+    typeLabel,
+    certificationNames,
+    usedCertifications,
     hasOlderVersions,
     previousVersionsText,
     isGithubHttpsUrl,
@@ -10,7 +21,6 @@ import {
     sortCatalogItems,
     summaryCounts,
     toCatalogError,
-    tracksCreated,
     truncate,
 } from './cybergoatz-catalog.utils';
 
@@ -36,7 +46,6 @@ function item(partial: Partial<CatalogItem>): CatalogItem {
         sandboxDefinitionId: null,
         poolId: null,
         trainingInstanceId: null,
-        trackItemId: null,
         previousVersions: null,
         state: 'synced',
         lastError: null,
@@ -150,7 +159,6 @@ describe('previous versions', () => {
         trainingDefinitionId: '10',
         poolId: '20',
         trainingInstanceId: '30',
-        trackItemId: null,
         keptReason: 'instance has training runs',
     };
 
@@ -174,7 +182,7 @@ describe('previous versions', () => {
         const lines = text.split('\n');
         expect(lines).toHaveLength(2);
         expect(lines[0]).toBe(
-            'Reason: instance has training runs, definition 10, pool 20, instance 30, mission -',
+            'Reason: instance has training runs, definition 10, pool 20, instance 30',
         );
         expect(lines[1]).toContain('cleanup not attempted yet');
         expect(lines[1]).toContain('pool -');
@@ -197,20 +205,12 @@ describe('summary helpers', () => {
         notBuilt: 6,
         removed: 7,
         items: [],
-        tracks: [
-            { slug: 'a', outcome: 'created' },
-            { slug: 'b', outcome: 'exists' },
-        ],
     };
 
     it('lists all counts including resumed and superseded kept', () => {
         expect(summaryCounts(summary).map((c) => c.value)).toEqual([
             1, 2, 3, 4, 8, 9, 5, 6, 7,
         ]);
-    });
-
-    it('returns only created tracks', () => {
-        expect(tracksCreated(summary).map((t) => t.slug)).toEqual(['a']);
     });
 });
 
@@ -232,5 +232,129 @@ describe('isGithubHttpsUrl', () => {
         ]) {
             expect(isGithubHttpsUrl(value), value).toBe(false);
         }
+    });
+});
+
+describe('plain-language view helpers', () => {
+    const ready = item({
+        catalogId: 'a',
+        title: 'Phishing triage',
+        state: 'synced',
+        type: 'hands-on',
+        course: 'c1',
+        certifications: ['sec'],
+    });
+    const broken = item({
+        catalogId: 'b',
+        title: 'DNS quiz',
+        state: 'failed',
+        type: 'mcq',
+        course: 'c2',
+    });
+    const notBuilt = item({
+        catalogId: 'c',
+        title: 'Future lab',
+        state: 'not_built',
+    });
+    const removed = item({
+        catalogId: 'd',
+        title: 'Old lab',
+        state: 'removed_from_catalog',
+    });
+    const all = [ready, broken, notBuilt, removed];
+    const none: CatalogViewFilters = {
+        search: '',
+        course: '',
+        type: '',
+        status: '',
+        certification: '',
+    };
+
+    it('never lists entries without a folder, and lists removed ones only in technical mode', () => {
+        expect(isListed(notBuilt, false)).toBe(false);
+        expect(isListed(notBuilt, true)).toBe(false);
+        expect(isListed(removed, false)).toBe(false);
+        expect(isListed(removed, true)).toBe(true);
+        expect(
+            filterCatalogItems(all, none, false).map((i) => i.catalogId),
+        ).toEqual(['a', 'b']);
+    });
+
+    it('filters by search text, course, type and status', () => {
+        const ids = (f: Partial<CatalogViewFilters>) =>
+            filterCatalogItems(all, { ...none, ...f }, false).map(
+                (i) => i.catalogId,
+            );
+        expect(ids({ search: 'phish' })).toEqual(['a']);
+        expect(ids({ course: 'c2' })).toEqual(['b']);
+        expect(ids({ type: 'mcq' })).toEqual(['b']);
+        expect(ids({ status: 'ready' })).toEqual(['a']);
+        expect(ids({ status: 'attention' })).toEqual(['b']);
+        expect(ids({ certification: 'sec' })).toEqual(['a']);
+    });
+
+    it('uses plain labels', () => {
+        expect(statusLabel('synced')).toBe('Ready');
+        expect(statusLabel('failed')).toBe('Needs attention');
+        expect(typeLabel('mcq')).toBe('Quiz');
+        expect(typeLabel('hands-on')).toBe('Hands-on lab');
+        expect(levelLabel('beginner')).toBe('Beginner');
+        expect(
+            libraryName('https://github.com/CyberGoatz/training-catalog.git'),
+        ).toBe('CyberGoatz/training-catalog');
+        expect(sourceStatusLabel('partial').tone).toBe('warn');
+        expect(sourceStatusLabel('success').text).toBe('Up to date');
+    });
+
+    it('describes an update in one sentence', () => {
+        const base: CatalogSyncSummary = {
+            commit: 'abc',
+            startedAt: '',
+            finishedAt: '',
+            created: 0,
+            updated: 0,
+            skipped: 5,
+            metadataUpdated: 0,
+            resumed: 0,
+            supersededKept: 0,
+            failed: 0,
+            notBuilt: 40,
+            removed: 0,
+            items: [],
+        };
+        expect(summarySentence(base)).toBe(
+            'No changes. Everything was already up to date.',
+        );
+        expect(summarySentence({ ...base, created: 38, failed: 1 })).toBe(
+            '38 new trainings added, 1 training could not be set up.',
+        );
+        expect(summarySentence({ ...base, error: 'boom' })).toBe(
+            'The update could not finish. Nothing was changed.',
+        );
+    });
+});
+
+describe('certification helpers', () => {
+    it('lists only certifications used by listed items, sorted by name', () => {
+        const certs = [
+            { id: 'z', name: 'Zeta' },
+            { id: 'a', name: 'Alpha' },
+            { id: 'u', name: 'Unused' },
+        ];
+        const items = [
+            item({ certifications: ['z', 'a'] }),
+            item({ certifications: null }),
+        ];
+        expect(usedCertifications(certs, items).map((c) => c.name)).toEqual([
+            'Alpha',
+            'Zeta',
+        ]);
+    });
+
+    it('maps ids to names and falls back to the id', () => {
+        const byId = new Map([['a', { id: 'a', name: 'Alpha' }]]);
+        expect(
+            certificationNames(item({ certifications: ['a', 'x'] }), byId),
+        ).toEqual(['Alpha', 'x']);
     });
 });
